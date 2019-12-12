@@ -1,7 +1,8 @@
-# 13victor
+# Getting started
 
-1. Download and unzip latest jtree:
-https://opowell.github.io/jtree/ 
-2. Remove everything in "jtree/apps".
-3. Download this experiment, unzip to "jtree/apps/13victor" (last folder name must be "13victor").
-4. Start jtree, open the "Queues" tab, start a session of "apps/13victor/queue.jtq" file.
+1. Download zip, extract all files and run "jtree.exe".
+2. Open the "Queues" tab, click the Queue (not blue play button).
+3. Set options.
+4. Start session.
+
+To run on non-Windows operating system, get executable from github.com/opowell/jtree.
