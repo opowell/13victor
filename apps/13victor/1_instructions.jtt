@@ -1,0 +1,5 @@
+app.isStandaloneApp = false;
+let instructions = app.newStage('instructions');
+instructions.activeScreen = `
+    <p>First, an example.</p>
+`
