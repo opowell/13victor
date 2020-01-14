@@ -12,8 +12,212 @@ jt.connected = function() {
         $('#myAllocY').val(player.myAllocationProposal.y);
       }
     });
+    if (player.partnerAllocationProposal != null) {
+      jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
+    }
   });
+
+  // jt.overwriteCrosshairImpl();
 };
+
+
+jt.overwriteCrosshairImpl = function() {
+
+  Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
+      var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
+      fireEvent(this, 'drawCrosshair', { e: e, point: point });
+      // Use last available event when updating non-snapped crosshairs without
+      // mouse interaction (#5287)
+      if (!e) {
+          e = this.cross && this.cross.e;
+      }
+      if (
+      // Disabled in options
+      !this.crosshair ||
+          // Snap
+          ((defined(point) || !snap) === false)) {
+          this.hideCrosshair();
+      }
+      else {
+          // Get the path
+          if (!snap) {
+              pos = e &&
+                  (this.horiz ?
+                      e.chartX - this.pos :
+                      this.len - e.chartY + this.pos);
+          }
+          else if (defined(point)) {
+              // #3834
+              pos = pick(this.coll !== 'colorAxis' ?
+                  point.crosshairPos : // 3D axis extension
+                  null, this.isXAxis ?
+                  point.plotX :
+                  this.len - point.plotY);
+          }
+          if (defined(pos)) {
+              crossOptions = {
+                  // value, only used on radial
+                  value: point && (this.isXAxis ?
+                      point.x :
+                      pick(point.stackY, point.y)),
+                  translatedValue: pos
+              };
+              if (this.chart.polar) {
+                  // Additional information required for crosshairs in
+                  // polar chart
+                  extend(crossOptions, {
+                      isCrosshair: true,
+                      chartX: e && e.chartX,
+                      chartY: e && e.chartY,
+                      point: point
+                  });
+              }
+              path = this.getPlotLinePath(crossOptions) ||
+                  null; // #3189
+          }
+          if (!defined(path)) {
+              this.hideCrosshair();
+              return;
+          }
+          categorized = this.categories && !this.isRadial;
+          // Draw the cross
+          if (!graphic) {
+              this.cross = graphic = this.chart.renderer
+                  .path()
+                  .addClass('highcharts-crosshair highcharts-crosshair-' +
+                  (categorized ? 'category ' : 'thin ') +
+                  options.className)
+                  .attr({
+                  zIndex: pick(options.zIndex, 2)
+              })
+                  .add();
+              // Presentational attributes
+              if (!this.chart.styledMode) {
+                  graphic.attr({
+                      stroke: options.color ||
+                          (categorized ?
+                              color('${palette.highlightColor20}')
+                                  .setOpacity(0.25).get() :
+                              '${palette.neutralColor20}'),
+                      'stroke-width': pick(options.width, 1)
+                  }).css({
+                      'pointer-events': 'none'
+                  });
+                  if (options.dashStyle) {
+                      graphic.attr({
+                          dashstyle: options.dashStyle
+                      });
+                  }
+              }
+          }
+          graphic.show().attr({
+              d: path
+          });
+          if (categorized && !options.width) {
+              graphic.attr({
+                  'stroke-width': this.transA
+              });
+          }
+          this.cross.e = e;
+      }
+      fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
+  };
+  // Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
+  //   // Additional variables
+  //   var defined = Highcharts.defined,
+  //   	pick = Highcharts.pick;
+    
+  //   var path,
+  //     options = this.crosshair,
+  //     snap = Highcharts.pick(options.snap, true),
+  //     pos,
+  //     categorized,
+  //     graphic = this.cross;
+
+  //   // Use last available event when updating non-snapped crosshairs without
+  //   // mouse interaction (#5287)
+  //   if (!e) {
+  //     e = this.cross && this.cross.e;
+  //   }
+
+  //   if (
+  //     // Disabled in options
+  //     !this.crosshair ||
+  //     // Snap
+  //     ((defined(point) || !snap) === false)
+  //   ) {
+  //     this.hideCrosshair();
+  //   } else {
+
+  //     // Get the path
+  //     if (!snap) {
+  //       pos = e && (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+  //     } else if (defined(point)) {
+  //       pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
+  //     }
+
+  //     if (defined(pos)) {
+  //       path = this.getPlotLinePath(
+  //         // First argument, value, only used on radial
+  //         point && (this.isXAxis ? point.x : pick(point.stackY, point.y)),
+  //         null,
+  //         null,
+  //         null,
+  //         pos // Translated position
+  //       ) || null; // #3189
+  //     }
+  //     console.log('Old path', path);
+  //     path.splice(path.length - 1 - 7, 6);
+  //     console.log('New path', path);
+
+
+  //     if (!defined(path)) {
+  //       this.hideCrosshair();
+  //       return;
+  //     }
+
+  //     categorized = this.categories && !this.isRadial;
+
+  //     // Draw the cross
+  //     if (!graphic) {
+  //       this.cross = graphic = this.chart.renderer
+  //         .path()
+  //         .addClass('highcharts-crosshair highcharts-crosshair-' +
+  //           (categorized ? 'category ' : 'thin ') + options.className)
+  //         .attr({
+  //           zIndex: pick(options.zIndex, 2)
+  //         })
+  //         .add();
+
+
+  //       // Presentational attributes
+  //       graphic.attr({
+  //         'stroke': options.color || (categorized ? color('#ccd6eb').setOpacity(0.25).get() : '#cccccc'),
+  //         'stroke-width': pick(options.width, 1)
+  //       });
+  //       if (options.dashStyle) {
+  //         graphic.attr({
+  //           dashstyle: options.dashStyle
+  //         });
+  //       }
+
+
+  //     }
+
+  //     graphic.show().attr({
+  //       d: path
+  //     });
+
+  //     if (categorized && !options.width) {
+  //       graphic.attr({
+  //         'stroke-width': this.transA
+  //       });
+  //     }
+  //     this.cross.e = e;
+  //   }
+  // }
+}
+
 
 jt.autoplay_decision = function() {
   let point = randomEl(jt.budgetData);
@@ -127,7 +331,7 @@ getSeries = function(player) {
     series.push({
       type: "scatter",
       name: "your choice",
-      color: "red",
+      color: "black",
       data: [[player.myProposal.x, player.myProposal.y]],
       marker: {
         radius: 6

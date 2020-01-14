@@ -1,50 +1,61 @@
 let trainingBudgets = [{maxX: 50, maxY: 50, id: 1}];
 
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
+session.addSelectOption('proposalType', ['EXOG', 'ENDO'], 'The type of proposal.');
+session.addNumberOption('exogProposalX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous proposal.');
+session.addNumberOption('exogProposalY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous proposal.');
 session.addNumberOption('budgetMax', 100, 100, 200, 1, 'Budget maximum.');
+session.addNumberOption('numExampleRounds', 1, 0, 100, 1, 'Number of example rounds.');
+session.addNumberOption('numIndivRounds', 50, 0, 100, 1, 'Number of individual rounds.');
+session.addNumberOption('numPairRounds', 50, 0, 100, 1, 'Number of pair rounds.');
 
-let numBudgets = 50;
-let realBudgets = [];
-let min = 10;
-let mid = 50;
-for (let i=0; i<numBudgets; i++) {
-    let x = Utils.randomInt(min, session.budgetMax+1);
-    let y = Utils.randomInt(min, session.budgetMax+1);
-    if (x < mid && y < mid) {
-        if (Math.random() < 0.5) {
-            x += (min+session.budgetMax)/2;
-        } else {
-            y += (min+session.budgetMax)/2;
+function drawBudgets(numBudgets) {
+    let budgets = [];
+    let min = 10;
+    let mid = 50;
+    for (let i=0; i<numBudgets; i++) {
+        let x = Utils.randomInt(min, session.budgetMax+1);
+        let y = Utils.randomInt(min, session.budgetMax+1);
+        if (x < mid && y < mid) {
+            if (Math.random() < 0.5) {
+                x += (min+session.budgetMax)/2;
+            } else {
+                y += (min+session.budgetMax)/2;
+            }
         }
+        budgets.push({
+            maxX: x,
+            maxY: y,
+            id: i
+        });
     }
-    realBudgets.push({
-        maxX: x,
-        maxY: y,
-        id: i
-    });
+    return budgets;
 }
 
-let shuffledBudgets = Utils.shuffle(realBudgets);
+let exampleBudgets = drawBudgets(session.numExampleRounds);
+let indivBudgets = drawBudgets(session.numIndivRounds);
+let pairBudgets = drawBudgets(session.numPairRounds);
+// let shuffledBudgets = Utils.shuffle(realBudgets);
 
-session.addApp('1_instructions.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'individual',
-    training: 'yes',
-    budgets: trainingBudgets,
-});
+// session.addApp('1_instructions.jtt');
+// session.addApp('counting.jtt', {
+//     treatment: 'individual',
+//     training: 'yes',
+//     budgets: exampleBudgets,
+// });
 
-session.addApp('2_instructions.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'individual',
-    training: 'no',
-    budgets: realBudgets,
-});
+// session.addApp('2_instructions.jtt');
+// session.addApp('counting.jtt', {
+//     treatment: 'individual',
+//     training: 'no',
+//     budgets: indivBudgets,
+// });
 
-session.addApp('3_instructions.jtt');
+// session.addApp('3_instructions.jtt');
 session.addApp('counting.jtt', {
     treatment: 'pair',
     training: 'no',
-    budgets: shuffledBudgets,
+    budgets: pairBudgets,
 });
 
 session.addApp('results.jtt');

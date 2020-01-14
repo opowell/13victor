@@ -1,0 +1,26 @@
+DONE
+QUEUE
+- setting, number of rounds, separate for example, individual and pairs.
+COUNTING
+- remove results stage
+PART B
+- your choices: always black, instead of red. 
+- other player: always blue
+- budget, smaller width and height
+- chat below budget, same width
+- center budget
+SLIDERS
+- "My share of X" and "My share of Y"
+ALLOCATION PANEL
+- Combine sliders:
+    - one slider showing your choice vs. partner's choice (line with number)
+
+TODO
+BUDGET CHART
+- remove outside lines
+TREATMENT - EXOG PROPOSAL
+- new queue setting
+- new setting: single proposal in entire session
+- only choose budget, no share choice
+- chat stays
+- box with allocation rule

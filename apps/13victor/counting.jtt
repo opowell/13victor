@@ -24,6 +24,9 @@ app.waitingScreen = `
 </div>
 `
 app.insertJtreeRefAtStartOfClientHTML = false;
+
+// <script src="/13victor/Utilities.js"></script>
+
 app.html = `
 <!DOCTYPE html>
 <html>
@@ -39,7 +42,8 @@ app.html = `
     <style>
     body {
         margin: 0px;
-        justify-content: unset;
+        max-width: unset;
+        height: 100vh;
     }
     #jtree {
         background-color: unset;
@@ -100,17 +104,49 @@ decisionStage.activeScreen = `
 if (app.treatment === 'pair') {
     let bargainStage = app.newStage('bargain');
     bargainStage.wrapPlayingScreenInFormTag = false;
+    bargainStage.groupStart = function(group) {
+        if (group.session().proposalType === 'EXOG') {
+            let p1 = group.players[0];
+            let p2 = group.players[1];
+            p1.myAllocationProposal = {
+                x: group.session().exogProposalX - 0,
+                y: group.session().exogProposalY - 0,
+            }
+            p2.myAllocationProposal = {
+                x: 100 - p1.myAllocationProposal.x,
+                y: 100 - p1.myAllocationProposal.y,
+            };
+            p1.partnerAllocationProposal = p2.myAllocationProposal;
+            p2.partnerAllocationProposal = p1.myAllocationProposal;
+        }
+    };
     bargainStage.activeScreen = `
 <div style='display: flex;'>
-    <div style='display: flex; flex-direction: column; flex: 0 0 880px;'>
+    <div style='display: flex; flex-direction: column; flex: 0 0 auto;'>
         <div class="card">
             <div class="card-body">
                 <h3>Decision {{period.id}} of {{app.numPeriods}}</h3>
-                <div id="containerBargain" style='width: 800px; height: 800px'></div>
+                <div id="containerBargain" style='width: 400px; height: 400px'></div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Chat</h5>
+                <div style='display: flex;'>
+                    <input style='flex: 1 1 auto' type='text' id='msgInput' onkeyup='keyUp(event)' placeholder='Enter message here...'>
+                    <button type='button' onclick='sendMsgToServer()'>Send message</button>
+                </div>
+                <div style='overflow-y: scroll; height: 100px; width: 100%; border: 2px solid #888; padding: 5px; margin-top: 5px;'>
+                    <div v-for='message in group.messages.slice().reverse()' :key='message.id' v-bind:style="message.player == player.id ? {color: 'black'} : {color: 'blue'}">
+                        <span v-if='message.player == player.id'><b>ME:</b></span>
+                        <span v-else><b>PARTNER:</b></span>
+                        {{ message.content }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <div style='display: flex; flex-direction: column; flex: 0 0 auto;'>
+    <div style='display: flex; flex-direction: column; flex: 0 0 400px;'>
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">My budget proposal</h5>
@@ -131,41 +167,64 @@ if (app.treatment === 'pair') {
                 <div v-else>None.</div>
             </div>
         </div>
-        <div class="card">
+        <div class="card" v-if='app.session.proposalType === "EXOG"'>
             <div class="card-body">
-                <h5 class="card-title">Chat</h5>
-                <input type='text' id='msgInput' onkeyup='keyUp(event)' placeholder='Enter message here...'>
-                <button type='button' onclick='sendMsgToServer()'>Send message</button>
-                <div style='overflow-y: scroll; height: 100px; max-width: 300px; border: 2px solid #888; padding: 5px; margin: 5px;'>
-                    <div v-for='message in group.messages.slice().reverse()' :key='message.id' v-bind:style="message.player == player.id ? {color: 'blue'} : {color: 'red'}">
-                        <span v-if='message.player == player.id'><b>ME:</b></span>
-                        <span v-else><b>PARTNER:</b></span>
-                        {{ message.content }}
-                    </div>
-                </div>
+                <h5 class="card-title">Allocation</h5>
+                <div>My share of X: <b>{{app.session.exogProposalX}}%</b></div>
+                <div>My share of Y: <b>{{app.session.exogProposalY}}%</b></div>
             </div>
         </div>
-        <div class="card">
+        <div class="card" v-if='app.session.proposalType === "ENDO"'>
             <div class="card-body">
                 <h5 class="card-title">My allocation proposal</h5>
-                <div style='display: flex;'>
-                    <span style='flex: 0 0 100px'>My X: <b>{{player.myAllocationProposal.x}}%</b></span>
-                    0% <input id="myAllocX" type="range" min="0" max="100" step="1" onchange="setMyAllocationProposal()"> 100%<br>
+                <div style='display: flex; height: 60px;'>
+                    <span style='flex: 0 0 150px'>My share of X: <b>{{player.myAllocationProposal.x}}%</b></span>
+                    <span style='flex: 0 0 auto'>0%</span>
+                    <span style='position: relative'>
+                        <span id='myAllocXBar' class='allocBar'></span>
+                        <span id='myAllocXText' class='allocText'></span>
+                        <input id="myAllocX" style='position: relative' type="range" min="0" max="100" step="1" onchange="setMyAllocationProposal()"> 
+                    </span>
+                    <span style='flex: 0 0 auto'>100%</span>
+                    <br>
                 </div>
-                <div style='display: flex'>
-                    <span style='flex: 0 0 100px'>My Y: <b>{{player.myAllocationProposal.y}}%</b></span>
-                    0% <input id="myAllocY" type="range" min="0" max="100" step="1" onchange="setMyAllocationProposal()"> 100%<br>
+                <div style='display: flex; height: 60px;'>
+                    <span style='flex: 0 0 150px'>My share of Y: <b>{{player.myAllocationProposal.y}}%</b></span>
+                    0%
+                    <span style='position: relative'>
+                        <span id='myAllocYBar' class='allocBar'></span>
+                        <span id='myAllocYText' class='allocText'></span>
+                        <input id="myAllocY" style='position: relative' type="range" min="0" max="100" step="1" onchange="setMyAllocationProposal()">
+                    </span>
+<style>
+.allocBar {
+    background-color: blue;
+    width: 2px;
+    height: 33px;
+    position: absolute;
+    top: 0px;
+    display: none;
+    z-index: 0;
+}
+.allocText {
+    position: absolute;
+    top: 29px;
+    color: blue;
+}
+</style>
+                    100%
+                    <br>
                 </div>
             </div>
         </div>
-        <div class="card">
+        <div class="card" style='display: none'>
             <div class="card-body">
                 <h5 class="card-title">Partner's allocation proposal</h5>
                 <div style='display: flex;'>
-                    <span style='flex: 0 0 100px'>My X:<b>{{player.partnerAllocationProposal.x == '' ? '' : 100 - player.partnerAllocationProposal.x}}%</b></span>
+                    <span style='flex: 0 0 150px'>My share of X: <b>{{player.partnerAllocationProposal.x + '' == '' ? '' : 100 - player.partnerAllocationProposal.x}}%</b></span>
                 </div>
                 <div style='display: flex'>
-                    <span style='flex: 0 0 100px'>My Y:<b>{{player.partnerAllocationProposal.y == '' ? '' : 100 - player.partnerAllocationProposal.y}}%</b></span>
+                    <span style='flex: 0 0 150px'>My share of Y: <b>{{player.partnerAllocationProposal.y + '' == '' ? '' : 100 - player.partnerAllocationProposal.y}}%</b></span>
                 </div>
             </div>
         </div>
@@ -183,24 +242,25 @@ if (app.treatment === 'pair') {
                     Budget proposals DO NOT match.
                     <button v-if='player.partnerProposal.x != ""' onclick='matchBudgetProposal()'>Match</button>
                 </div>
-                <div v-if='
-                    player.myAllocationProposal.x === 100 - player.partnerAllocationProposal.x && 
-                    player.myAllocationProposal.y === 100 - player.partnerAllocationProposal.y'
-                class="card-title text-success">Allocation proposals DO match.</div>
-                <div v-else
-                class="card-title text-danger">
-                    Allocation proposals DO NOT match.
-                    <button v-if='player.partnerAllocationProposal.x != ""' onclick='matchAllocationProposal()'>Match</button>      
-                </div>
-                <div 
-                >
+                <template v-if='app.session.proposalType === "ENDO"'>
+                    <div v-if='
+                        player.myAllocationProposal.x === 100 - player.partnerAllocationProposal.x && 
+                        player.myAllocationProposal.y === 100 - player.partnerAllocationProposal.y'
+                    class="card-title text-success">Allocation proposals DO match.</div>
+                    <div v-else
+                    class="card-title text-danger">
+                        Allocation proposals DO NOT match.
+                        <button v-if='player.partnerAllocationProposal.x != ""' onclick='matchAllocationProposal()'>Match</button>      
+                    </div>
+                </template>
+                <div>
                     <button 
                     :disabled='
                 player.myProposal.x !== player.partnerProposal.x ||
                 player.myProposal.y !== player.partnerProposal.y ||
                 player.myAllocationProposal.x !== 100 - player.partnerAllocationProposal.x ||
                 player.myAllocationProposal.y !== 100 - player.partnerAllocationProposal.y'
-                    onclick='endBargining()'>END BARGAINING</button>
+                    onclick='endBargaining()'>END BARGAINING</button>
                 </div>
             </div>
         </div>
@@ -209,7 +269,7 @@ if (app.treatment === 'pair') {
 
 
         <script>
-        endBargining = function() {
+        endBargaining = function() {
             jt.sendMessage('endBargaining');
         }
         matchBudgetProposal = function() {
@@ -246,7 +306,23 @@ if (app.treatment === 'pair') {
         }
         jt.messages.setPartnerAllocationProposal = function(proposal) {
             jt.vue.player.partnerAllocationProposal = proposal;
+            jt.setProposal('X', 100 - proposal.x);
+            jt.setProposal('Y', 100 - proposal.y);
         }
+        jt.setProposal = function(letter, value) {
+            let left = 1.19*value + 6;
+            $('#myAlloc' + letter + 'Bar').css('left', left + 'px');
+            $('#myAlloc' + letter + 'Bar').css('display', 'flex');
+            $('#myAlloc' + letter + 'Text').text(value);
+            let adjLeft = left - 3;
+            if (value >= 10 && value < 100) {
+                adjLeft = left - 6;
+            } else if (value >= 100) {
+                adjLeft = left - 11;
+            }
+            $('#myAlloc' + letter + 'Text').css('left', adjLeft + 'px');
+        }
+
         </script>
     `
 
@@ -286,35 +362,6 @@ if (app.treatment === 'pair') {
         partner.emit('setPartnerAllocationProposal', proposal);
     }
 }
-
-let resultsStage = app.newStage('results');
-resultsStage.playerStart = function(player) {
-    if (player.group.period.id == 1) {
-        player.participant.outcomes = [];
-    }
-    player.participant.outcomes.push(player.myProposal);
-}
-resultsStage.activeScreen = `
-<div style='display: flex; flex-direction: column; width: 400px;'>
-    <div class="card">
-        <div class="card-body">
-            <h3>Result</h3>
-            <h5>Budget:</h5>
-            <div>X: {{player.myProposal.x}}.</div>
-            <div>Y: {{player.myProposal.y}}.</div>
-            <div v-if='player.myAllocationProposal.x != ""'>
-            <br>
-                <h5>My allocation:</h5>
-                <div>X: {{player.myAllocationProposal.x}}.</div>
-                <div>Y: {{player.myAllocationProposal.y}}.</div>
-            </div>
-            <br>
-            <button>OK</button>
-        </div>
-    </div>
-</div>
-
-`;
 
 app.participantEnd = function(participant) {
     if (participant.chosenPayouts == null) {
