@@ -37,6 +37,7 @@ app.html = `
         <script src="/shared/bootstrap.min.js"></script>
         <script src="/13victor/highcharts.js"></script>
         <script src="/13victor/budget.js"></script>
+        <script src="/13victor/Utilities.js"></script>
         <link rel="stylesheet" href="/shared/bootstrap.min.css">
     </head>
     <style>
@@ -231,13 +232,13 @@ if (app.treatment === 'pair') {
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Status</h5>
-                <div v-if='
+                <div style='min-width: 360px' v-if='
                     player.myProposal.x === player.partnerProposal.x && 
                     player.myProposal.y === player.partnerProposal.y'
                 class="card-title text-success">
                     Budget proposals DO match.
                 </div>
-                <div v-else
+                <div v-else style='min-width: 360px' 
                 class="card-title text-danger">
                     Budget proposals DO NOT match.
                     <button v-if='player.partnerProposal.x != ""' onclick='matchBudgetProposal()'>Match</button>

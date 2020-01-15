@@ -11,6 +11,10 @@ function pick() {
     }
 }
 
+function clamp(value, min, max) {
+    return value > min ? value < max ? value : max : min;
+}
+
 function defined(obj) {
     return typeof obj !== 'undefined' && obj !== null;
 }

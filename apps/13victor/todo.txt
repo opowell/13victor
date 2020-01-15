@@ -14,13 +14,12 @@ SLIDERS
 ALLOCATION PANEL
 - Combine sliders:
     - one slider showing your choice vs. partner's choice (line with number)
-
-TODO
-BUDGET CHART
-- remove outside lines
 TREATMENT - EXOG PROPOSAL
 - new queue setting
 - new setting: single proposal in entire session
 - only choose budget, no share choice
-- chat stays
 - box with allocation rule
+
+TODO
+BUDGET CHART
+- remove outside lines

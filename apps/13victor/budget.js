@@ -23,7 +23,80 @@ jt.connected = function() {
 
 jt.overwriteCrosshairImpl = function() {
 
+  drawCrosshairLine = function(axis, options) {
+      var axis = axis, 
+      chart = axis.chart, 
+      axisLeft = axis.left, 
+      axisTop = axis.top, 
+      old = options.old, 
+      value = options.value, 
+      translatedValue = options.translatedValue, 
+      lineWidth = options.lineWidth, 
+      force = options.force, 
+      x1, 
+      y1, 
+      x2, 
+      y2, 
+      cHeight = (old && chart.oldChartHeight) || chart.chartHeight, 
+      cWidth = (old && chart.oldChartWidth) || chart.chartWidth, 
+      skip, 
+      transB = axis.transB, 
+      evt, 
+      /**
+       * Check if x is between a and b. If not, either move to a/b
+       * or skip, depending on the force parameter.
+       */
+      between = function (x, a, b) {
+          if (force !== 'pass' && x < a || x > b) {
+              if (force) {
+                  x = clamp(x, a, b);
+              }
+              else {
+                  skip = true;
+              }
+          }
+          return x;
+      };
+      evt = {
+          value: value,
+          lineWidth: lineWidth,
+          old: old,
+          force: force,
+          acrossPanes: options.acrossPanes,
+          translatedValue: translatedValue
+      };
+      fireEvent(this, 'getPlotLinePath', evt, function (e) {
+          translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+          // Keep the translated value within sane bounds, and avoid Infinity
+          // to fail the isNumber test (#7709).
+          translatedValue = clamp(translatedValue, -1e5, 1e5);
+          x1 = x2 = Math.round(translatedValue + transB);
+          y1 = y2 = Math.round(cHeight - translatedValue - transB);
+          if (!isNumber(translatedValue)) { // no min or max
+              skip = true;
+              force = false; // #7175, don't force it when path is invalid
+          }
+          else if (axis.horiz) {
+              y1 = axisTop;
+              y2 = cHeight - axis.bottom;
+              x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
+          }
+          else {
+              x1 = axisLeft;
+              x2 = cWidth - axis.right;
+              y1 = y2 = between(y1, axisTop, axisTop + axis.height);
+          }
+          e.path = skip && !force ?
+              null :
+              chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
+
+      });
+      return evt.path;
+  }
+
   Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
+
+    this.chart.renderer.crispLine(['M', 0, 0, 'L', 100, 100], 5);
       var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
       fireEvent(this, 'drawCrosshair', { e: e, point: point });
       // Use last available event when updating non-snapped crosshairs without
@@ -74,7 +147,9 @@ jt.overwriteCrosshairImpl = function() {
               }
               path = this.getPlotLinePath(crossOptions) ||
                   null; // #3189
-          }
+              // path = drawCrosshairLine(this, crossOptions) ||
+              //     null; // #3189
+            }
           if (!defined(path)) {
               this.hideCrosshair();
               return;
@@ -122,100 +197,6 @@ jt.overwriteCrosshairImpl = function() {
       }
       fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
   };
-  // Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
-  //   // Additional variables
-  //   var defined = Highcharts.defined,
-  //   	pick = Highcharts.pick;
-    
-  //   var path,
-  //     options = this.crosshair,
-  //     snap = Highcharts.pick(options.snap, true),
-  //     pos,
-  //     categorized,
-  //     graphic = this.cross;
-
-  //   // Use last available event when updating non-snapped crosshairs without
-  //   // mouse interaction (#5287)
-  //   if (!e) {
-  //     e = this.cross && this.cross.e;
-  //   }
-
-  //   if (
-  //     // Disabled in options
-  //     !this.crosshair ||
-  //     // Snap
-  //     ((defined(point) || !snap) === false)
-  //   ) {
-  //     this.hideCrosshair();
-  //   } else {
-
-  //     // Get the path
-  //     if (!snap) {
-  //       pos = e && (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
-  //     } else if (defined(point)) {
-  //       pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-  //     }
-
-  //     if (defined(pos)) {
-  //       path = this.getPlotLinePath(
-  //         // First argument, value, only used on radial
-  //         point && (this.isXAxis ? point.x : pick(point.stackY, point.y)),
-  //         null,
-  //         null,
-  //         null,
-  //         pos // Translated position
-  //       ) || null; // #3189
-  //     }
-  //     console.log('Old path', path);
-  //     path.splice(path.length - 1 - 7, 6);
-  //     console.log('New path', path);
-
-
-  //     if (!defined(path)) {
-  //       this.hideCrosshair();
-  //       return;
-  //     }
-
-  //     categorized = this.categories && !this.isRadial;
-
-  //     // Draw the cross
-  //     if (!graphic) {
-  //       this.cross = graphic = this.chart.renderer
-  //         .path()
-  //         .addClass('highcharts-crosshair highcharts-crosshair-' +
-  //           (categorized ? 'category ' : 'thin ') + options.className)
-  //         .attr({
-  //           zIndex: pick(options.zIndex, 2)
-  //         })
-  //         .add();
-
-
-  //       // Presentational attributes
-  //       graphic.attr({
-  //         'stroke': options.color || (categorized ? color('#ccd6eb').setOpacity(0.25).get() : '#cccccc'),
-  //         'stroke-width': pick(options.width, 1)
-  //       });
-  //       if (options.dashStyle) {
-  //         graphic.attr({
-  //           dashstyle: options.dashStyle
-  //         });
-  //       }
-
-
-  //     }
-
-  //     graphic.show().attr({
-  //       d: path
-  //     });
-
-  //     if (categorized && !options.width) {
-  //       graphic.attr({
-  //         'stroke-width': this.transA
-  //       });
-  //     }
-  //     this.cross.e = e;
-  //   }
-  // }
 }
 
 
