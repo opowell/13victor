@@ -37,21 +37,21 @@ let indivBudgets = drawBudgets(session.numIndivRounds);
 let pairBudgets = drawBudgets(session.numPairRounds);
 // let shuffledBudgets = Utils.shuffle(realBudgets);
 
-// session.addApp('1_instructions.jtt');
-// session.addApp('counting.jtt', {
-//     treatment: 'individual',
-//     training: 'yes',
-//     budgets: exampleBudgets,
-// });
+session.addApp('1_instructions.jtt');
+session.addApp('counting.jtt', {
+    treatment: 'individual',
+    training: 'yes',
+    budgets: exampleBudgets,
+});
 
-// session.addApp('2_instructions.jtt');
-// session.addApp('counting.jtt', {
-//     treatment: 'individual',
-//     training: 'no',
-//     budgets: indivBudgets,
-// });
+session.addApp('2_instructions.jtt');
+session.addApp('counting.jtt', {
+    treatment: 'individual',
+    training: 'no',
+    budgets: indivBudgets,
+});
 
-// session.addApp('3_instructions.jtt');
+session.addApp('3_instructions.jtt');
 session.addApp('counting.jtt', {
     treatment: 'pair',
     training: 'no',
