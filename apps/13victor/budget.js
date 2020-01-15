@@ -15,88 +15,22 @@ jt.connected = function() {
     if (player.partnerAllocationProposal != null) {
       jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
     }
+
   });
 
-  // jt.overwriteCrosshairImpl();
+  jt.overwriteCrosshairImpl();
 };
 
 
+var lineX = null;
+var lineY = null;
+var xInt = null;
+var yInt = null;
+
 jt.overwriteCrosshairImpl = function() {
-
-  drawCrosshairLine = function(axis, options) {
-      var axis = axis, 
-      chart = axis.chart, 
-      axisLeft = axis.left, 
-      axisTop = axis.top, 
-      old = options.old, 
-      value = options.value, 
-      translatedValue = options.translatedValue, 
-      lineWidth = options.lineWidth, 
-      force = options.force, 
-      x1, 
-      y1, 
-      x2, 
-      y2, 
-      cHeight = (old && chart.oldChartHeight) || chart.chartHeight, 
-      cWidth = (old && chart.oldChartWidth) || chart.chartWidth, 
-      skip, 
-      transB = axis.transB, 
-      evt, 
-      /**
-       * Check if x is between a and b. If not, either move to a/b
-       * or skip, depending on the force parameter.
-       */
-      between = function (x, a, b) {
-          if (force !== 'pass' && x < a || x > b) {
-              if (force) {
-                  x = clamp(x, a, b);
-              }
-              else {
-                  skip = true;
-              }
-          }
-          return x;
-      };
-      evt = {
-          value: value,
-          lineWidth: lineWidth,
-          old: old,
-          force: force,
-          acrossPanes: options.acrossPanes,
-          translatedValue: translatedValue
-      };
-      fireEvent(this, 'getPlotLinePath', evt, function (e) {
-          translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
-          // Keep the translated value within sane bounds, and avoid Infinity
-          // to fail the isNumber test (#7709).
-          translatedValue = clamp(translatedValue, -1e5, 1e5);
-          x1 = x2 = Math.round(translatedValue + transB);
-          y1 = y2 = Math.round(cHeight - translatedValue - transB);
-          if (!isNumber(translatedValue)) { // no min or max
-              skip = true;
-              force = false; // #7175, don't force it when path is invalid
-          }
-          else if (axis.horiz) {
-              y1 = axisTop;
-              y2 = cHeight - axis.bottom;
-              x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
-          }
-          else {
-              x1 = axisLeft;
-              x2 = cWidth - axis.right;
-              y1 = y2 = between(y1, axisTop, axisTop + axis.height);
-          }
-          e.path = skip && !force ?
-              null :
-              chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
-
-      });
-      return evt.path;
-  }
 
   Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
 
-    this.chart.renderer.crispLine(['M', 0, 0, 'L', 100, 100], 5);
       var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
       fireEvent(this, 'drawCrosshair', { e: e, point: point });
       // Use last available event when updating non-snapped crosshairs without
@@ -196,7 +130,38 @@ jt.overwriteCrosshairImpl = function() {
           this.cross.e = e;
       }
       fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
-  };
+
+      // console.log(crossOptions);
+      // console.log(path);
+  
+      if (this.isXAxis) {
+        if(lineX)
+          lineX.destroy();
+        let x1 = path[1];
+        let y1 = yInt;
+        let x2 = path[4];
+        let y2 = path[5];
+        xInt = x1;
+        lineX = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
+          'stroke-width': 1,
+          stroke: 'gray',
+          zIndex: 2001
+        }).add();
+      } else {
+        if(lineY)
+          lineY.destroy();
+        let x1 = path[1];
+        let y1 = path[2];
+        let x2 = xInt;
+        let y2 = path[5];
+        yInt = y1;
+        lineY = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
+          'stroke-width': 1,
+          stroke: 'gray',
+          zIndex: 2001
+        }).add();
+      }
+    };
 }
 
 
