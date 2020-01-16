@@ -102,8 +102,9 @@ decisionStage.activeScreen = `
 </div>
 `;
 
+let bargainStage = null;
 if (app.treatment === 'pair') {
-    let bargainStage = app.newStage('bargain');
+    bargainStage = app.newStage('bargain');
     bargainStage.wrapPlayingScreenInFormTag = false;
     bargainStage.groupStart = function(group) {
         if (group.session().proposalType === 'EXOG') {
