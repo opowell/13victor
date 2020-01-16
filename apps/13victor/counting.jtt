@@ -364,6 +364,17 @@ if (app.treatment === 'pair') {
     }
 }
 
+let calcStage = decisionStage;
+if (app.treatment === 'pair') {
+    calcStage = bargainStage;
+}
+calcStage.playerEnd = function(player) {
+    if (player.group.period.id == 1) {
+        player.participant.outcomes = [];
+    }
+    player.participant.outcomes.push(player.myProposal);
+}
+
 app.participantEnd = function(participant) {
     if (participant.chosenPayouts == null) {
         participant.chosenDecisions = [];

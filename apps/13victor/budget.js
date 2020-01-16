@@ -12,7 +12,7 @@ jt.connected = function() {
         $('#myAllocY').val(player.myAllocationProposal.y);
       }
     });
-    if (player.partnerAllocationProposal != null) {
+    if (player.partnerAllocationProposal != null && jt.messages.setPartnerAllocationProposal != null) {
       jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
     }
 
@@ -216,6 +216,7 @@ updateChart = function(player, containerName) {
         point: {
           events: {
             click: function(e) {
+              console.log('click');
               if (
                 confirm(
                   "Your chosen budget is X=" +
