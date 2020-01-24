@@ -1,5 +1,9 @@
 let results = app.newStage('results');
+results.playerStart = function(player) {
+    player.indivPayout = player.participant.chosenPayouts[1] * app.session.exchangeRateIndiv;
+    player.pairsPayout = player.participant.chosenPayouts[2] * app.session.exchangeRatePairs;
+}
 results.activeScreen = `
-    <p>Part 1: {{participant.chosenPayouts[1]}}.</p>
-    <p>Part 2: {{participant.chosenPayouts[2]}}.</p>
-`
+    <p>Part 1: {{participant.chosenPayouts[1]}} tokens = {{player.indivPayout}} EUR.</p>
+    <p>Part 2: {{participant.chosenPayouts[2]}} tokens = {{player.pairsPayout}} EUR..</p>
+`;

@@ -2,20 +2,22 @@ jt.connected = function() {
   jt.socket.on("playerUpdate", function(player) {
     player = JSON.parse(player);
     let containerName = 'containerDecision'
-    if (player.stage.id === 'bargain') {
+    if (player.stage.id === 'decide') {
       containerName = 'containerBargain';
     }
     Vue.nextTick(function() {
       updateChart(player, containerName);
-      if (player.stage.id === 'bargain') {
-        $('#myAllocX').val(player.myAllocationProposal.x);
-        $('#myAllocY').val(player.myAllocationProposal.y);
+      if (player.stage.id === 'decide') {
+        if (player.myAllocationProposal != null) {
+          $('#myAllocX').val(player.myAllocationProposal.x);
+          $('#myAllocY').val(player.myAllocationProposal.y);
+        }
       }
     });
     if (player.partnerAllocationProposal != null && jt.messages.setPartnerAllocationProposal != null) {
       jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
     }
-
+    setTimeout(showMyProposal, 500);
   });
 
   jt.overwriteCrosshairImpl();
@@ -165,7 +167,7 @@ jt.overwriteCrosshairImpl = function() {
 }
 
 
-jt.autoplay_decision = function() {
+jt.autoplay_decide = function() {
   let point = randomEl(jt.budgetData);
   if (jt.vue.app.treatment == 'pair') {
     if (jt.vue.player.idInGroup == 1) {
@@ -182,7 +184,7 @@ updateChart = function(player, containerName) {
   jt.chart = Highcharts.chart(containerName, {
     xAxis: {
       min: 0,
-      max: 100,
+      max: 200,
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
@@ -191,7 +193,7 @@ updateChart = function(player, containerName) {
     },
     yAxis: {
       min: 0,
-      max: 100,
+      max: 200,
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
@@ -274,7 +276,7 @@ getSeries = function(player) {
       enableMouseTracking: true
     }
   ];
-  if (player.myProposal.x != '') {
+  if (player.myProposal != null && player.myProposal.x != '') {
     series.push({
       type: "scatter",
       name: "your choice",
@@ -285,7 +287,7 @@ getSeries = function(player) {
       }
     });
   }
-  if (player.partnerProposal.x != '') {
+  if (player.partnerProposal != null && player.partnerProposal.x != '') {
     series.push({
       type: "scatter",
       name: "other player choice",

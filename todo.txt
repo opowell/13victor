@@ -1,15 +1,17 @@
- BUDGETS
- - 1 intersection 50-100, other 10-100
+DONE
+- two exchange rates, one for example payoff, other for other parts, show on results screen.
+- remove budget max option (always 100).
+- budgets: 1 intersection 50-100, other 10-100
+ 
+BUDGETS
  - queue options: min/max on number options.
  - remove proposal options if exog proposals chosen.
- - two exchange rates, one for example payoff, other for other parts, show on results screen.
- - remove budget max option (always 100).
  - two options, factor e1 and e2.
  - 3 treatments.
- QUEUE OPTION
+QUEUE OPTION
  - option: indiv. first / pair first.
  
- GRAPH
+GRAPH
  - smaller for individual, larger for group.
  - random starting place for crosshair, track.
  - click anywhere on graph for selection.

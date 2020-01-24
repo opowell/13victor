@@ -2,25 +2,34 @@ let trainingBudgets = [{maxX: 50, maxY: 50, id: 1}];
 
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
 session.addSelectOption('proposalType', ['EXOG', 'ENDO'], 'The type of proposal.');
-session.addNumberOption('exogProposalX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous proposal.');
-session.addNumberOption('exogProposalY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous proposal.');
-session.addNumberOption('budgetMax', 100, 100, 200, 1, 'Budget maximum.');
+if (session.proposalType === 'EXOG') {
+    session.addNumberOption('exogProposalX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous proposal.');
+    session.addNumberOption('exogProposalY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous proposal.');
+}
 session.addNumberOption('numExampleRounds', 1, 0, 100, 1, 'Number of example rounds.');
-session.addNumberOption('numIndivRounds', 50, 0, 100, 1, 'Number of individual rounds.');
-session.addNumberOption('numPairRounds', 50, 0, 100, 1, 'Number of pair rounds.');
+session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
+session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate for individual part.');
+session.addNumberOption('exchangeRatePairs', 1, 0, 1000, 0.001, 'Exchange rate for pairs part.');
+session.addNumberOption('indivBudgetP1Weight', 1.3, 0, 10, 0.1, 'Player 1\'s individual budget as a proportion of the representative budget.');
+session.addNumberOption('indivBudgetP2Weight', 0.7, 0, 10, 0.1, 'Player 2\'s individual budget as a proportion of the representative budget.');
+session.addNumberOption('pairBudgetWeight', 1, 0, 10, 0.1, 'Pair budget as a proportion of the representative budget.');
+session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play first (individual or pair)');
+
+let budgetMax = 100;
+let budgetMin = 10;
 
 function drawBudgets(numBudgets) {
     let budgets = [];
-    let min = 10;
-    let mid = 50;
+    let min = budgetMin;
+    let mid = budgetMax / 2;
     for (let i=0; i<numBudgets; i++) {
-        let x = Utils.randomInt(min, session.budgetMax+1);
-        let y = Utils.randomInt(min, session.budgetMax+1);
+        let x = Utils.randomInt(min, budgetMax+1);
+        let y = Utils.randomInt(min, budgetMax+1);
         if (x < mid && y < mid) {
             if (Math.random() < 0.5) {
-                x += (min+session.budgetMax)/2;
+                x += mid;
             } else {
-                y += (min+session.budgetMax)/2;
+                y += mid;
             }
         }
         budgets.push({
@@ -33,8 +42,7 @@ function drawBudgets(numBudgets) {
 }
 
 let exampleBudgets = drawBudgets(session.numExampleRounds);
-let indivBudgets = drawBudgets(session.numIndivRounds);
-let pairBudgets = drawBudgets(session.numPairRounds);
+let paidBudgets = drawBudgets(session.numRounds);
 // let shuffledBudgets = Utils.shuffle(realBudgets);
 
 session.addApp('1_instructions.jtt');
@@ -44,18 +52,28 @@ session.addApp('counting.jtt', {
     budgets: exampleBudgets,
 });
 
+function addPairApps() {
+    session.addApp('3_instructions.jtt');
+    session.addApp('counting.jtt', {
+        treatment: 'pair',
+        training: 'no',
+        budgets: paidBudgets,
+    });
+}
+
+if (session.playFirst === 'pair') {
+    addPairApps();
+}
+
 session.addApp('2_instructions.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
     training: 'no',
-    budgets: indivBudgets,
+    budgets: paidBudgets,
 });
 
-session.addApp('3_instructions.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'pair',
-    training: 'no',
-    budgets: pairBudgets,
-});
+if (session.playFirst !== 'pair') {
+    addPairApps();
+}
 
 session.addApp('results.jtt');
