@@ -175,6 +175,7 @@ decisionStage.groupStart = function(group) {
 }
 
 decisionStage.playerStart = function(player) {
+    player.randomInitialSelection = Math.random()*player.group.maxX;
     if (app.treatment === 'pair') {
         player.myProposal = {x: '', y: ''};
         player.partnerProposal = {x: '', y: ''};
@@ -197,6 +198,10 @@ decisionStage.activeScreen = `
                 <h3 v-if='app.training === "no"'>Decision {{period.id}} of {{app.numPeriods}}</h3>
                 <h3 v-else>Example</h3>
                 <div id="containerBargain" style='width: 600px; height: 600px'></div>
+                <div id='text' style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px;' onclick='confirmSelection()' onmouseover='draw_plot_lines(jt.toolTipX)'>
+                    X = <b id='proposalX'></b>, Y = <b id='proposalY'></b>
+                </div>
+                <div id='circle' style='background-color: black; height: 10px; border-radius: 5px; width: 10px; position: absolute;' onclick='confirmSelection()' onmouseover='draw_plot_lines(jt.toolTipX)'></div>
             </div>
         </div>
         <div class="card" v-if="app.treatment === 'pair'">

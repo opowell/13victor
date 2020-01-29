@@ -13,16 +13,115 @@ jt.connected = function() {
           $('#myAllocY').val(player.myAllocationProposal.y);
         }
       }
+      enableChartMouseMoving();
+      draw_plot_lines(player.randomInitialSelection);
     });
     if (player.partnerAllocationProposal != null && jt.messages.setPartnerAllocationProposal != null) {
       jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
     }
     setTimeout(showMyProposal, 500);
+    // setTimeout(randomSelection, 1000);
+
   });
 
-  jt.overwriteCrosshairImpl();
+  // jt.overwriteCrosshairImpl();
 };
 
+function enableChartMouseMoving() {
+  jt.chart.container.onmousemove = function(e) {
+    e = jt.chart.pointer.normalize(e);
+    let xValue = jt.chart.xAxis[0].toValue(e.chartX);
+    draw_plot_lines(xValue);
+  };
+  jt.chart.container.onmouseleave = function(e) {
+    clearPlotLines();
+  };
+}
+
+function clearPlotLines() {
+  try {
+    if(lineX)
+      lineX.destroy();
+    if(lineY)
+      lineY.destroy();
+  } catch (err) {
+  }
+}
+
+function draw_plot_lines(xValue){
+
+  clearPlotLines();
+
+  if (xValue < 0) {
+    xValue = 0;
+  }
+  let xData = jt.chart.series[0].xData;
+  let yData = jt.chart.series[0].yData;
+
+  let yValue = null;
+  let found = false;
+  for (let i = 0; i<xData.length; i++) {
+    if (yValue === jt.chart.series[0].yData[i]) {
+      break;
+    }
+    yValue = jt.chart.series[0].yData[i];
+    if (xData[i] > xValue) {
+      found = true;
+      break;
+    }
+  }
+  if (!found) {
+    xValue = xData[xData.length-1];
+    yValue = yData[yData.length-1];
+  }
+  let xPixels = jt.chart.xAxis[0].toPixels(xValue);
+  let yPixels = jt.chart.yAxis[0].toPixels(yValue);
+
+  xValue = Math.round(xValue*10)/10;
+  yValue = Math.round(yValue*10)/10;
+
+  jt.toolTipX = xValue;
+  jt.toolTipY = yValue;
+
+  let chart = jt.chart;
+
+  let circle = document.getElementById('circle');
+  circle.style.left = (xPixels + 16) + 'px';
+  circle.style.top = (yPixels + 57) + 'px';
+  let text = document.getElementById('text');
+  text.style.left = (xPixels - 44) + 'px';
+  text.style.top = (yPixels + 17) + 'px';
+  $('#proposalX').text(xValue);
+  $('#proposalY').text(yValue);
+
+  let x0 = chart.xAxis[0].toPixels(0);
+  let y0 = chart.yAxis[0].toPixels(0);
+
+  try {
+    if(lineX)
+      lineX.destroy();
+    if(lineY)
+      lineY.destroy();
+  } catch (err) {
+  }
+
+  if (xPixels < x0 || yPixels > y0) {
+    return;
+  }
+
+  lineX = jt.chart.renderer.path(['M', xPixels, y0, 'L', xPixels, yPixels]).attr({
+    'stroke-width': 1,
+    stroke: 'gray',
+    zIndex: 2001
+  }).add();
+
+  lineY = jt.chart.renderer.path(['M', x0, yPixels, 'L', xPixels, yPixels]).attr({
+    'stroke-width': 1,
+    stroke: 'gray',
+    zIndex: 2001
+  }).add();
+
+}
 
 var lineX = null;
 var lineY = null;
@@ -180,8 +279,31 @@ jt.autoplay_decide = function() {
   jt.sendMessage("propose", proposal);
 }
 
+jt.toolTipX = null;
+jt.toolTipY = null;
+
+let confirmSelection = function(event) {
+  if (
+    confirm(
+      "Your chosen budget is X=" +
+        jt.toolTipX +
+        " and Y=" +
+        jt.toolTipY +
+        ", is this your preferred budget?"
+    )
+  ) {
+    let proposal = { x: jt.toolTipX, y: jt.toolTipY };
+    jt.sendMessage("propose", proposal);
+  }
+};
+
 updateChart = function(player, containerName) {
   jt.chart = Highcharts.chart(containerName, {
+    chart: {
+      events: {
+        click: confirmSelection,
+      },
+    },
     xAxis: {
       min: 0,
       max: 200,
@@ -203,40 +325,26 @@ updateChart = function(player, containerName) {
     title: {
       text: "Choose your preferred budget"
     },
-    tooltip: {
-      borderColor: "black",
-      borderRadius: 2,
-      borderWidth: 3,
-      formatter: function() {
-        return "X = <b>" + this.x + "</b>, Y = <b>" + this.y;
-      },
-      crosshairs: [true, true]
-    },
+    // tooltip: {
+    //   borderColor: "black",
+    //   borderRadius: 2,
+    //   borderWidth: 3,
+    //   formatter: function() {
+    //     jt.toolTipX = this.x;
+    //     jt.toolTipY = this.y;
+    //     return "X = <b>" + this.x + "</b>, Y = <b>" + this.y;
+    //   },
+    //   crosshairs: [true, true]
+    // },
     plotOptions: {
       series: {
-        cursor: "pointer",
-        point: {
-          events: {
-            click: function(e) {
-              console.log('click');
-              if (
-                confirm(
-                  "Your chosen budget is X=" +
-                    this.x +
-                    " and Y=" +
-                    this.y +
-                    ", is this your preferred budget?"
-                )
-              ) {
-                let proposal = { x: this.x, y: this.y };
-                jt.sendMessage("propose", proposal);
-              }
-            }
-          }
-        },
         marker: {
           lineWidth: 1
-        }
+        },
+        events: {
+          click: confirmSelection,
+        },
+        enableMouseTracking: false,
       },
       line: {
         animation: false
