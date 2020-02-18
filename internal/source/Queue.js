@@ -98,7 +98,11 @@ class Queue {
     }
 
     parentFolderName() {
-        let x = this.id.split('\\');
+        let foldSep = '\\';
+        if (this.id.includes('/')) {
+            foldSep = '/';
+        }
+        let x = this.id.split(foldSep);
         if (x.length < 2) {
             return 'noFolderSeparatorFound';
         }
@@ -106,7 +110,11 @@ class Queue {
     }
 
     parentFolderFullName() {
-        let x = this.id.lastIndexOf('\\');
+        let foldSep = '\\';
+        if (this.id.includes('/')) {
+            foldSep = '/';
+        }
+        let x = this.id.lastIndexOf(foldSep);
         if (x === -1) {
             return this.id;
         }

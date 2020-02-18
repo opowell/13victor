@@ -118,11 +118,14 @@ jt.showAddAppToQueueModal = function() {
 jt.setQueueOption = function(name) {
     let el = $('[app-option-name="' + name + '"]');
     let val = $('[app-option-name="' + name + '"]').val();
-    if (el.attr('min') && val < el.attr('min')) {
+    if (isNumeric(val)) {
+        val = Number.parseFloat(val);
+    }
+    if (el.attr('min') && val < el.attr('min')-0) {
         jt.popupMessage('Invalid queue option: ' + name + ' = ' + val);
         return;
     }
-    if (el.attr('max') && val > el.attr('max')) {
+    if (el.attr('max') && val > el.attr('max')-0) {
         jt.popupMessage('Invalid queue option: ' + name + ' = ' + val);
         return;
     }

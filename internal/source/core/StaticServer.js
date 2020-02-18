@@ -101,6 +101,21 @@ class StaticServer {
             res.send(clients);
         });
 
+        expApp.get('/api/folder', async function(req, res) {
+            let contents = await self.jt.data.getFolderContents(req.query.path);
+            res.send(contents);
+        });
+
+        expApp.get('/api/renameFile', async function(req, res) {
+            let result = await fs.rename(path.resolve(req.query.path, req.query.oldName), path.resolve(req.query.path, req.query.newName));
+            res.send({success: true, result});
+        });
+
+        expApp.get('/api/serverRoot', async function(req, res) {
+            let contents = self.jt.path;
+            res.send(contents);
+        });
+
         expApp.get('/:pId', this.handleRequest.bind(this));
         expApp.post('/:pId', this.handleRequest.bind(this));
 

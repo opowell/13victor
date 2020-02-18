@@ -1,3 +1,7 @@
+# Requirements
+1. Google Chrome
+All pages should be opened in Google Chrome.
+
 # Getting started
 
 1. Download zip (green "Clone or download" button)

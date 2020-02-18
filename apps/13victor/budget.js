@@ -8,9 +8,12 @@ jt.connected = function() {
     Vue.nextTick(function() {
       updateChart(player, containerName);
       if (player.stage.id === 'decide') {
-        if (player.myAllocationProposal != null) {
+        if (player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
           $('#myAllocX').val(player.myAllocationProposal.x);
           $('#myAllocY').val(player.myAllocationProposal.y);
+        } else {
+          $('#myAllocX').val(0);
+          $('#myAllocY').val(0);        
         }
       }
       enableChartMouseMoving();
@@ -83,14 +86,17 @@ function draw_plot_lines(xValue){
   jt.toolTipX = xValue;
   jt.toolTipY = yValue;
 
+  jt.vue.player.toolTipX = xValue;
+  jt.vue.player.toolTipY = yValue;
+
   let chart = jt.chart;
 
   let circle = document.getElementById('circle');
-  circle.style.left = (xPixels + 16) + 'px';
-  circle.style.top = (yPixels + 57) + 'px';
+  circle.style.left = (xPixels + 15) + 'px';
+  circle.style.top = (yPixels + 81) + 'px';
   let text = document.getElementById('text');
   text.style.left = (xPixels - 44) + 'px';
-  text.style.top = (yPixels + 17) + 'px';
+  text.style.top = (yPixels + 34) + 'px';
   $('#proposalX').text(xValue);
   $('#proposalY').text(yValue);
 
@@ -282,26 +288,38 @@ jt.autoplay_decide = function() {
 jt.toolTipX = null;
 jt.toolTipY = null;
 
-let confirmSelection = function(event) {
-  if (
-    confirm(
-      "Your chosen budget is X=" +
-        jt.toolTipX +
-        " and Y=" +
-        jt.toolTipY +
-        ", is this your preferred budget?"
-    )
-  ) {
-    let proposal = { x: jt.toolTipX, y: jt.toolTipY };
-    jt.sendMessage("propose", proposal);
-  }
+let confirmAllocationSelection = function(event) {
+  $('#confirmAllocationModal').modal('show');
 };
+
+let cancelDivisionProposal = function() {
+  if (isNumeric(jt.vue.player.myAllocationProposal.x)) {
+    $('#myAllocX').val(jt.vue.player.myAllocationProposal.x);
+  } else {
+    $('#myAllocX').val(-1);
+  }
+  $('#myAllocY').val(jt.vue.player.myAllocationProposal.y);
+}
+
+let confirmDivisionSelection = function(event) {
+  if (event.target.id === 'myAllocX') {
+    jt.vue.player.newDivisionX = event.target.value;
+  } else {
+    jt.vue.player.newDivisionY = event.target.value;
+  }
+  $('#confirmDivisionModal').modal('show');
+};
+
+jt.sendProposal = function() {
+    let proposal = { x: jt.toolTipX, y: jt.toolTipY };
+    jt.sendMessage("propose", proposal);  
+}
 
 updateChart = function(player, containerName) {
   jt.chart = Highcharts.chart(containerName, {
     chart: {
       events: {
-        click: confirmSelection,
+        click: confirmAllocationSelection,
       },
     },
     xAxis: {
@@ -310,7 +328,7 @@ updateChart = function(player, containerName) {
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
-        text: "Good X"
+        text: "X"
       }
     },
     yAxis: {
@@ -319,30 +337,22 @@ updateChart = function(player, containerName) {
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
-        text: "Good Y"
+        text: "Y"
       }
     },
     title: {
-      text: "Choose your preferred budget"
+      text: ""
     },
-    // tooltip: {
-    //   borderColor: "black",
-    //   borderRadius: 2,
-    //   borderWidth: 3,
-    //   formatter: function() {
-    //     jt.toolTipX = this.x;
-    //     jt.toolTipY = this.y;
-    //     return "X = <b>" + this.x + "</b>, Y = <b>" + this.y;
-    //   },
-    //   crosshairs: [true, true]
-    // },
+    subtitle: {
+      text: ''
+    },
     plotOptions: {
       series: {
         marker: {
           lineWidth: 1
         },
         events: {
-          click: confirmSelection,
+          click: confirmAllocationSelection,
         },
         enableMouseTracking: false,
       },
@@ -395,7 +405,7 @@ getSeries = function(player) {
       }
     });
   }
-  if (player.partnerProposal != null && player.partnerProposal.x != '') {
+  if (player.partnerProposal != null && player.partnerProposal.x != '' && player.myProposal != null && player.myProposal.x != '') {
     series.push({
       type: "scatter",
       name: "other player choice",

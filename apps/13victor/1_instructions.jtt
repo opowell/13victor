@@ -1,5 +1,10 @@
 app.isStandaloneApp = false;
+
+app.participantStart = function(participant) {
+    delete participant.numDecParts;
+}
+
 let instructions = app.newStage('instructions');
 instructions.activeScreen = `
-    <p>First, an example.</p>
+    <p>To familiarize yourself with the graphical interface, you can now practice for {{ app.session.numPracticeRounds }} round{{ app.session.numPracticeRounds === 1 ? '' : 's'}}. <i v-if='app.session.payPracticeRound === "yes"'>At the end of the {{ app.session.numPracticeRounds }} round{{ (app.session.numPracticeRounds === 1 ? '' : 's') }}, one will be randomly selected. For each Token earned you will receive {{ app.session.exchangeRatePracticeRound}} Euros in cash at the end of the experiment.</i></p>
 `

@@ -1,5 +1,15 @@
 app.isStandaloneApp = false;
+
+app.numRoundsToCome = app.session.numRounds;
+
+app.participantStart = function(participant) {
+    if (participant.numDecParts == null) {
+        participant.numDecParts = 0;
+    }
+    participant.numDecParts++;
+}
+
 let instructions = app.newStage('instructions');
 instructions.activeScreen = `
-    <p>Part A.</p>
+    <p>You will now make decisions in the {{ app.session.numRounds }} round{{ app.session.numRounds === 1 ? '' : 's'}} of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} as described in the instructions.</p>
 `
