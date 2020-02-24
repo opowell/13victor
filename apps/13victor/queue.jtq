@@ -2,32 +2,65 @@ let trainingBudgets = [{maxX: 50, maxY: 50, id: 1}];
 
 let treatments = [
     {
-        name: 'T1: EXOG, aaa',
+        name: 'T1',
         fieldValues: {
-            proposalType: 'EXOG',
+            allocationType: 'EXOG',
+            e1: 1,
+            e2: 1,
+            m: 1,
+            d1: 1,
+            d2: 1,
         },
     },
     {
-        name: 'T2: EXOG, bbb',
+        name: 'T2',
         fieldValues: {
-            proposalType: 'EXOG',
+            allocationType: 'EXOG',
+            e1: 1,
+            e2: 1,
+            m: 2,
+            d1: 0.5,
+            d2: 0.5,
         },
     },
     {
-        name: 'T3: ENDOG, aaa',
+        name: 'T3',
         fieldValues: {
-            proposalType: 'ENDOG',
+            allocationType: 'EXOG',
+            e1: 1.3,
+            e2: 0.7,
+            m: 2,
+            d1: 0.5,
+            d2: 0.5,
         },
     },
     {
-        name: 'T4: ENDOG, bbb',
+        name: 'T4',
         fieldValues: {
-            proposalType: 'ENDOG',
+            allocationType: 'EXOG',
+            e1: 1.3,
+            e2: 0.7,
+            m: 2,
+            d1: 0.65,
+            d2: 0.35,
         },
     },
     {
-        name: 'T5: Custom',
+        name: 'T5',
         fieldValues: {
+            allocationType: 'ENDO',
+            e1: 1,
+            e2: 1,
+            m: 2,
+        },
+    },
+    {
+        name: 'T6',
+        fieldValues: {
+            allocationType: 'ENDO',
+            e1: 1.3,
+            e2: 0.7,
+            m: 2,
         },
     },
 ]
@@ -37,35 +70,32 @@ for (let i in treatments) {
     treatmentNames.push(treatments[i].name);
 }
 
-session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type (endogenous or exogenous), and 2) .');
+session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
 
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
-session.addSelectOption('proposalType', ['EXOG', 'ENDO'], 'The type of proposal.');
-if (session.proposalType === 'EXOG') {
-    session.addNumberOption('exogProposalX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous proposal.');
-    session.addNumberOption('exogProposalY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous proposal.');
-}
+// session.addSelectOption('allocationType', ['EXOG', 'ENDO'], 'The type of proposal.');
+// if (session.allocationType === 'EXOG') {
+//     session.addNumberOption('exogAllocationX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous allocation.');
+//     session.addNumberOption('exogAllocationY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous allocation.');
+// }
 session.addNumberOption('numPracticeRounds', 1, 0, 100, 1, 'Number of practice rounds.');
 session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
-session.addSelectOption('payPracticeRound', ['no', 'yes'], 'Whether or not the exchange rate is paid.');
-session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round.');
+session.addSelectOption('payPracticeRound', ['no', 'yes'], 'Whether or not the practice round is paid.');
+session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round, if paid.');
 session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate for individual part.');
 session.addNumberOption('exchangeRatePairs', 1, 0, 1000, 0.001, 'Exchange rate for pairs part.');
-session.addNumberOption('indivBudgetP1Weight', 1.3, 0, 10, 0.1, 'Player 1\'s individual budget as a proportion of the representative budget.');
-session.addNumberOption('indivBudgetP2Weight', 0.7, 0, 10, 0.1, 'Player 2\'s individual budget as a proportion of the representative budget.');
-session.addNumberOption('pairBudgetWeight', 1, 0, 10, 0.1, 'Pair budget as a proportion of the representative budget.');
 session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play first (individual or pair)');
 
-// for (let i in treatments) {
-//     let tr = treatments[i];
-//     if (tr.name === session.treatment) {
-//         for (let j in tr.fieldValues) {
-//             session[j] = tr.fieldValues[j];
-//         }
-//         break;
-//     }
-// }
+for (let i in treatments) {
+    let tr = treatments[i];
+    if (tr.name === session.treatment) {
+        for (let j in tr.fieldValues) {
+            session[j] = tr.fieldValues[j];
+        }
+        break;
+    }
+}
 
 let budgetMax = 100;
 let budgetMin = 10;

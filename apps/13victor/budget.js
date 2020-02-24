@@ -1,16 +1,13 @@
 jt.connected = function() {
   jt.socket.on("playerUpdate", function(player) {
     player = JSON.parse(player);
-    let containerName = 'containerDecision'
-    if (player.stage.id === 'decide') {
-      containerName = 'containerBargain';
-    }
+    let containerName = 'containerBargain';
     Vue.nextTick(function() {
       updateChart(player, containerName);
       if (player.stage.id === 'decide') {
-        if (player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
-          $('#myAllocX').val(player.myAllocationProposal.x);
-          $('#myAllocY').val(player.myAllocationProposal.y);
+        if (player.myDivisionProposal != null && player.myDivisionProposal.x != '') {
+          $('#myAllocX').val(player.myDivisionProposal.x);
+          $('#myAllocY').val(player.myDivisionProposal.y);
         } else {
           $('#myAllocX').val(0);
           $('#myAllocY').val(0);        
@@ -19,10 +16,10 @@ jt.connected = function() {
       enableChartMouseMoving();
       draw_plot_lines(player.randomInitialSelection);
     });
-    if (player.partnerAllocationProposal != null && jt.messages.setPartnerAllocationProposal != null) {
-      jt.messages.setPartnerAllocationProposal(player.partnerAllocationProposal);
+    if (player.partnerDivisionProposal != null && jt.messages.setPartnerDivisionProposal != null) {
+      jt.messages.setPartnerDivisionProposal(player.partnerDivisionProposal);
     }
-    setTimeout(showMyProposal, 500);
+    // setTimeout(showMyAllocationProposal, 500);
     // setTimeout(randomSelection, 1000);
 
   });
@@ -55,6 +52,12 @@ function draw_plot_lines(xValue){
 
   clearPlotLines();
 
+  let player = jt.vue.player;
+
+  if (player.myAllocationProposal.x !== "" && player.myAllocationProposal.x === player.partnerAllocationProposal.x) {
+      return;
+  }
+
   if (xValue < 0) {
     xValue = 0;
   }
@@ -77,11 +80,20 @@ function draw_plot_lines(xValue){
     xValue = xData[xData.length-1];
     yValue = yData[yData.length-1];
   }
-  let xPixels = jt.chart.xAxis[0].toPixels(xValue);
-  let yPixels = jt.chart.yAxis[0].toPixels(yValue);
 
   xValue = Math.round(xValue*10)/10;
   yValue = Math.round(yValue*10)/10;
+
+  let otherProposal = jt.vue.player.partnerAllocationProposal;
+  if (otherProposal != null && otherProposal.x !== "") {
+    if (Math.abs(otherProposal.x - xValue) < 1.5) {
+      xValue = otherProposal.x;
+      yValue = otherProposal.y;
+    }
+  }
+
+  let xPixels = jt.chart.xAxis[0].toPixels(xValue);
+  let yPixels = jt.chart.yAxis[0].toPixels(yValue);
 
   jt.toolTipX = xValue;
   jt.toolTipY = yValue;
@@ -97,8 +109,8 @@ function draw_plot_lines(xValue){
   let text = document.getElementById('text');
   text.style.left = (xPixels - 44) + 'px';
   text.style.top = (yPixels + 34) + 'px';
-  $('#proposalX').text(xValue);
-  $('#proposalY').text(yValue);
+  $('#allocationProposalX').text(xValue);
+  $('#allocationProposalY').text(yValue);
 
   let x0 = chart.xAxis[0].toPixels(0);
   let y0 = chart.yAxis[0].toPixels(0);
@@ -282,7 +294,7 @@ jt.autoplay_decide = function() {
     }
   } 
   let proposal = { x: point[0], y: point[1] };
-  jt.sendMessage("propose", proposal);
+  jt.sendMessage("setMyAllocationProposal", proposal);
 }
 
 jt.toolTipX = null;
@@ -293,12 +305,12 @@ let confirmAllocationSelection = function(event) {
 };
 
 let cancelDivisionProposal = function() {
-  if (isNumeric(jt.vue.player.myAllocationProposal.x)) {
-    $('#myAllocX').val(jt.vue.player.myAllocationProposal.x);
+  if (isNumeric(jt.vue.player.myDivisionProposal.x)) {
+    $('#myAllocX').val(jt.vue.player.myDivisionProposal.x);
   } else {
     $('#myAllocX').val(-1);
   }
-  $('#myAllocY').val(jt.vue.player.myAllocationProposal.y);
+  $('#myAllocY').val(jt.vue.player.myDivisionProposal.y);
 }
 
 let confirmDivisionSelection = function(event) {
@@ -394,23 +406,23 @@ getSeries = function(player) {
       enableMouseTracking: true
     }
   ];
-  if (player.myProposal != null && player.myProposal.x != '') {
+  if (player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
     series.push({
       type: "scatter",
       name: "your choice",
       color: "black",
-      data: [[player.myProposal.x, player.myProposal.y]],
+      data: [[player.myAllocationProposal.x, player.myAllocationProposal.y]],
       marker: {
         radius: 6
       }
     });
   }
-  if (player.partnerProposal != null && player.partnerProposal.x != '' && player.myProposal != null && player.myProposal.x != '') {
+  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x != '' && player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
     series.push({
       type: "scatter",
       name: "other player choice",
       color: "blue",
-      data: [[player.partnerProposal.x, player.partnerProposal.y]],
+      data: [[player.partnerAllocationProposal.x, player.partnerAllocationProposal.y]],
       marker: {
         radius: 6
       }

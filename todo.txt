@@ -24,47 +24,33 @@ the other did. After the first decision in each round subjects can see in real t
 NOTE: Not an issue in Google Chrome. From your screenshots, it appears you were testing in Microsoft Edge. Please use Chrome only for testing and experiment.
 - GROUP DECISION, bottom-left panel, Chat window should extend over the entire width of the interface
 - Legend (below second slider) blue line segment followed by blue text: “Other’s division proposal”
+- The message “Status.(new line) Budget proposals DO (NOT) match” should be changed to “Status. (new line) Allocations proposals DO (NOT) match” , should be in bold, and should
+appear to the right of the two lines “Decision x of X” and “ Choose preferred allocation, that is on top of the left-top panel.
+- GROUP DECISION, It is difficult to match proposals, this has to do with the sensitivity of the mouse. To ease this it would be good that when the subject is in some neighborhood of what the other chose, say an interval of 0.3 each side, then that allocation can be chosen.
+- Add a new feature: 6 pre-specified treatments as we discussed before.
 
 CHECK
 - Add a new feature: Payment of the practice round (yes/no).
 - Add a new feature: set exchange rate of the practice round (default is the same exchange rate as the exchange rate of the other parts of the experiment).
-- Add a new feature: 4 pre-specified treatments as we discussed before.
 - Add a new feature: number of decisions to be paid (default one for each part)
 - Add a new feature: adjust the scale of the graphic interface (choice of the allocation) to the maximum tokens that can be attained. Note that the maximum can be either 200 tokens,
 100 tokens, or anything in between, depeding on the treatment. Alternatively no adjustment and the scale is 200 on each axis.
-- The message “Status.(new line) DO (NOT) match” should be changed to “Status. (new line) Allocations proposals DO (NOT) match” , should be in bold, and should appear to the right of the lines “Decision x of X” and “ Choose preferred allocation”, that is on top of the left-top panel.
 - Before they both make the first division choice, the sliders should not show any dark gray and the messages above, My share of the eventually agreed X (or Y), should write: ””
+- GROUP DECISION, The most relevant bug is that sometimes proposals cannot be matched. Matched subjects face different values of Y for a given X.
 
 WAITING
 - GROUP DECISION, After making a choice, the black dot goes to a random point on the budget line. We do not want that, we want that the dot stays were the previous choice was made before the subject moves the mouse inside the graphical interface. 
-- GROUP DECISION, It is difficult to match proposals, this has to do with the sensitivity of the mouse. To ease this it would be good that when the subject is in some neighborhood of what the other chose, say an interval of 0.3 each side, then that allocation can be chosen.
 
 TODO
-- GROUP DECISION, The most relevant bug is that sometimes proposals cannot be matched. Matched subjects face different values of Y for a given X.
 Changes bottom right panel
-- GROUP DECISION, bottom right panel, Get rid of this panel
 - Button “Next decision” not necessary. As soon as groups make a match they can go to the next round. When allocation decisions and division decisions need to be made, then as soon as one of these decisions have a match they should go opaque and the other decision is still active until a match for that decision is made.
 - Get rid of the “Next decision” button. As soon as allocation proposals match, a pop-up window should appear saying “Your allocation proposals match. A new round will start. (OK button)”
 Changes in the mid-bottom
 - Not opaque anymore (see why below)
 - When a choice is made, a pop-up should appear and should write “Your chosen division is X=… and Y=… . (begin new line) Do you want to confirm this allocation? (buttons should be “Yes” “No”).”
 - As with the allocation decision, the first division decision should be independent. As soon as both players make a first choice, they can see each others division choices.
-- When allocation decisions and division decisions need to be made, then as soon as one of these decisions have a match they should go opaque and the other decision is still active until a match for that decision is made.
-Bugs
 Changes middle-bottom right panel
-- Legend (below second slider) blue line segment followed by blue text: “Other’s division proposal” Before they both make the first division choice, the sliders should not show any dark gray and the messages above, My share of the eventually agreed X (or Y), should write: ””
-- When a choice is made, a pop-up should appear and should write “Your chosen division is X=… and Y=… . (begin new line) Do you want to confirm this allocation? (buttons should be “Yes” “No”).”
-- As with the allocation decision, the first division decision should be independent. As soon as both players make a first choice, they can see each others division choices.
-Changes bottom right panel
-- Get rid of this panel
-- The message “Status.(new line) Budget proposals DO (NOT) match” should be changed to “Status. (new line) Allocations proposals DO (NOT) match” , should be in bold, and should
-appear to the right of the two lines “Decision x of X” and “ Choose preferred allocation, that is on top of the left-top panel.
 - The message “Allocation proposals DO (NOT) match” should be changed to “Division proposals DO (NOT) match” , should be in bold, and should appear to the right of the lines “Decision x of X” and “ Choose preferred allocation”, that is on top of the left-top panel.
-- Get rid of the “Next decision” button. As soon as allocation proposals match, a pop-up window should appear saying “Your allocation proposals match. A new round will start. (OK button)”
-- Chat window should extend over the entire width of the interface.
-- When allocation decisions and division decisions need to be made, then as soon as one of these decisions have a match they should go opaque and the other decision is still active until a match for that decision is made.
-Changes bottom left panel
-- Chat window should extend over the entire width of the interface
 
 
 2020.01.01
