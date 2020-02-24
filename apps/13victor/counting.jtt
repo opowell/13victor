@@ -136,11 +136,12 @@ decisionStage.groupStart = function(group) {
     group.maxX = app.budgets[group.period.id - 1].maxX;
     group.maxY = app.budgets[group.period.id - 1].maxY;
     group.budgetId = app.budgets[group.period.id - 1].id;
+    group.validProposals = false;
     if (group.app().treatment === 'pair') {
         let p1 = group.players[0];
         let p2 = group.players[1];
         let p1x, p1y, p2x, p2y = '';
-        if (group.session().allocationType === 'EXOG') {
+        if (group.session().divisionType === 'EXOG') {
             p1x = group.session().d1*100;
             p1y = group.session().d1*100;
             p2x = group.session().d2*100;
@@ -179,23 +180,23 @@ decisionStage.groupStart = function(group) {
 decisionStage.playerStart = function(player) {
     player.toolTipX = -1;
     player.toolTipY = -1;
-    player.newDivisionX = -1;
-    player.newDivisionY = -1;
+    player.newDivisionLetter = -1;
+    player.newDivisionValue = -1;
     player.randomInitialAllocationSelection = Math.random()*player.group.maxX;
+    player.myAllocationProposal = {x: '', y: ''};
     if (app.treatment === 'pair') {
-        player.myAllocationProposal = {x: '', y: ''};
         player.partnerAllocationProposal = {x: '', y: ''};
+        player.allocationMultiplier = app.session.m;
     } else {
         if (player.idInGroup === 1) {
-            player.group.maxX = player.group.maxX * app.session.e1;
-            player.group.maxY = player.group.maxY * app.session.e1;
+            player.allocationMultiplier = app.session.e1;
         } else {
-            player.group.maxX = player.group.maxX * app.session.e2;
-            player.group.maxY = player.group.maxY * app.session.e2;
+            player.allocationMultiplier = app.session.e2;
         }
     }
+    player.maxX = player.group.maxX * player.allocationMultiplier;
+    player.maxY = player.group.maxY * player.allocationMultiplier;
 }
-
 
 decisionStage.activeScreen = /*html*/`
 <div class="modal" id="confirmAllocationModal" tabindex="-1" role="dialog" style='margin-top: 30vh'>
@@ -226,12 +227,24 @@ decisionStage.activeScreen = /*html*/`
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <p style='padding-top: 30px;'>Your chosen division is {{player.newDivisionLetter}}={{player.newDivisionValue}}%%</p>
+        <p style='padding-top: 30px;'>Your chosen division is {{player.newDivisionLetter}}={{player.newDivisionValue}}%</p>
         <p>Do you want to confirm this division?</p>
       </div>
       <div class="modal-footer" style='justify-content: left'>
         <button type="button" class="btn btn-primary" data-dismiss="modal" onclick='setMyDivisionProposal()'>Yes</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick='cancelDivisionProposal()'>No</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="informMatchModal" tabindex="-1" role="dialog" style='margin-top: 30vh'>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <p style='padding-top: 30px;'>Your allocation and division proposals match. A new round will start.</p>
+      </div>
+      <div class="modal-footer" style='justify-content: left'>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick='confirmNewRound()'>OK</button>
       </div>
     </div>
   </div>
@@ -243,7 +256,7 @@ decisionStage.activeScreen = /*html*/`
                 <div style='display: flex'>
                     <div style='flex: 1 1 auto'>
                         <div style='padding-bottom: 5px'>{{participant.numDecParts == null ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
-                        <h5 style='padding-bottom: 5px'>Please choose your preferred allocation{{app.treatment === 'pair' ? ' and division' : ''}}!</h5>
+                        <h5 style='padding-bottom: 5px'>Please choose your preferred allocation{{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}}!</h5>
                     </div>
                     <div 
                         v-if='
@@ -267,10 +280,22 @@ decisionStage.activeScreen = /*html*/`
                     </div>
                 </div>
                 <div id="containerBargain" style='width: 600px; height: 600px'></div>
-                <div id='text' style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px;' onclick='confirmAllocationSelection()' onmousemove='draw_plot_lines(jt.toolTipX)'>
+                <div 
+                    id='text' 
+                    style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px;'
+                    v-show='player.myAllocationProposal.x === "" || player.myAllocationProposal.x !== player.partnerAllocationProposal.x'
+                    onclick='confirmAllocationSelection()' 
+                    onmousemove='draw_plot_lines(jt.toolTipX)'
+                >
                     X = <b id='allocationProposalX'></b>, Y = <b id='allocationProposalY'></b>
                 </div>
-                <div id='circle' style='background-color: black; height: 10px; border-radius: 5px; width: 10px; position: absolute;' onclick='confirmAllocationSelection()' onmousemove='draw_plot_lines(jt.toolTipX)'></div>
+                <div
+                    id='circle'
+                    style='background-color: black; height: 10px; border-radius: 5px; width: 10px; position: absolute;'
+                    onclick='confirmAllocationSelection()' 
+                    onmousemove='draw_plot_lines(jt.toolTipX)'
+                    v-show='player.myAllocationProposal.x === "" || player.myAllocationProposal.x !== player.partnerAllocationProposal.x'
+                ></div>
             </div>
         </div>
         <div style='display: flex; flex-direction: column; flex: 0 0 360px;' v-if="app.treatment === 'pair'">
@@ -278,7 +303,7 @@ decisionStage.activeScreen = /*html*/`
                 <div class='blocker' v-show='player.myAllocationProposal.x !== "" && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body">
                     <h5 class="card-title">My allocation proposal</h5>
-                    <div v-if='player.myAllocationProposal != null'>
+                    <div v-if='player.myAllocationProposal.x !== ""'>
                         X: {{player.myAllocationProposal.x}}<br>
                         Y: {{player.myAllocationProposal.y}}<br>
                     </div>
@@ -288,7 +313,7 @@ decisionStage.activeScreen = /*html*/`
             <div class="card" style='flex: 1 1 auto;'>
                 <div class='blocker' v-show='player.myAllocationProposal.x !== "" && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body" style='color: blue'>
-                    <h5 class="card-title">Other's allocation proposal</h5>
+                    <h5 class="card-title">Other player's allocation proposal</h5>
                     <div v-if='player.partnerAllocationProposal != null && player.myAllocationProposal.x !== ""'>
                         X: {{player.partnerAllocationProposal.x}}<br>
                         Y: {{player.partnerAllocationProposal.y}}<br>
@@ -296,15 +321,16 @@ decisionStage.activeScreen = /*html*/`
                     <div v-else>None.</div>
                 </div>
             </div>
-            <div class="card" v-if='app.session.allocationType === "EXOG"' style='flex: 1 1 auto;'>
+            <div class="card" v-if='app.session.divisionType === "EXOG"' style='flex: 1 1 auto;'>
+                <div class='blocker'></div>
                 <div class="card-body">
                     <h5 class="card-title">Division</h5>
                     <div>My share of the eventually agreed X: <b>{{player.myDivisionProposal.x}}%</b></div>
                     <div>My share of the eventually agreed Y: <b>{{player.myDivisionProposal.y}}%</b></div>
                 </div>
             </div>
-            <div class="card" v-if='app.session.allocationType === "ENDO"' style='flex: 1 1 auto;'>
-                <div class='blocker' v-show='player.myAllocationProposal == null || player.myAllocationProposal.x == "" || player.partnerAllocationProposal.x == ""'></div>
+            <div class="card" v-if='app.session.divisionType === "ENDO"' style='flex: 1 1 auto;'>
+                <div class='blocker' v-show='player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === player.partnerDivisionProposal.x'></div>
                 <div class="card-body">
                     <h5 class="card-title">My proposed division</h5>
                     <div style='height: 120px;'>
@@ -333,21 +359,7 @@ decisionStage.activeScreen = /*html*/`
                     </div>
                     <div style='display: flex'>
                         <span style='width: 20px; margin-top: 11px; margin-right: 5px; height: 2px; background-color: blue'></span>
-                        <span style='color: blue'>Other's division proposal</span>
-                    </div>
-                </div>
-            </div>
-            <div v-show='false' class="card" style='flex: 1 1 auto;'>
-                <div class='blocker' v-show='player.myDivisionProposal.x == "" || player.partnerDivisionProposal.x == ""'></div>
-                <div class="card-body">
-                    <div>
-                        <button 
-                        :disabled='
-                    player.myAllocationProposal.x !== player.partnerAllocationProposal.x ||
-                    player.myAllocationProposal.y !== player.partnerAllocationProposal.y ||
-                    player.myDivisionProposal.x !== 100 - player.partnerDivisionProposal.x ||
-                    player.myDivisionProposal.y !== 100 - player.partnerDivisionProposal.y'
-                        onclick='endBargaining()'>NEXT DECISION</button>
+                        <span style='color: blue'>Other player's division proposal</span>
                     </div>
                 </div>
             </div>
@@ -372,12 +384,12 @@ decisionStage.activeScreen = /*html*/`
     </div>
 </div>
         <script>
-let sX = document.createElement("style");
+window.sX = document.createElement("style");
 document.head.appendChild(sX);
-sX.textContent = '';
-let sY = document.createElement("style");
+window.sX.textContent = '';
+window.sY = document.createElement("style");
 document.head.appendChild(sY);
-sY.textContent = '';
+window.sY.textContent = '';
 showSliderThumb = function(letter) {
     window['s' + letter].textContent = \`
 #myDivision\${letter}::-webkit-slider-thumb {
@@ -385,7 +397,8 @@ showSliderThumb = function(letter) {
 }
 \`;
 }
-        endBargaining = function() {
+
+        confirmNewRound = function() {
             jt.sendMessage('endBargaining');
         }
         keyUp = function(event) {
@@ -406,10 +419,11 @@ showSliderThumb = function(letter) {
                 return;
             }
             el.style.background = 'linear-gradient(to right, #666666 0%, #666666 ' + value + '%, #AAAAAA ' + value + '%, #AAAAAA 100%)';
+            showSliderThumb(letter);
         }
         setMyDivisionProposal = function() {
             showSliderThumb(jt.vue.player.newDivisionLetter);
-            let el = $('#myAlloc' + jt.vue.player.newDivisionLetter)[0];
+            let el = $('#myDivision' + jt.vue.player.newDivisionLetter)[0];
             let value = el.value;
             showMyDivisionProposal(jt.vue.player.newDivisionLetter);
             let out = {};
@@ -434,27 +448,27 @@ showSliderThumb = function(letter) {
         jt.messages.setPartnerDivisionProposal = function(proposal) {
             jt.vue.player.partnerDivisionProposal = proposal;
             if (isNumeric(proposal.x)) {
-                jt.setProposal('X', 100 - proposal.x);
+                jt.setProposal('X', 100 - proposal.x, 'partner');
             }
             if (isNumeric(proposal.y)) {
-                jt.setProposal('Y', 100 - proposal.y);
+                jt.setProposal('Y', 100 - proposal.y, 'partner');
             }
         }
-        jt.setProposal = function(letter, value) {
+        jt.setMyDivisionProposal = function(letter, value, person) {
             if (isNaN(value)) {
                 return;
             }
             let left = 1.27*value;
-            $('#myDivision' + letter + 'Bar').css('left', value + '%');
-            $('#myDivision' + letter + 'Bar').css('display', 'flex');
-            $('#myDivision' + letter + 'Text').text(value);
+            $('#' + person + 'Division' + letter + 'Bar').css('left', value + '%');
+            $('#' + person + 'Division' + letter + 'Bar').css('display', 'flex');
+            $('#' + person + 'Division' + letter + 'Text').text(value);
             let adjLeft = 3;
             if (value >= 10 && value < 100) {
                 adjLeft = 6;
             } else if (value >= 100) {
                 adjLeft = 11;
             }
-            $('#myDivision' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
+            $('#' + person + 'Division' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
         }
 
         </script>
@@ -462,18 +476,15 @@ showSliderThumb = function(letter) {
 
 app.messages.endBargaining = function() {
     let player = this.participant.player;
-    let group = player.group;
-    if (player.stage.id === 'decide') {
-        // Player exits decision stage after making proposal.
-        player.endStage(true);
-        return;
-    } else {
-        // Only leave bargaining stage if valid proposals have been made.
-        let validProposals = app.areProposalsValid(group);
-        if (validProposals) {
-            group.forceEndStage(player.stage);
+    player.endStage(false);
+
+    for (let i in player.group.players) {
+        if (player.group.players[i].status === 'playing') {
+            return;
         }
     }
+
+    player.group.forceEndStage(player.stage);
 }
 
 app.messages.sendMessage = function(content) {
@@ -491,14 +502,55 @@ app.messages.sendMessage = function(content) {
     }
 }
 
+app.messages.setMyAllocationProposal = function(proposal) {
+    // 'this' is the client sending the proposal.
+    let player = this.participant.player;
+    player.myAllocationProposal = proposal;
+    player.emit('setMyAllocationProposal', proposal);
+    let group = player.group;
+    let partner = null;
+    if (app.treatment === 'pair') {
+        partner = group.playersExcept(player)[0];
+        partner.partnerAllocationProposal = proposal;
+        partner.emit('setPartnerAllocationProposal', proposal);
+    }
+    let timePosted = player.timeInStage();
+    let message = {
+        proposal,
+        player: player.id, 
+        timePosted,
+    };
+    group.allocationProposals.new(message);
+
+    let valid = app.areProposalsValid(group);
+    if (valid) {
+        group.validProposals = true;
+    } 
+
+    // Player exits decision stage after making proposal.
+    if (player.app().treatment !== 'pair') {
+        player.endStage(true);
+    }     
+    else {
+        player.saveAndUpdate();
+        partner.saveAndUpdate();
+    }
+
+}
+
 app.messages.setMyDivisionProposal = function(proposal) {
     let player = this.participant.player;
     let group = player.group;
-    player.myDivisionProposal = proposal;
-    player.emit('setMyDivisionProposal', proposal);
+    if (proposal.X) {
+        player.myDivisionProposal.x = proposal.X;
+    }
+    if (proposal.Y) {
+        player.myDivisionProposal.y = proposal.Y;
+    }
+    player.emit('setMyDivisionProposal', player.myDivisionProposal);
     let partner = group.playersExcept(player)[0];
-    partner.partnerDivisionProposal = proposal;
-    partner.emit('setPartnerDivisionProposal', proposal);
+    partner.partnerDivisionProposal = player.myDivisionProposal;
+    partner.emit('setPartnerDivisionProposal', player.myDivisionProposal);
     let timePosted = player.timeInStage();
     let message = {
         proposal,
@@ -545,52 +597,31 @@ app.participantEnd = function(participant) {
     participant.chosenPayouts.push(payout);
 }
 
-app.messages.setMyAllocationProposal = function(proposal) {
-    // 'this' is the client sending the proposal.
-    let player = this.participant.player;
-    player.myAllocationProposal = proposal;
-    player.emit('setMyAllocationProposal', proposal);
-    let group = player.group;
-    let partner = null;
-    if (app.treatment === 'pair') {
-        partner = group.playersExcept(player)[0];
-        partner.partnerAllocationProposal = proposal;
-        partner.emit('setPartnerAllocationProposal', proposal);
-    }
-    let timePosted = player.timeInStage();
-    let message = {
-        proposal,
-        player: player.id, 
-        timePosted,
-    };
-    group.allocationProposals.new(message);
 
-    if (player.app().treatment !== 'pair') {
-        // Player exits decision stage after making proposal.
-        player.endStage(true);
-        // group.endStage(player.stage, false);
-    } else {
-        player.saveAndUpdate();
-        partner.saveAndUpdate();
-    }
-
-}
 
 // Returns sum of all individual player proposals (for x and y), or false if not all players have made a proposal yet.
 app.areProposalsValid = function(group) {
     let p1 = group.players[0];
     let p2 = group.players[1];
-    
-    if (
-        p1.myProposal.x != p2.myProposal.x ||
-        p1.myProposal.y != p2.myProposal.y
-    ) {
+
+    if (group.app().treatment === 'individual') {
+        return true;
+    }
+
+    let matchingAllocationProposals = 
+            p1.myAllocationProposal.x === p2.myAllocationProposal.x &&
+            p1.myAllocationProposal.y === p2.myAllocationProposal.y;
+
+    if (!matchingAllocationProposals) {
         return false;
     }
 
-    if (p1.myDivisionProposal.x + p2.myDivisionProposal.x != 100 ||
-        p1.myDivisionProposal.y + p2.myDivisionProposal.y != 100
-    ) {
+    let matchingDivisionProposals = 
+        group.app().session.divisionType === 'EXOG' ||
+        (p1.myDivisionProposal.x !== 100 - p2.myDivisionProposal.x ||
+        p1.myDivisionProposal.y !== 100 - p2.myDivisionProposal.y);
+
+    if (!matchingDivisionProposals) {
         return false;
     }
 

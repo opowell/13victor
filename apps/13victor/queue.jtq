@@ -4,7 +4,7 @@ let treatments = [
     {
         name: 'T1',
         fieldValues: {
-            allocationType: 'EXOG',
+            divisionType: 'EXOG',
             e1: 1,
             e2: 1,
             m: 1,
@@ -15,7 +15,7 @@ let treatments = [
     {
         name: 'T2',
         fieldValues: {
-            allocationType: 'EXOG',
+            divisionType: 'EXOG',
             e1: 1,
             e2: 1,
             m: 2,
@@ -26,7 +26,7 @@ let treatments = [
     {
         name: 'T3',
         fieldValues: {
-            allocationType: 'EXOG',
+            divisionType: 'EXOG',
             e1: 1.3,
             e2: 0.7,
             m: 2,
@@ -37,7 +37,7 @@ let treatments = [
     {
         name: 'T4',
         fieldValues: {
-            allocationType: 'EXOG',
+            divisionType: 'EXOG',
             e1: 1.3,
             e2: 0.7,
             m: 2,
@@ -48,7 +48,7 @@ let treatments = [
     {
         name: 'T5',
         fieldValues: {
-            allocationType: 'ENDO',
+            divisionType: 'ENDO',
             e1: 1,
             e2: 1,
             m: 2,
@@ -57,7 +57,7 @@ let treatments = [
     {
         name: 'T6',
         fieldValues: {
-            allocationType: 'ENDO',
+            divisionType: 'ENDO',
             e1: 1.3,
             e2: 0.7,
             m: 2,
@@ -73,8 +73,8 @@ for (let i in treatments) {
 session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
 
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
-// session.addSelectOption('allocationType', ['EXOG', 'ENDO'], 'The type of proposal.');
-// if (session.allocationType === 'EXOG') {
+// session.addSelectOption('divisionType', ['EXOG', 'ENDO'], 'The type of proposal.');
+// if (session.divisionType === 'EXOG') {
 //     session.addNumberOption('exogAllocationX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous allocation.');
 //     session.addNumberOption('exogAllocationY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous allocation.');
 // }

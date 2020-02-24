@@ -4,21 +4,35 @@ jt.connected = function() {
     let containerName = 'containerBargain';
     Vue.nextTick(function() {
       updateChart(player, containerName);
-      if (player.stage.id === 'decide') {
-        if (player.myDivisionProposal != null && player.myDivisionProposal.x != '') {
-          $('#myAllocX').val(player.myDivisionProposal.x);
-          $('#myAllocY').val(player.myDivisionProposal.y);
-        } else {
-          $('#myAllocX').val(0);
-          $('#myAllocY').val(0);        
-        }
+      if (player.myDivisionProposal.x != '') {
+        $('#myDivisionX').val(player.myDivisionProposal.x);
+        $('#myDivisionY').val(player.myDivisionProposal.y);
+      } else {
+        $('#myDivisionX').val(0);
+        $('#myDivisionY').val(0);        
       }
+
+      if (player.myDivisionProposal.x !== '') {
+        showMyDivisionProposal('X');
+      }
+
+      if (player.myDivisionProposal.y !== '') {
+        showMyDivisionProposal('Y');
+      }
+
       enableChartMouseMoving();
       draw_plot_lines(player.randomInitialSelection);
     });
     if (player.partnerDivisionProposal != null && jt.messages.setPartnerDivisionProposal != null) {
       jt.messages.setPartnerDivisionProposal(player.partnerDivisionProposal);
     }
+
+    if (player.group.validProposals) {
+      $('#informMatchModal').modal({backdrop: 'static', keyboard: false});
+    } else {
+      $('#informMatchModal').modal('hide');
+    }
+
     // setTimeout(showMyAllocationProposal, 500);
     // setTimeout(randomSelection, 1000);
 
@@ -285,16 +299,31 @@ jt.overwriteCrosshairImpl = function() {
 
 
 jt.autoplay_decide = function() {
-  let point = randomEl(jt.budgetData);
-  if (jt.vue.app.treatment == 'pair') {
-    if (jt.vue.player.idInGroup == 1) {
-      point = jt.budgetData[0];
-    } else {
-      point = jt.budgetData[jt.budgetData.length - 1];
-    }
-  } 
-  let proposal = { x: point[0], y: point[1] };
-  jt.sendMessage("setMyAllocationProposal", proposal);
+
+  if (jt.vue.group.validProposals) {
+    confirmNewRound();
+    return;
+  }
+
+  if (jt.vue.player.myAllocationProposal.x === '') {
+    let point = randomEl(jt.budgetData);
+    if (jt.vue.app.treatment == 'pair') {
+      if (jt.vue.player.idInGroup == 1) {
+        point = jt.budgetData[0];
+      } else {
+        point = jt.budgetData[jt.budgetData.length - 1];
+      }
+    } 
+    let proposal = { x: point[0], y: point[1] };
+    jt.sendMessage("setMyAllocationProposal", proposal);
+    return;
+  }
+
+  if (jt.vue.player.myDivisionProposal.x === '') {
+    let proposal = { x: 50, y: 50 };
+    jt.sendMessage("setMyDivisionProposal", proposal);
+    return;
+  }
 }
 
 jt.toolTipX = null;
@@ -314,11 +343,12 @@ let cancelDivisionProposal = function() {
 }
 
 let confirmDivisionSelection = function(event) {
-  if (event.target.id === 'myAllocX') {
-    jt.vue.player.newDivisionX = event.target.value;
+  if (event.target.id === 'myDivisionX') {
+    jt.vue.player.newDivisionLetter = 'X';
   } else {
-    jt.vue.player.newDivisionY = event.target.value;
+    jt.vue.player.newDivisionLetter = 'Y';
   }
+  jt.vue.player.newDivisionValue = event.target.value;
   $('#confirmDivisionModal').modal('show');
 };
 
@@ -409,18 +439,28 @@ getSeries = function(player) {
   if (player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
     series.push({
       type: "scatter",
-      name: "your choice",
+      name: "my allocation proposal",
       color: "black",
       data: [[player.myAllocationProposal.x, player.myAllocationProposal.y]],
       marker: {
         radius: 6
       }
     });
+  } else {
+    series.push({
+      type: "scatter",
+      name: ".",
+      color: "white",
+      data: [],
+      marker: {
+        radius: 6
+      }
+    });    
   }
   if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x != '' && player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
     series.push({
       type: "scatter",
-      name: "other player choice",
+      name: "other player's allocation proposal",
       color: "blue",
       data: [[player.partnerAllocationProposal.x, player.partnerAllocationProposal.y]],
       marker: {
