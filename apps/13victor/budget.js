@@ -1,10 +1,12 @@
 jt.connected = function() {
   jt.socket.on("playerUpdate", function(player) {
+    
     player = JSON.parse(player);
+
     let containerName = 'containerBargain';
     Vue.nextTick(function() {
       updateChart(player, containerName);
-      if (player.myDivisionProposal.x != '') {
+      if (player.myDivisionProposal != null && player.myDivisionProposal.x != '') {
         $('#myDivisionX').val(player.myDivisionProposal.x);
         $('#myDivisionY').val(player.myDivisionProposal.y);
       } else {
@@ -12,16 +14,23 @@ jt.connected = function() {
         $('#myDivisionY').val(0);        
       }
 
-      if (player.myDivisionProposal.x !== '') {
+      if (player.myDivisionProposal != null && player.myDivisionProposal.x !== '') {
         showMyDivisionProposal('X');
       }
 
-      if (player.myDivisionProposal.y !== '') {
+      if (player.myDivisionProposal != null && player.myDivisionProposal.y !== '') {
         showMyDivisionProposal('Y');
       }
 
       enableChartMouseMoving();
-      draw_plot_lines(player.randomInitialSelection);
+      if (player.myAllocationProposal.x !== '') {
+        draw_plot_lines(player.myAllocationProposal.x);
+      }
+
+      $('#confirmAllocationModal').on('hidden.bs.modal', function (e) {
+        jt.showingAllocationModal = false;
+      });
+            
     });
     if (player.partnerDivisionProposal != null && jt.messages.setPartnerDivisionProposal != null) {
       jt.messages.setPartnerDivisionProposal(player.partnerDivisionProposal);
@@ -44,11 +53,33 @@ jt.connected = function() {
 function enableChartMouseMoving() {
   jt.chart.container.onmousemove = function(e) {
     e = jt.chart.pointer.normalize(e);
-    let xValue = jt.chart.xAxis[0].toValue(e.chartX);
-    draw_plot_lines(xValue);
+    let xVal = jt.chart.xAxis[0].toValue(e.chartX);
+    let yVal = jt.chart.yAxis[0].toValue(e.chartY);
+    if (xVal < 0 || yVal < 0) {
+      return;
+    }
+    let yMax = jt.vue.player.maxY;
+    let xMax = jt.vue.player.maxX;
+    let selX = yMax / (yMax / xMax + yVal / xVal);
+    if (xVal > yVal) {
+      yVal = 200/xVal * yVal;
+      xVal = 200;
+    } else {
+      xVal = 200/yVal * xVal;
+      yVal = 200;
+    }
+    draw_plot_lines(selX, xVal, yVal);
   };
   jt.chart.container.onmouseleave = function(e) {
-    clearPlotLines();
+    if (!jt.showingAllocationModal) {
+      if (jt.vue.player.myAllocationProposal.x === '') {
+        clearPlotLines();
+        jt.vue.player.toolTipX = -1;
+        jt.vue.player.toolTipY = -1;
+      } else {
+        draw_plot_lines(jt.vue.player.myAllocationProposal.x, -1, -1);
+      }
+    }
   };
 }
 
@@ -58,17 +89,19 @@ function clearPlotLines() {
       lineX.destroy();
     if(lineY)
       lineY.destroy();
+    if(lineMouse)
+      lineMouse.destroy();
   } catch (err) {
   }
 }
 
-function draw_plot_lines(xValue){
+function draw_plot_lines(xValue, xPos, yPos){
 
   clearPlotLines();
 
   let player = jt.vue.player;
 
-  if (player.myAllocationProposal.x !== "" && player.myAllocationProposal.x === player.partnerAllocationProposal.x) {
+  if (player.group.validProposals) {
       return;
   }
 
@@ -109,6 +142,9 @@ function draw_plot_lines(xValue){
   let xPixels = jt.chart.xAxis[0].toPixels(xValue);
   let yPixels = jt.chart.yAxis[0].toPixels(yValue);
 
+  let xMousePixels = jt.chart.xAxis[0].toPixels(xPos);
+  let yMousePixels = jt.chart.yAxis[0].toPixels(yPos);
+
   jt.toolTipX = xValue;
   jt.toolTipY = yValue;
 
@@ -119,23 +155,15 @@ function draw_plot_lines(xValue){
 
   let circle = document.getElementById('circle');
   circle.style.left = (xPixels + 15) + 'px';
-  circle.style.top = (yPixels + 81) + 'px';
+  circle.style.top = (yPixels + 87) + 'px';
   let text = document.getElementById('text');
   text.style.left = (xPixels - 44) + 'px';
-  text.style.top = (yPixels + 34) + 'px';
+  text.style.top = (yPixels + 40) + 'px';
   $('#allocationProposalX').text(xValue);
   $('#allocationProposalY').text(yValue);
 
   let x0 = chart.xAxis[0].toPixels(0);
   let y0 = chart.yAxis[0].toPixels(0);
-
-  try {
-    if(lineX)
-      lineX.destroy();
-    if(lineY)
-      lineY.destroy();
-  } catch (err) {
-  }
 
   if (xPixels < x0 || yPixels > y0) {
     return;
@@ -152,6 +180,14 @@ function draw_plot_lines(xValue){
     stroke: 'gray',
     zIndex: 2001
   }).add();
+
+  if (xPos >= 0 && yPos >= 0) {
+    lineMouse = jt.chart.renderer.path(['M', x0, y0, 'L', xMousePixels, yMousePixels]).attr({
+      'stroke-width': 1,
+      stroke: '#ff000029',
+      zIndex: 2002
+    }).add();
+  } 
 
 }
 
@@ -329,7 +365,10 @@ jt.autoplay_decide = function() {
 jt.toolTipX = null;
 jt.toolTipY = null;
 
+jt.showingAllocationModal = false;
+
 let confirmAllocationSelection = function(event) {
+  jt.showingAllocationModal = true;
   $('#confirmAllocationModal').modal('show');
 };
 
@@ -470,3 +509,105 @@ getSeries = function(player) {
   }
   return series;
 };
+
+window.sX = document.createElement("style");
+document.head.appendChild(sX);
+window.sY = document.createElement("style");
+document.head.appendChild(sY);
+
+resetRangeInputs = function() {
+  window.sX.textContent = '';
+  window.sY.textContent = '';  
+}
+
+resetRangeInputs();
+
+showSliderThumb = function(letter) {
+    window['s' + letter].textContent = `
+
+#myDivision${letter}::-webkit-slider-thumb {
+    width: 2px !important;
+}
+
+#myDivision${letter}::-webkit-slider-runnable-track {
+    background-color: unset;
+}
+
+`;
+}
+
+confirmNewRound = function() {
+    jt.sendMessage('endBargaining');
+    resetRangeInputs();
+}
+
+keyUp = function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      sendChatMessageToServer();
+    }
+}
+showMyDivisionProposal = function(letter) {
+    let el = $('#myDivision' + letter)[0];
+    if (el == null) {
+        return;
+    }
+    let value = el.value;
+    if (isNaN(value)) {
+        return;
+    }
+    el.style.background = 'linear-gradient(to right, #666666 0%, #666666 ' + value + '%, #AAAAAA ' + value + '%, #AAAAAA 100%)';
+    showSliderThumb(letter);
+}
+setMyDivisionProposal = function() {
+    showSliderThumb(jt.vue.player.newDivisionLetter);
+    let el = $('#myDivision' + jt.vue.player.newDivisionLetter)[0];
+    let value = el.value;
+    showMyDivisionProposal(jt.vue.player.newDivisionLetter);
+    let out = {};
+    out[jt.vue.player.newDivisionLetter] = value;
+    jt.sendMessage('setMyDivisionProposal', out);
+}
+jt.sendAllocationProposal = function() {
+    let proposal = {
+        x: jt.toolTipX,
+        y: jt.toolTipY,
+    };
+    jt.sendMessage('setMyAllocationProposal', proposal);
+}
+sendChatMessageToServer = function() {
+    let content = $('#chatMessageInput').val();
+    jt.sendMessage("sendMessage", content);
+    $('#chatMessageInput').val('');
+}
+jt.messages.setMyDivisionProposal = function(proposal) {
+    jt.vue.player.myDivisionProposal.x = proposal.x;
+    jt.vue.player.myDivisionProposal.y = proposal.y;
+}
+jt.messages.setPartnerDivisionProposal = function(proposal) {
+    jt.vue.player.partnerDivisionProposal = proposal;
+    if (isNumeric(proposal.x)) {
+        jt.setProposal('X', 100 - proposal.x, 'partner');
+    }
+    if (isNumeric(proposal.y)) {
+        jt.setProposal('Y', 100 - proposal.y, 'partner');
+    }
+}
+jt.setProposal = function(letter, value, person) {
+    if (isNaN(value) || value === '') {
+        return;
+    }
+    let left = 1.27*value;
+    $('#' + person + 'Division' + letter + 'Bar').css('left', value + '%');
+    // $('#' + person + 'Division' + letter + 'Bar').css('display', 'flex');
+    $('#' + person + 'Division' + letter + 'Text').text(value);
+    let adjLeft = 3;
+    if (value >= 10 && value < 100) {
+        adjLeft = 6;
+    } else if (value >= 100) {
+        adjLeft = 11;
+    }
+    $('#' + person + 'Division' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
+}
