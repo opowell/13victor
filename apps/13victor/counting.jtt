@@ -381,12 +381,15 @@ app.messages.setMyAllocationProposal = function(proposal) {
 }
 
 app.messages.setMyDivisionProposal = function(proposal) {
+
+    proposal = {x: proposal.X, y: proposal.Y};
+
     let player = this.participant.player;
     let group = player.group;
-    if (proposal.X) {
+    if (proposal.x) {
         player.myDivisionProposal.x = proposal.X;
     }
-    if (proposal.Y) {
+    if (proposal.y) {
         player.myDivisionProposal.y = proposal.Y;
     }
     player.emit('setMyDivisionProposal', player.myDivisionProposal);
@@ -410,13 +413,20 @@ decisionStage.playerEnd = function(player) {
 }
 
 app.participantEnd = function(participant) {
+
     if (participant.chosenPayouts == null) {
         participant.chosenDecisions = [];
         participant.chosenPayouts = [];
         participant.chosenGoods = [];
+        participant.payouts = [];
     }
 
-    let N = app.session.numPaidDecisionsPerRound;
+    let N = app.numPaidDecisions;
+
+    if (N > app.numPeriods) {
+        console.log('error: not enough paid periods');
+        return;
+    }
 
     let ints = [];
     for (let i=0; i<app.numPeriods; i++) {
@@ -424,19 +434,24 @@ app.participantEnd = function(participant) {
     }
     Utils.shuffle(ints);
     ints = ints.splice(0, N);
+
     let payout = 0;
     let chosenDecisions = [];
-    let selectedGoods = [];
+    let chosenGoods = [];
+    let chosenPayouts = [];
+
     for (let i=0; i<ints.length; i++) {
         let selectedGood = (Math.random() < app.session.probSelX) ? 'x' : 'y';
         let p = ints[i];
         chosenDecisions.push(p+1);
-        selectedGoods.push(selectedGood);
+        chosenGoods.push(selectedGood);
+        chosenPayouts.push(participant.outcomes[p][selectedGood] * app.exRate);
         payout += participant.outcomes[p][selectedGood];
     }
     participant.chosenDecisions.push(chosenDecisions);
     participant.chosenGoods.push(selectedGoods);
-    participant.chosenPayouts.push(payout);
+    participant.chosenPayouts.push(chosenPayouts);
+    participant.payouts.push(payout);
 }
 
 

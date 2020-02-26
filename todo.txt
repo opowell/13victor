@@ -30,6 +30,7 @@ appear to the right of the two lines “Decision x of X” and “ Choose prefer
 - Add a new feature: 6 pre-specified treatments as we discussed before.
 - Button “Next decision” not necessary. As soon as groups make a match they can go to the next round. When allocation decisions and division decisions need to be made, then as soon as one of these decisions have a match they should go opaque and the other decision is still active until a match for that decision is made.
 - Get rid of the “Next decision” button. As soon as allocation proposals match, a pop-up window should appear saying “Your allocation proposals match. A new round will start. (OK button)”
+- GROUP DECISION, After making a choice, the black dot goes to a random point on the budget line. We do not want that, we want that the dot stays were the previous choice was made before the subject moves the mouse inside the graphical interface. 
 
 CHECK
 - Add a new feature: Payment of the practice round (yes/no).
@@ -43,9 +44,6 @@ CHECK
 - GROUP DECISION, The most relevant bug is that sometimes proposals cannot be matched. Matched subjects face different values of Y for a given X.
 - The message “Allocation proposals DO (NOT) match” should be changed to “Division proposals DO (NOT) match” , should be in bold, and should appear to the right of the lines “Decision x of X” and “ Choose preferred allocation”, that is on top of the left-top panel.
 - Panels not opaque anymore (see why below)
-
-WAITING
-- GROUP DECISION, After making a choice, the black dot goes to a random point on the budget line. We do not want that, we want that the dot stays were the previous choice was made before the subject moves the mouse inside the graphical interface. 
 
 2020.01.01
 - reload queue after changing options.

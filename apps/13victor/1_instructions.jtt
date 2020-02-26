@@ -6,5 +6,5 @@ app.participantStart = function(participant) {
 
 let instructions = app.newStage('instructions');
 instructions.activeScreen = `
-    <p>To familiarize yourself with the graphical interface, you can now practice for {{ app.session.numPracticeRounds }} round{{ app.session.numPracticeRounds === 1 ? '' : 's'}}. <i v-if='app.session.payPracticeRound === "yes"'>At the end of the {{ app.session.numPracticeRounds }} round{{ (app.session.numPracticeRounds === 1 ? '' : 's') }}, one will be randomly selected. For each Token earned you will receive {{ app.session.exchangeRatePracticeRound}} Euros in cash at the end of the experiment.</i></p>
+    <p>To familiarize yourself with the graphical interface, you can now practice for {{ app.session.numPracticeRounds }} round{{ app.session.numPracticeRounds === 1 ? '' : 's'}}. <span v-if='app.session.payPracticeRound === "yes"'>At the end of the {{ app.session.numPracticeRounds }} round{{ (app.session.numPracticeRounds === 1 ? '' : 's') }}, one will be randomly selected. For each Token earned you will receive {{ app.session.exchangeRatePracticeRound}} Euro{{ app.session.exchangeRatePracticeRound === 1 ? '' : 's'}} in cash at the end of the experiment.</span></p>
 `

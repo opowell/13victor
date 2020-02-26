@@ -73,11 +73,6 @@ for (let i in treatments) {
 session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
 
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
-// session.addSelectOption('divisionType', ['EXOG', 'ENDO'], 'The type of proposal.');
-// if (session.divisionType === 'EXOG') {
-//     session.addNumberOption('exogAllocationX', 50, 0, 100, 1, 'The value of x for Player 1 in the exogenous allocation.');
-//     session.addNumberOption('exogAllocationY', 50, 0, 100, 1, 'The value of y for Player 1 in the exogenous allocation.');
-// }
 session.addNumberOption('numPracticeRounds', 1, 0, 100, 1, 'Number of practice rounds.');
 session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
@@ -130,16 +125,20 @@ let paidBudgets = drawBudgets(session.numRounds);
 session.addApp('1_instructions.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
-    training: 'yes',
+    text: 'training',
     budgets: exampleBudgets,
+    numPaidRounds: session.payPracticeRound === 'yes' ? exampleBudgets.length : 0,
+    exRate: exchangeRatePracticeRound,
 });
 
 function addPairApps() {
     session.addApp('2_instructions.jtt');
     session.addApp('counting.jtt', {
         treatment: 'pair',
-        training: 'no',
+        numPaidRounds: session.numPaidDecisionsPerRound,
+        text: 'standard',
         budgets: paidBudgets,
+        exRate: exchangeRatePairs,
     });
 }
 
@@ -150,8 +149,10 @@ if (session.playFirst === 'pair') {
 session.addApp('2_instructions.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
-    training: 'no',
+    numPaidRounds: session.numPaidDecisionsPerRound,
+    text: 'standard',
     budgets: paidBudgets,
+    exRate: exchangeRateIndiv,
 });
 
 if (session.playFirst !== 'pair') {

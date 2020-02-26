@@ -3,9 +3,8 @@ jt.connected = function() {
     
     player = JSON.parse(player);
 
-    let containerName = 'containerBargain';
     Vue.nextTick(function() {
-      updateChart(player, containerName);
+      updateChart(player);
       if (player.myDivisionProposal != null && player.myDivisionProposal.x != '') {
         $('#myDivisionX').val(player.myDivisionProposal.x);
         $('#myDivisionY').val(player.myDivisionProposal.y);
@@ -55,19 +54,32 @@ function enableChartMouseMoving() {
     e = jt.chart.pointer.normalize(e);
     let xVal = jt.chart.xAxis[0].toValue(e.chartX);
     let yVal = jt.chart.yAxis[0].toValue(e.chartY);
-    if (xVal < 0 || yVal < 0) {
+    if (xVal < 0 && yVal < 0) {
       return;
     }
     let yMax = jt.vue.player.maxY;
     let xMax = jt.vue.player.maxX;
-    let selX = yMax / (yMax / xMax + yVal / xVal);
-    if (xVal > yVal) {
+    if (xVal < 0) {
+      yVal = yMax;
+      xVal = 0;
+    } else if (yVal < 0) {
+      xVal = xMax;
+      yVal = 0;
+    } else if (xVal > yVal) {
       yVal = 200/xVal * yVal;
       xVal = 200;
     } else {
       xVal = 200/yVal * xVal;
       yVal = 200;
     }
+
+    let selX = null;
+    if (xVal === 0) {
+      selX = 0;
+    } else {
+      selX = yMax / (yMax / xMax + yVal / xVal);
+    }
+
     draw_plot_lines(selX, xVal, yVal);
   };
   jt.chart.container.onmouseleave = function(e) {
@@ -105,34 +117,40 @@ function draw_plot_lines(xValue, xPos, yPos){
       return;
   }
 
-  if (xValue < 0) {
-    xValue = 0;
-  }
   let xData = jt.chart.series[0].xData;
   let yData = jt.chart.series[0].yData;
 
   let yValue = null;
-  let found = false;
-  for (let i = 0; i<xData.length; i++) {
-    if (yValue === jt.chart.series[0].yData[i]) {
-      break;
+
+  if (xValue < 0) {
+    xValue = 0;
+    yValue = yData[0];
+  } else {
+    let upperY = null;
+    let lowerY = null;
+    for (let i = 0; i<xData.length; i++) {
+      if (xValue < xData[i]) {
+        upperY = yData[i];
+        break;
+      } else {
+        lowerY = yData[i];
+      }
     }
-    yValue = jt.chart.series[0].yData[i];
-    if (xData[i] > xValue) {
-      found = true;
-      break;
-    }
+    if (upperY != null) {
+      yValue = lowerY;
+    } else {
+      yValue = 0;
+    } 
   }
-  if (!found) {
-    xValue = xData[xData.length-1];
-    yValue = yData[yData.length-1];
-  }
+
+
+  console.log('xValue ' + xValue + ', yValue = ' + yValue);
 
   xValue = Math.round(xValue*10)/10;
   yValue = Math.round(yValue*10)/10;
 
   let otherProposal = jt.vue.player.partnerAllocationProposal;
-  if (otherProposal != null && otherProposal.x !== "") {
+  if (otherProposal != null && otherProposal.x !== "" && jt.vue.player.myAllocationProposal.x !== '') {
     if (Math.abs(otherProposal.x - xValue) < 1.5) {
       xValue = otherProposal.x;
       yValue = otherProposal.y;
@@ -344,11 +362,7 @@ jt.autoplay_decide = function() {
   if (jt.vue.player.myAllocationProposal.x === '') {
     let point = randomEl(jt.budgetData);
     if (jt.vue.app.treatment == 'pair') {
-      if (jt.vue.player.idInGroup == 1) {
-        point = jt.budgetData[0];
-      } else {
-        point = jt.budgetData[jt.budgetData.length - 1];
-      }
+      point = jt.budgetData[0];
     } 
     let proposal = { x: point[0], y: point[1] };
     jt.sendMessage("setMyAllocationProposal", proposal);
@@ -396,8 +410,8 @@ jt.sendProposal = function() {
     jt.sendMessage("propose", proposal);  
 }
 
-updateChart = function(player, containerName) {
-  jt.chart = Highcharts.chart(containerName, {
+updateChart = function(player) {
+  jt.chart = Highcharts.chart('containerBargain', {
     chart: {
       events: {
         click: confirmAllocationSelection,
@@ -475,7 +489,7 @@ getSeries = function(player) {
       enableMouseTracking: true
     }
   ];
-  if (player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
+  if (player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
     series.push({
       type: "scatter",
       name: "my allocation proposal",
@@ -496,7 +510,7 @@ getSeries = function(player) {
       }
     });    
   }
-  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x != '' && player.myAllocationProposal != null && player.myAllocationProposal.x != '') {
+  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x !== '' && player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
     series.push({
       type: "scatter",
       name: "other player's allocation proposal",

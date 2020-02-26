@@ -1,12 +1,6 @@
 let results = app.newStage('results');
-results.playerStart = function(player) {
-
-    player.practicePayout = player.participant.chosenPayouts[0] * app.session.exchangeRatePracticeRound;
-    player.indivPayout = player.participant.chosenPayouts[1] * app.session.exchangeRateIndiv;
-    player.pairsPayout = player.participant.chosenPayouts[2] * app.session.exchangeRatePairs;
-}
 results.activeScreen = `
-    <p v-if='session.payPracticeRound === "yes"'>Practice: {{participant.chosenPayouts[0]}} tokens = {{player.practicePayout}} EUR.</p>
-    <p>Part 1: {{participant.chosenPayouts[1]}} tokens = {{player.indivPayout}} EUR.</p>
-    <p>Part 2: {{participant.chosenPayouts[2]}} tokens = {{player.pairsPayout}} EUR..</p>
+    <p v-if='app.session.payPracticeRound === "yes"'>Practice: {{participant.payouts[0]}} EUR.</p>
+    <p>Part 1: {{participant.payouts[1]}} EUR.</p>
+    <p>Part 2: {{participant.payouts[2]}} EUR.</p>
 `;
