@@ -67,7 +67,12 @@ let treatments = [
 
 let treatmentNames = [];
 for (let i in treatments) {
-    treatmentNames.push(treatments[i].name);
+    let name = treatments[i].name;
+    for (let j in treatments[i].fieldValues) {
+        name += ', ' + j + '=' + treatments[i].fieldValues[j];
+    }
+    treatments[i].fullNanme = name;
+    treatmentNames.push(name);
 }
 
 session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
@@ -84,7 +89,8 @@ session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play
 
 for (let i in treatments) {
     let tr = treatments[i];
-    if (tr.name === session.treatment) {
+    if (session.treatment.startsWith(tr.name)) {
+        console.log('treatment = ' + session.treatment);
         for (let j in tr.fieldValues) {
             session[j] = tr.fieldValues[j];
         }
@@ -122,23 +128,23 @@ let exampleBudgets = drawBudgets(session.numPracticeRounds);
 let paidBudgets = drawBudgets(session.numRounds);
 // let shuffledBudgets = Utils.shuffle(realBudgets);
 
-session.addApp('1_instructions.jtt');
+session.addApp('1_instructions_training.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
     text: 'training',
     budgets: exampleBudgets,
-    numPaidRounds: session.payPracticeRound === 'yes' ? exampleBudgets.length : 0,
-    exRate: exchangeRatePracticeRound,
+    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+    exRate: session.exchangeRatePracticeRound,
 });
 
 function addPairApps() {
-    session.addApp('2_instructions.jtt');
+    session.addApp('2_instructions_main.jtt');
     session.addApp('counting.jtt', {
         treatment: 'pair',
-        numPaidRounds: session.numPaidDecisionsPerRound,
+        numPaidDecisions: session.numPaidDecisionsPerRound,
         text: 'standard',
         budgets: paidBudgets,
-        exRate: exchangeRatePairs,
+        exRate: session.exchangeRatePairs,
     });
 }
 
@@ -146,13 +152,13 @@ if (session.playFirst === 'pair') {
     addPairApps();
 }
 
-session.addApp('2_instructions.jtt');
+session.addApp('2_instructions_main.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
-    numPaidRounds: session.numPaidDecisionsPerRound,
+    numPaidDecisions: session.numPaidDecisionsPerRound,
     text: 'standard',
     budgets: paidBudgets,
-    exRate: exchangeRateIndiv,
+    exRate: session.exchangeRateIndiv,
 });
 
 if (session.playFirst !== 'pair') {

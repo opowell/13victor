@@ -143,9 +143,6 @@ function draw_plot_lines(xValue, xPos, yPos){
     } 
   }
 
-
-  console.log('xValue ' + xValue + ', yValue = ' + yValue);
-
   xValue = Math.round(xValue*10)/10;
   yValue = Math.round(yValue*10)/10;
 
@@ -382,6 +379,9 @@ jt.toolTipY = null;
 jt.showingAllocationModal = false;
 
 let confirmAllocationSelection = function(event) {
+  if (jt.vue.player.toolTipX < 0 || jt.vue.player.toolTipY < 0) {
+    return;
+  }
   jt.showingAllocationModal = true;
   $('#confirmAllocationModal').modal('show');
 };
@@ -499,7 +499,7 @@ getSeries = function(player) {
         radius: 6
       }
     });
-  } else {
+  } else if (player.stage.app.treatment === 'pairs') {
     series.push({
       type: "scatter",
       name: ".",

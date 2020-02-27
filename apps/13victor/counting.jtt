@@ -1,7 +1,4 @@
 app.isStandaloneApp = false;
-app.addSelectOption('treatment', ['individual', 'pair'], 'Whether game is played individually or in pairs.');
-app.addTextOption('budgets', [80, 80], 'Set of budgets to be played.');
-app.addSelectOption('training', ['yes', 'no'], 'Whether or not this app is training.');
 
 if (app.treatment === 'individual') {
     app.groupSize = 1;
@@ -66,29 +63,30 @@ decisionStage.groupStart = function(group) {
     group.maxY = group.budgetY * app.session.m;
     group.budgetId = app.budgets[group.period.id - 1].id;
     group.validProposals = false;
+
+    for (let p in group.players) {
+        let x, y = '';
+        let player = group.players[p];
+        if (group.session().divisionType === 'EXOG') {
+            let d = group.session().d1;
+            if (player.idInGroup === 2) {
+                d = group.session().d2;
+            }
+            x = d*100;
+            y = d*100;
+        } else {
+            x = '';
+            y = '';
+        }
+        player.myDivisionProposal = {
+            x,
+            y,
+        }
+    }
+
     if (group.app().treatment === 'pair') {
         let p1 = group.players[0];
         let p2 = group.players[1];
-        let p1x, p1y, p2x, p2y = '';
-        if (group.session().divisionType === 'EXOG') {
-            p1x = group.session().d1*100;
-            p1y = group.session().d1*100;
-            p2x = group.session().d2*100;
-            p2y = group.session().d2*100;
-        } else {
-            p1x = '';
-            p1y = '';
-            p2x = '';
-            p2y = '';
-        }
-        p1.myDivisionProposal = {
-            x: p1x,
-            y: p1y,
-        }
-        p2.myDivisionProposal = {
-            x: p2x,
-            y: p2y,
-        };
         p1.partnerDivisionProposal = p2.myDivisionProposal;
         p2.partnerDivisionProposal = p1.myDivisionProposal;
     } 
@@ -317,15 +315,11 @@ decisionStage.activeScreen = /*html*/`
 app.messages.endBargaining = function() {
     let player = this.participant.player;
     player.endStage(false);
-
-    player.participant.previousAllocation = player.myDivisionProposal;
-
     for (let i in player.group.players) {
         if (player.group.players[i].status === 'playing') {
             return;
         }
     }
-
     player.group.forceEndStage(player.stage);
 }
 
@@ -347,22 +341,25 @@ app.messages.sendMessage = function(content) {
 app.messages.setMyAllocationProposal = function(proposal) {
     // 'this' is the client sending the proposal.
     let player = this.participant.player;
+    let group = player.group;
+
+    let timePosted = player.timeInStage();
+    let message = {
+        x: proposal.x,
+        y: proposal.y,
+        player: player.id, 
+        timePosted,
+    };
+    group.allocationProposals.new(message);
+
     player.myAllocationProposal = proposal;
     player.emit('setMyAllocationProposal', proposal);
-    let group = player.group;
     let partner = null;
     if (app.treatment === 'pair') {
         partner = group.playersExcept(player)[0];
         partner.partnerAllocationProposal = proposal;
         partner.emit('setPartnerAllocationProposal', proposal);
     }
-    let timePosted = player.timeInStage();
-    let message = {
-        proposal,
-        player: player.id, 
-        timePosted,
-    };
-    group.allocationProposals.new(message);
 
     let valid = app.areProposalsValid(group);
     if (valid) {
@@ -371,7 +368,8 @@ app.messages.setMyAllocationProposal = function(proposal) {
 
     // Player exits decision stage after making proposal.
     if (player.app().treatment !== 'pair') {
-        player.endStage(true);
+        let end = app.messages.endBargaining.bind(this);
+        end();
     }     
     else {
         player.saveAndUpdate();
@@ -386,30 +384,37 @@ app.messages.setMyDivisionProposal = function(proposal) {
 
     let player = this.participant.player;
     let group = player.group;
+
+    let timePosted = player.timeInStage();
+    let message = {
+        x: proposal.x,
+        y: proposal.y,
+        player: player.id, 
+        timePosted,
+    };
+    group.divisionProposals.new(message);
+
     if (proposal.x) {
-        player.myDivisionProposal.x = proposal.X;
+        player.myDivisionProposal.x = proposal.x;
     }
     if (proposal.y) {
-        player.myDivisionProposal.y = proposal.Y;
+        player.myDivisionProposal.y = proposal.y;
     }
     player.emit('setMyDivisionProposal', player.myDivisionProposal);
     let partner = group.playersExcept(player)[0];
     partner.partnerDivisionProposal = player.myDivisionProposal;
     partner.emit('setPartnerDivisionProposal', player.myDivisionProposal);
-    let timePosted = player.timeInStage();
-    let message = {
-        proposal: player.myDivisionProposal,
-        player: player.id, 
-        timePosted,
-    };
-    group.divisionProposals.new(message);
 }
 
 decisionStage.playerEnd = function(player) {
+
     if (player.group.period.id == 1) {
-        player.participant.outcomes = [];
+        player.participant.allocationOutcomes = [];
+        player.participant.divisionOutcomes = [];
     }
-    player.participant.outcomes.push(player.myAllocationProposal);
+    player.participant.allocationOutcomes.push({x: player.myAllocationProposal.x, y: player.myAllocationProposal.y});
+    player.participant.divisionOutcomes.push({x: player.myDivisionProposal.x, y: player.myDivisionProposal.y});
+
 }
 
 app.participantEnd = function(participant) {
@@ -435,7 +440,7 @@ app.participantEnd = function(participant) {
     Utils.shuffle(ints);
     ints = ints.splice(0, N);
 
-    let payout = 0;
+    let totalPayout = 0;
     let chosenDecisions = [];
     let chosenGoods = [];
     let chosenPayouts = [];
@@ -445,19 +450,29 @@ app.participantEnd = function(participant) {
         let p = ints[i];
         chosenDecisions.push(p+1);
         chosenGoods.push(selectedGood);
-        chosenPayouts.push(participant.outcomes[p][selectedGood] * app.exRate);
-        payout += participant.outcomes[p][selectedGood];
+        let allocation = participant.allocationOutcomes[p][selectedGood];
+        let division = participant.divisionOutcomes[p][selectedGood];
+        let payout = allocation * division / 100 * app.exRate;
+        chosenPayouts.push(payout);
+        totalPayout += payout;
     }
+    console.log('storing', chosenDecisions, chosenGoods, chosenPayouts, totalPayout);
     participant.chosenDecisions.push(chosenDecisions);
-    participant.chosenGoods.push(selectedGoods);
+    participant.chosenGoods.push(chosenGoods);
     participant.chosenPayouts.push(chosenPayouts);
-    participant.payouts.push(payout);
+    participant.payouts.push(totalPayout);
+
 }
 
 
 
 // Returns sum of all individual player proposals (for x and y), or false if not all players have made a proposal yet.
 app.areProposalsValid = function(group) {
+
+    if (group.players.length < 2) {
+        return true;
+    }
+
     let p1 = group.players[0];
     let p2 = group.players[1];
 
