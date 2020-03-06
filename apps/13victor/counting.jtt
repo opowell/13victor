@@ -168,7 +168,7 @@ decisionStage.activeScreen = /*html*/`
   </div>
 </div>
 <div style='display: flex; flex-direction: column;'>
-    <div style='display: flex; flex-direction: row; width: 1100px; justify-content: center;'>
+    <div :style='"display: flex; flex-direction: row; width: " + ((app.treatment === "pair" && app.session.divisionType === "ENDO") ? 1180 : 1000) + "px; justify-content: center;"'>
         <div class="card" :style='app.treatment === "pair" ? "flex: 1 1 auto" : ""'>
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
@@ -178,10 +178,7 @@ decisionStage.activeScreen = /*html*/`
                     </div>
                     <div
                         v-if='
-                            app.treatment === "pair" && 
-                            player.myAllocationProposal.x != "" && 
-                            player.partnerAllocationProposal !== null && 
-                            player.partnerAllocationProposal.x !== ""
+                            app.treatment === "pair" 
                         '
                         style='flex: 0 1 auto; padding-left: 20px;'
                     >
@@ -268,8 +265,8 @@ decisionStage.activeScreen = /*html*/`
                         <br>
                         <span style='flex: 0 0 auto'>0%</span>
                         <span style='position: relative'>
-                            <span v-show='player.partnerDivisionProposal.x !== "" && player.myDivisionProposal.x !== ""' id='partnerDivisionXBar' class='divisionBar'></span>
-                            <span v-show='player.partnerDivisionProposal.x !== "" && player.myDivisionProposal.x !== ""' id='partnerDivisionXText' class='divisionText'></span>
+                            <span v-show='player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionXBar' class='divisionBar'></span>
+                            <span v-show='player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionXText' class='divisionText'></span>
                             <input id="myDivisionX" value='0' style='position: relative' type="range" min="0" max="100" step="1" onchange="confirmDivisionSelection(event)"> 
                         </span>
                         <span style='flex: 0 0 auto'>100%</span>
@@ -280,8 +277,8 @@ decisionStage.activeScreen = /*html*/`
                         <br>
                         0%
                         <span style='position: relative'>
-                            <span v-show='player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionYBar' class='divisionBar'></span>
-                            <span v-show='player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionYText' class='divisionText'></span>
+                            <span v-show='player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionYBar' class='divisionBar'></span>
+                            <span v-show='player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== "" && player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== ""' id='partnerDivisionYText' class='divisionText'></span>
                             <input id="myDivisionY" value='0' style='position: relative' type="range" min="0" max="100" step="1" onchange="confirmDivisionSelection(event)">
                         </span>
                         100%
@@ -365,14 +362,19 @@ app.messages.setMyAllocationProposal = function(proposal) {
         partner.emit('setPartnerAllocationProposal', proposal);
     }
 
+    app.checkIfValid(group, player, partner, this);
+
+}
+
+app.checkIfValid = function(group, player, partner, client) {
     let valid = app.areProposalsValid(group);
     if (valid) {
         group.validProposals = true;
     } 
 
     // Player exits decision stage after making proposal.
-    if (player.app().treatment !== 'pair') {
-        let end = app.messages.endBargaining.bind(this);
+    if (app.treatment !== 'pair') {
+        let end = app.messages.endBargaining.bind(client);
         end();
     }     
     else {
@@ -408,6 +410,9 @@ app.messages.setMyDivisionProposal = function(proposal) {
     let partner = group.playersExcept(player)[0];
     partner.partnerDivisionProposal = player.myDivisionProposal;
     partner.emit('setPartnerDivisionProposal', player.myDivisionProposal);
+
+    app.checkIfValid(group, player, partner, this);
+
 }
 
 decisionStage.playerEnd = function(player) {
@@ -426,8 +431,10 @@ app.participantEnd = function(participant) {
     if (participant.chosenPayouts == null) {
         participant.chosenDecisions = [];
         participant.chosenPayouts = [];
+        participant.chosenDivisions = [];
+        participant.chosenAllocations = [];
         participant.chosenGoods = [];
-        participant.payouts = [];
+        participant.chosenEuros = []; 
     }
 
     let N = app.numPaidDecisions;
@@ -444,27 +451,37 @@ app.participantEnd = function(participant) {
     Utils.shuffle(ints);
     ints = ints.splice(0, N);
 
-    let totalPayout = 0;
     let chosenDecisions = [];
     let chosenGoods = [];
     let chosenPayouts = [];
+    let chosenAllocations = [];
+    let chosenDivisions = [];
+    let chosenEuros = [];
 
     for (let i=0; i<ints.length; i++) {
         let selectedGood = (Math.random() < app.session.probSelX) ? 'x' : 'y';
         let p = ints[i];
         chosenDecisions.push(p+1);
         chosenGoods.push(selectedGood);
-        let allocation = participant.allocationOutcomes[p][selectedGood];
-        let division = participant.divisionOutcomes[p][selectedGood];
-        let payout = allocation * division / 100 * app.exRate;
+        let allocation = participant.allocationOutcomes[p];
+        chosenAllocations.push(allocation);
+        let division = participant.divisionOutcomes[p];
+        let payout = allocation[selectedGood];
+        if (division.x === '') {
+            division = '-';
+        } else {
+            payout *= division[selectedGood] / 100;
+        }
+        chosenDivisions.push(division);
         chosenPayouts.push(payout);
-        totalPayout += payout;
+        chosenEuros.push(payout * app.exRate);
     }
-    console.log('storing', chosenDecisions, chosenGoods, chosenPayouts, totalPayout);
     participant.chosenDecisions.push(chosenDecisions);
     participant.chosenGoods.push(chosenGoods);
     participant.chosenPayouts.push(chosenPayouts);
-    participant.payouts.push(totalPayout);
+    participant.chosenDivisions.push(chosenDivisions);
+    participant.chosenAllocations.push(chosenAllocations);
+    participant.chosenEuros.push(chosenEuros);
 
 }
 

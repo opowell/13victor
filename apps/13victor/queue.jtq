@@ -185,3 +185,5 @@ if (session.playFirst !== 'pair') {
 }
 
 session.addApp('results.jtt');
+
+session.addApp('survey.jtt');

@@ -3,7 +3,15 @@ jt.connected = function() {
     
     player = JSON.parse(player);
 
+    if (player.roomId !== jt.vue.player.roomId) {
+      resetRangeInputs();
+    }
+
     Vue.nextTick(function() {
+
+      if (player.status !== 'playing') {
+        return;
+      }
       updateChart(player);
       if (player.myDivisionProposal != null && player.myDivisionProposal.x != '') {
         $('#myDivisionX').val(player.myDivisionProposal.x);
@@ -373,7 +381,7 @@ jt.autoplay_decide = function() {
   }
 
   if (jt.vue.player.myDivisionProposal.x === '') {
-    let proposal = { x: 50, y: 50 };
+    let proposal = { X: 50, Y: 50 };
     jt.sendMessage("setMyDivisionProposal", proposal);
     return;
   }
@@ -388,25 +396,41 @@ let confirmAllocationSelection = function(event) {
   if (jt.vue.player.toolTipX < 0 || jt.vue.player.toolTipY < 0) {
     return;
   }
+
+  if (jt.vue.player.myAllocationProposal.x === jt.vue.player.partnerAllocationProposal.x &&
+    jt.vue.player.myAllocationProposal.y === jt.vue.player.partnerAllocationProposal.y) {
+      return;
+    }
   jt.showingAllocationModal = true;
   $('#confirmAllocationModal').modal('show');
 };
 
 let cancelDivisionProposal = function() {
   if (isNumeric(jt.vue.player.myDivisionProposal.x)) {
-    $('#myAllocX').val(jt.vue.player.myDivisionProposal.x);
+    $('#myDivisionX').val(jt.vue.player.myDivisionProposal.x);
   } else {
-    $('#myAllocX').val(-1);
+    $('#myDivisionX').val(-1);
   }
-  $('#myAllocY').val(jt.vue.player.myDivisionProposal.y);
+  $('#myDivisionY').val(jt.vue.player.myDivisionProposal.y);
 }
 
 let confirmDivisionSelection = function(event) {
+
+  let noCurChoice = null;
   if (event.target.id === 'myDivisionX') {
     jt.vue.player.newDivisionLetter = 'X';
+    noCurChoice = jt.vue.player.myDivisionProposal.x === '';
   } else {
     jt.vue.player.newDivisionLetter = 'Y';
+    noCurChoice = jt.vue.player.myDivisionProposal.y === '';
   }
+  if (!noCurChoice &&
+    jt.vue.player.myDivisionProposal.x === jt.vue.player.partnerDivisionProposal.x &&
+    jt.vue.player.myDivisionProposal.y === jt.vue.player.partnerDivisionProposal.y
+  ) {
+      return;
+    }
+
   jt.vue.player.newDivisionValue = event.target.value;
   $('#confirmDivisionModal').modal('show');
 };
@@ -434,6 +458,7 @@ updateChart = function(player) {
       max: chartMax,
       gridLineWidth: 0.5,
       tickInterval: 10,
+      margin: 25,
       title: {
         text: "X",
         style: {
@@ -441,7 +466,7 @@ updateChart = function(player) {
           "font-size": "14pt",
           "margin": "5px",
         },
-        },
+      },
     },
     yAxis: {
       min: 0,
@@ -451,10 +476,10 @@ updateChart = function(player) {
       title: {
         text: "Y",
         rotation: 0,
+        margin: 25,
         style: {
           "font-weight": "bolder",  
           "font-size": "14pt",
-          "margin": "5px",
         },
       }
     },
@@ -574,8 +599,8 @@ showSliderThumb = function(letter) {
 }
 
 confirmNewRound = function() {
-    jt.sendMessage('endBargaining');
-    resetRangeInputs();
+  resetRangeInputs();
+  jt.sendMessage('endBargaining');
 }
 
 keyUp = function(event) {

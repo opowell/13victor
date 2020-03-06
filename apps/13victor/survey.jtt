@@ -1,0 +1,47 @@
+app.isStandaloneApp = false;
+app.groupSize = 1;
+
+let page1 = app.newStage('page1');
+page1.activeScreen = `
+<p>1. What is your age?</p>
+<input required name='player.age' type='text'>
+<br><br>
+
+<p>2. What is your gender?</p>
+<input name='player.gender' type='radio' required value='male' id='genderMale'>
+<label for='genderMale'>Male</label>
+<input name='player.gender' type='radio' required value='female' id='genderFemale'>
+<label for='genderFemale'>Female</label>
+<input name='player.gender' type='radio' required value='other' id='genderOther'>
+<label for='genderOther'>Other</label>
+<br><br>
+
+<p>3. What is your field of study?</p>
+<input required name='player.fieldOfStudy' type='text'>
+<br><br>
+
+<p>4. In which year did you first enroll in university?</p>
+<input required name='player.firstYearUni' type='text'>
+<br><br>
+
+<p>5. What is your first (native) language?</p>
+<input required name='player.firstLang' type='text'>
+<br><br>
+`;
+
+let page2 = app.newStage('page2');
+page2.activeScreen = `
+<p>6. In part A of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
+<textarea required name='player.partARule' rows=5 cols=60></textarea>
+<br><br>
+
+<p>7. In part B of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
+<textarea required name='player.partBRule' rows=5 cols=60></textarea>
+<br><br>
+
+<style>
+textarea {
+    font-size: inherit;
+}
+</style>
+`;

@@ -1,31 +1,60 @@
 let results = app.newStage('results');
+results.playerStart = function(player) {
+    let participant = player.participant;
+    participant.payoffs = [];
+    let partNames = ['Training', 'Part A', 'Part B'];
+    player.totalEuros = 0;
+    for (let i=0; i<participant.chosenPayouts.length; i++) {
+        let partName = partNames[i];
+        for (let j=0; j<participant.chosenPayouts[i].length; j++) {
+            participant.payoffs.push({
+                part: partName,
+                round: participant.chosenDecisions[i][j],
+                allocation: participant.chosenAllocations[i][j],
+                division: participant.chosenDivisions[i][j],
+                account: participant.chosenGoods[i][j],
+                tokens: participant.chosenPayouts[i][j],
+                euros: participant.chosenEuros[i][j],
+            });
+            player.totalEuros += participant.chosenEuros[i][j];
+        }
+    }
+}
 results.activeScreen = `
-    <h3>Earnings</h3>
-    <table>
+    <h3>Your earnings</h3>
+    <style>
+        td {
+            padding: 5px;
+        }
+    </style>
+    <table style='font-size: inherit'>
         <tr>
             <th>Part</th>
             <th>Round</th>
             <th>Allocation</th>
+            <th>Division</th>
             <th>Account</th>
             <th>Tokens</th>
             <th>EUR</th>
         </tr>
         <tr v-for='(payoff, index) in participant.payoffs' :key='index'>
-            <td>{{payoff.part}}</td>
-            <td>{{payoff.round}}</td>
-            <td>{{payoff.allocation}}</td>
-            <td>{{payoff.account}}</td>
-            <td>{{payoff.tokens}}</td>
-            <td><b>{{payoff.euros}}</b></td>
+            <td style='text-align: center'>{{payoff.part}}</td>
+            <td style='text-align: center'>{{payoff.round}}</td>
+            <td style='text-align: center'>X: {{payoff.allocation.x}}, Y: {{payoff.allocation.y}}</td>
+            <td style='text-align: center'>{{payoff.division === '-' ? '-' : "X: " + payoff.division.x + ", Y: " + payoff.division.y}}</td>
+            <td style='text-align: center'>{{payoff.account === 'x' ? 'X' : 'Y'}}</td>
+            <td style='text-align: right'>{{payoff.tokens | round(2)}}</td>
+            <td style='text-align: right'><b>{{payoff.euros | round(2)}}</b></td>
         </tr>
 
         <tr>
             <td></td>
             <td></td>
             <td></td>
+            <td></td>
+            <td></td>
             <td><b>TOTAL</b></td>
-            <td>{{player.totalTokens}}</td>
-            <td><b>{{player.totalEuros}}</b></td>
+            <td><b>{{player.totalEuros | round(2)}}</b></td>
         </tr>
     </table>
 
