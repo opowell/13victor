@@ -1,6 +1,32 @@
 let results = app.newStage('results');
 results.activeScreen = `
-    <p v-if='app.session.payPracticeRound === "yes"'>Practice: {{participant.payouts[0]}} EUR.</p>
-    <p>Part 1: {{participant.payouts[1]}} EUR.</p>
-    <p>Part 2: {{participant.payouts[2]}} EUR.</p>
+    <h3>Earnings</h3>
+    <table>
+        <tr>
+            <th>Part</th>
+            <th>Round</th>
+            <th>Allocation</th>
+            <th>Account</th>
+            <th>Tokens</th>
+            <th>EUR</th>
+        </tr>
+        <tr v-for='(payoff, index) in participant.payoffs' :key='index'>
+            <td>{{payoff.part}}</td>
+            <td>{{payoff.round}}</td>
+            <td>{{payoff.allocation}}</td>
+            <td>{{payoff.account}}</td>
+            <td>{{payoff.tokens}}</td>
+            <td><b>{{payoff.euros}}</b></td>
+        </tr>
+
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>TOTAL</b></td>
+            <td>{{player.totalTokens}}</td>
+            <td><b>{{player.totalEuros}}</b></td>
+        </tr>
+    </table>
+
 `;

@@ -51,6 +51,12 @@ jt.connected = function() {
 
 function enableChartMouseMoving() {
   jt.chart.container.onmousemove = function(e) {
+
+    let chartMax = 100;
+    if (jt.vue.app.session != null) {
+      chartMax = jt.vue.app.session.chartMax;
+    }
+
     e = jt.chart.pointer.normalize(e);
     let xVal = jt.chart.xAxis[0].toValue(e.chartX);
     let yVal = jt.chart.yAxis[0].toValue(e.chartY);
@@ -66,11 +72,11 @@ function enableChartMouseMoving() {
       xVal = xMax;
       yVal = 0;
     } else if (xVal > yVal) {
-      yVal = 200/xVal * yVal;
-      xVal = 200;
+      yVal = chartMax/xVal * yVal;
+      xVal = chartMax;
     } else {
-      xVal = 200/yVal * xVal;
-      yVal = 200;
+      xVal = chartMax/yVal * xVal;
+      yVal = chartMax;
     }
 
     let selX = null;
@@ -356,7 +362,7 @@ jt.autoplay_decide = function() {
     return;
   }
 
-  if (jt.vue.player.myAllocationProposal.x === '') {
+  if (!jt.vue.player.madeAllocationSelection) {
     let point = randomEl(jt.budgetData);
     if (jt.vue.app.treatment == 'pair') {
       point = jt.budgetData[0];
@@ -411,6 +417,12 @@ jt.sendProposal = function() {
 }
 
 updateChart = function(player) {
+
+  let chartMax = 100;
+  if (player.group.period.app.session != null) {
+    chartMax = player.group.period.app.session.chartMax;
+  }
+
   jt.chart = Highcharts.chart('containerBargain', {
     chart: {
       events: {
@@ -419,20 +431,31 @@ updateChart = function(player) {
     },
     xAxis: {
       min: 0,
-      max: 200,
+      max: chartMax,
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
-        text: "X"
-      }
+        text: "X",
+        style: {
+          "font-weight": "bolder",
+          "font-size": "14pt",
+          "margin": "5px",
+        },
+        },
     },
     yAxis: {
       min: 0,
-      max: 200,
+      max: chartMax,
       gridLineWidth: 0.5,
       tickInterval: 10,
       title: {
-        text: "Y"
+        text: "Y",
+        rotation: 0,
+        style: {
+          "font-weight": "bolder",  
+          "font-size": "14pt",
+          "margin": "5px",
+        },
       }
     },
     title: {
@@ -492,7 +515,7 @@ getSeries = function(player) {
   if (player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
     series.push({
       type: "scatter",
-      name: "my allocation proposal",
+      name: "My allocation proposal",
       color: "black",
       data: [[player.myAllocationProposal.x, player.myAllocationProposal.y]],
       marker: {
@@ -510,10 +533,10 @@ getSeries = function(player) {
       }
     });    
   }
-  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x !== '' && player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
+  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x !== '' && player.madeAllocationSelection) {
     series.push({
       type: "scatter",
-      name: "other player's allocation proposal",
+      name: "Other's allocation proposal",
       color: "blue",
       data: [[player.partnerAllocationProposal.x, player.partnerAllocationProposal.y]],
       marker: {

@@ -2,6 +2,10 @@ let trainingBudgets = [{maxX: 50, maxY: 50, id: 1}];
 
 let treatments = [
     {
+        name: 'Custom',
+        fieldValues: {},
+    },
+    {
         name: 'T1',
         fieldValues: {
             divisionType: 'EXOG',
@@ -77,11 +81,19 @@ for (let i in treatments) {
 
 session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
 
+session.addSelectOption('divisionType', ['EXOG', 'ENDO'], 'The type of division.');
+session.addNumberOption('e1', 1, 0, 10, 0.01, 'Player 1 individual budget set multiplier.');
+session.addNumberOption('e2', 1, 0, 10, 0.01, 'Player 2 individual budget set multiplier.');
+session.addNumberOption('m', 1, 0, 10, 0.01, 'Group budget set multiplier.');
+session.addNumberOption('d1', 1, 0, 100, 0.01, 'If EXOG division, Player 1 share of the group allocation.');
+session.addNumberOption('d2', 1, 0, 100, 0.01, 'If EXOG division, Player 2 share of the group allocation.');
+
+session.addNumberOption('chartMax', 200, 0, 1000, 1, 'Chart scale.');
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
 session.addNumberOption('numPracticeRounds', 1, 0, 100, 1, 'Number of practice rounds.');
-session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of paid decisions per round.');
+session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of randomly paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
-session.addSelectOption('payPracticeRound', ['no', 'yes'], 'Whether or not the practice round is paid.');
+session.addSelectOption('payPracticeRound', ['yes', 'no'], 'Whether or not the practice round is paid.');
 session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round, if paid.');
 session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate for individual part.');
 session.addNumberOption('exchangeRatePairs', 1, 0, 1000, 0.001, 'Exchange rate for pairs part.');
@@ -89,8 +101,10 @@ session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play
 
 for (let i in treatments) {
     let tr = treatments[i];
+    if (tr.name === 'Custom') {
+        break;
+    }
     if (session.treatment.startsWith(tr.name)) {
-        console.log('treatment = ' + session.treatment);
         for (let j in tr.fieldValues) {
             session[j] = tr.fieldValues[j];
         }
@@ -98,22 +112,28 @@ for (let i in treatments) {
     }
 }
 
-let budgetMax = 100;
-let budgetMin = 10;
+
+// Draw budget lines.
+// - intersect at least one axis at or above the 50-token level
+// - intersect both axes at or below the 100-token level.
+function drawBudgetMax1() {
+    return Utils.randomInt(50, 101);
+}
+
+function drawBudgetMax2() {
+    return Utils.randomInt(0, 101);
+}
 
 function drawBudgets(numBudgets) {
     let budgets = [];
-    let min = budgetMin;
-    let mid = budgetMax / 2;
     for (let i=0; i<numBudgets; i++) {
-        let x = Utils.randomInt(min, budgetMax+1);
-        let y = Utils.randomInt(min, budgetMax+1);
-        if (x < mid && y < mid) {
-            if (Math.random() < 0.5) {
-                x += mid;
-            } else {
-                y += mid;
-            }
+        let x = drawBudgetMax1();
+        let y = drawBudgetMax2();
+        // 50% chance to switch.
+        if (Math.random() < 0.5) {
+            let z = x;
+            x = y;
+            y = z;
         }
         budgets.push({
             maxX: x,
@@ -126,7 +146,6 @@ function drawBudgets(numBudgets) {
 
 let exampleBudgets = drawBudgets(session.numPracticeRounds);
 let paidBudgets = drawBudgets(session.numRounds);
-// let shuffledBudgets = Utils.shuffle(realBudgets);
 
 session.addApp('1_instructions_training.jtt');
 session.addApp('counting.jtt', {
