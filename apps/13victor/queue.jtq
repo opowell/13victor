@@ -99,6 +99,15 @@ session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate f
 session.addNumberOption('exchangeRatePairs', 1, 0, 1000, 0.001, 'Exchange rate for pairs part.');
 session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play first (individual or pair)');
 
+session.ravenMatricesPractice = {
+    questionIds: [1, 2],
+    answers: [1, 5],
+};
+session.ravenMatrices = {
+    questionIds: [3, 10, 12, 15, 16, 18, 21, 22, 28, 30, 31, 34],
+    answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
+}
+
 for (let i in treatments) {
     let tr = treatments[i];
     if (tr.name === 'Custom') {
@@ -121,7 +130,7 @@ function drawBudgetMax1() {
 }
 
 function drawBudgetMax2() {
-    return Utils.randomInt(0, 101);
+    return Utils.randomInt(10, 101);
 }
 
 function drawBudgets(numBudgets) {
@@ -147,43 +156,65 @@ function drawBudgets(numBudgets) {
 let exampleBudgets = drawBudgets(session.numPracticeRounds);
 let paidBudgets = drawBudgets(session.numRounds);
 
-session.addApp('1_instructions_training.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'individual',
-    text: 'training',
-    budgets: exampleBudgets,
-    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
-    exRate: session.exchangeRatePracticeRound,
+// session.addApp('1_instructions_training.jtt');
+// session.addApp('counting.jtt', {
+//     treatment: 'individual',
+//     text: 'training',
+//     budgets: exampleBudgets,
+//     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+//     exRate: session.exchangeRatePracticeRound,
+// });
+
+// function addPairApps() {
+//     session.addApp('2_instructions_main.jtt');
+//     session.addApp('counting.jtt', {
+//         treatment: 'pair',
+//         numPaidDecisions: session.numPaidDecisionsPerRound,
+//         text: 'standard',
+//         budgets: paidBudgets,
+//         exRate: session.exchangeRatePairs,
+//     });
+// }
+
+// if (session.playFirst === 'pair') {
+//     addPairApps();
+// }
+
+// session.addApp('2_instructions_main.jtt');
+// session.addApp('counting.jtt', {
+//     treatment: 'individual',
+//     numPaidDecisions: session.numPaidDecisionsPerRound,
+//     text: 'standard',
+//     budgets: paidBudgets,
+//     exRate: session.exchangeRateIndiv,
+// });
+
+// if (session.playFirst !== 'pair') {
+//     addPairApps();
+// }
+
+// session.addApp('results.jtt');
+
+session.addApp('3_instructions_ravens.jtt', {
+    playType: 'practice',
+    matrices: session.ravenMatricesPractice,
 });
 
-function addPairApps() {
-    session.addApp('2_instructions_main.jtt');
-    session.addApp('counting.jtt', {
-        treatment: 'pair',
-        numPaidDecisions: session.numPaidDecisionsPerRound,
-        text: 'standard',
-        budgets: paidBudgets,
-        exRate: session.exchangeRatePairs,
-    });
-}
-
-if (session.playFirst === 'pair') {
-    addPairApps();
-}
-
-session.addApp('2_instructions_main.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'individual',
-    numPaidDecisions: session.numPaidDecisionsPerRound,
-    text: 'standard',
-    budgets: paidBudgets,
-    exRate: session.exchangeRateIndiv,
+session.addApp('ravens.jtt', { 
+    imagePrefix: 'Practice',
+    playType: 'practice',
+    matrices: session.ravenMatricesPractice,
 });
 
-if (session.playFirst !== 'pair') {
-    addPairApps();
-}
+session.addApp('3_instructions_ravens.jtt', {
+    playType: 'real',
+    matrices: session.ravenMatrices,
+});
 
-session.addApp('results.jtt');
+session.addApp('ravens.jtt', { 
+    imagePrefix: 'Raven',
+    playType: 'real',
+    matrices: session.ravenMatrices,
+});
 
 session.addApp('survey.jtt');

@@ -30,12 +30,12 @@ results.activeScreen = `
     <table style='font-size: inherit'>
         <tr>
             <th>Part</th>
-            <th>Round</th>
-            <th>Allocation</th>
+            <th>Selected<br>round</th>
+            <th>Chosen<br>allocation</th>
             <th>Division</th>
-            <th>Account</th>
-            <th>Tokens</th>
-            <th>EUR</th>
+            <th>Selected<br>account</th>
+            <th>Tokens<br>earned</th>
+            <th>EUR<br>earned</th>
         </tr>
         <tr v-for='(payoff, index) in participant.payoffs' :key='index'>
             <td style='text-align: center'>{{payoff.part}}</td>

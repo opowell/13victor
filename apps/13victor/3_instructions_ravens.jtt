@@ -1,0 +1,8 @@
+app.isStandaloneApp = false;
+
+let instructions = app.newStage('instructions');
+instructions.activeScreen = `
+    <p>You will now answer {{ app.matrices.questionIds.length }} Raven matrices, as described in the instructions.</p>
+    <p v-if='app.playType === "practice"'>This is for practice.</p>
+    <p v-if='app.playType === "real"'>This is for real.</p>
+`

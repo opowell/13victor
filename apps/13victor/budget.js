@@ -210,13 +210,13 @@ function draw_plot_lines(xValue, xPos, yPos){
     zIndex: 2001
   }).add();
 
-  if (xPos >= 0 && yPos >= 0) {
-    lineMouse = jt.chart.renderer.path(['M', x0, y0, 'L', xMousePixels, yMousePixels]).attr({
-      'stroke-width': 1,
-      stroke: '#ff000029',
-      zIndex: 2002
-    }).add();
-  } 
+  // if (xPos >= 0 && yPos >= 0) {
+  //   lineMouse = jt.chart.renderer.path(['M', x0, y0, 'L', xMousePixels, yMousePixels]).attr({
+  //     'stroke-width': 1,
+  //     stroke: '#ff000029',
+  //     zIndex: 2002
+  //   }).add();
+  // } 
 
 }
 
@@ -537,7 +537,7 @@ getSeries = function(player) {
       enableMouseTracking: true
     }
   ];
-  if (player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
+  if (!player.initialCircle && player.myAllocationProposal != null && player.myAllocationProposal.x !== '') {
     series.push({
       type: "scatter",
       name: "My allocation proposal",
@@ -638,6 +638,7 @@ jt.sendAllocationProposal = function() {
         y: jt.toolTipY,
     };
     jt.sendMessage('setMyAllocationProposal', proposal);
+    jt.vue.player.initialCircle = false;
 }
 sendChatMessageToServer = function() {
     let content = $('#chatMessageInput').val();
@@ -661,7 +662,6 @@ jt.setProposal = function(letter, value, person) {
     if (isNaN(value) || value === '') {
         return;
     }
-    let left = 1.27*value;
     $('#' + person + 'Division' + letter + 'Bar').css('left', value + '%');
     // $('#' + person + 'Division' + letter + 'Bar').css('display', 'flex');
     $('#' + person + 'Division' + letter + 'Text').text(value);
@@ -673,3 +673,53 @@ jt.setProposal = function(letter, value, person) {
     }
     $('#' + person + 'Division' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
 }
+
+var valueHover = 0;
+function calcSliderPos(e) {
+  let x = (e.offsetX / e.target.clientWidth) *  parseInt(e.target.getAttribute('max'),10);
+  if (x > 100) {
+    x = 100;
+  }
+  if (x < 0) {
+    x = 0;
+  }
+  return x;
+}
+let mouseMove = function(event, letter) {
+  let value = calcSliderPos(event);
+  $('#hoverDivision' + letter + 'Bar').css('left', value + '%');
+  $('#hoverDivision' + letter + 'Text').text(value.toFixed(0));
+  jt.vue.player['hoverDivision' + letter] = value;
+  let adjLeft = 3;
+  if (value >= 10 && value < 100) {
+      adjLeft = 6;
+  } else if (value >= 100) {
+      adjLeft = 11;
+  }
+  $('#hoverDivision' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
+}
+
+let mouseLeave = function(letter) {
+  // jt.vue.player['hoverDivision' + letter] = -1;
+}
+
+let clickDivisionSelection = function(event, letter) {
+
+  let noCurChoice = null;
+  jt.vue.player.newDivisionLetter = letter;
+  if (letter === 'X') {
+    noCurChoice = jt.vue.player.myDivisionProposal.x === '';
+  } else {
+    noCurChoice = jt.vue.player.myDivisionProposal.y === '';
+  }
+  if (!noCurChoice &&
+    jt.vue.player.myDivisionProposal.x === jt.vue.player.partnerDivisionProposal.x &&
+    jt.vue.player.myDivisionProposal.y === jt.vue.player.partnerDivisionProposal.y
+  ) {
+      return;
+    }
+
+  let value = calcSliderPos(event);
+  jt.vue.player.newDivisionValue = value;
+  $('#confirmDivisionModal').modal('show');
+};
