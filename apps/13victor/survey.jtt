@@ -27,15 +27,36 @@ page1.activeScreen = `
 <p>5. What is your first (native) language?</p>
 <input required name='player.firstLang' type='text'>
 <br><br>
+
+<p>6. Please tell us, in general, how willing or unwilling you are to take risks in financial matters. Please use a scale from 0 to 10, where 0 means “completely unwilling to take risks” and a 10 means you are “very willing to take risks”.</p>
+<div style='display: flex; justify-content: center'>
+<label :for='"risk" + i' class="answerBox" v-for='i in 11'>
+    <input :id='"risk" + i' type='radio' name="player.risk" required :value='i-1'>
+    <span style='text-align: center'>{{ i-1 }}</span>
+</label>
+</div>
+<br><br>
+
+<style>
+.answerBox {
+    padding: 5px 15px;
+    cursor: pointer;
+    display: flex; 
+    flex-direction: column;
+    align-items: center; 
+    justify-content: flex-start;
+}
+</style>
+
 `;
 
 let page2 = app.newStage('page2');
 page2.activeScreen = `
-<p>6. In part A of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
+<p>7. In part A of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
 <textarea required name='player.partARule' rows=5 cols=60></textarea>
 <br><br>
 
-<p>7. In part B of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
+<p>8. In part B of the experiment, was there a rule according to which you made your choices? If yes, could you please describe this rule?</p>
 <textarea required name='player.partBRule' rows=5 cols=60></textarea>
 <br><br>
 

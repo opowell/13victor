@@ -40,7 +40,7 @@ choiceStage.playerStart = function (player) {
         player.answers.push('no answer');
     }
 }
-choiceStage.duration = 600;
+choiceStage.duration = app.playType === 'practice' ? 120 : 600;
 choiceStage.addOKButtonIfNone = false;
 choiceStage.activeScreen = /*html*/`
 <!-- MAIN -->
@@ -71,12 +71,12 @@ choiceStage.activeScreen = /*html*/`
         </div>
     </div>
     <!-- RIGHT -->
-    <div style='display: flex'>
+    <div style='display: flex; max-width: 200px;'>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
                 <h5 class="card-title">Question list</h5>
-                <div style='display: flex;'>
-                    <div :class="{ 'selected': i === 1 }" class="questionBox" :id="'Q' + i" v-for="i in app.matrices.questionIds.length" :key="i" :data-question="i" onclick="jt.changeToQuestion(event)">
+                <div style='display: flex; flex-wrap: wrap;'>
+                    <div class="questionBox" :id="'Q' + i" v-for="i in app.matrices.questionIds.length" :key="i" :data-question="i" onclick="jt.changeToQuestion(event)">
                         {{i}}
                     </div>
                 </div>
@@ -85,6 +85,21 @@ choiceStage.activeScreen = /*html*/`
     </div>
 </div>
     <script>
+jt.connected = function() {
+  jt.socket.on("playerUpdate", function(player) {
+    player = JSON.parse(player);
+    Vue.nextTick(function() {
+        let x = player.matrixId;
+        for (let i=0; i<player.answers.length; i++) {
+            let ans = player.answers[i];
+            if (ans !== 'no answer') {
+                $('#Q' + (i+1)).addClass('answered');
+            }
+        }
+        jt.changeToQuestion({ target: { dataset: { question: x }}});
+    });
+  });
+}
         jt.changeToQuestion = function(event) {
             $('#Q' + jt.vue.player.matrixId).removeClass('selected');
             $('.answerBox').removeClass('selected');
@@ -95,8 +110,7 @@ choiceStage.activeScreen = /*html*/`
             $('#Q' + i).addClass('selected');
             let answer = jt.vue.player.answers[i-1];
             if (answer !== "no answer") {
-                $('#A' + answer).addClass('selected');
-                $('#input' + answer).prop('checked', true);
+                jt.setAnswer({ target: { dataset: { answer: answer}}});
             }
         }
         jt.setAnswer = function(event) {
@@ -108,6 +122,7 @@ choiceStage.activeScreen = /*html*/`
             $('#A' + answer).addClass('selected');
             $('#input' + answer).prop('checked', true);
             $('#Q' + i).addClass('answered');
+            jt.sendMessage('setAnswer', { matrixId: i, answer: answer });
         }
 
     </script>    
@@ -143,17 +158,9 @@ choiceStage.activeScreen = /*html*/`
         background-color: #aed8ae;
     }
     </style>
-    `;
-choiceStage.playerEnd = function (player) {
-    let period = player.group.period;
-    if (player.choice == app.answers[period.id - 1]) {
-        player.points = player.points + 0.5;
-    }
-}
+`;
 
-app.participantEnd = function (participant) {
-    if (participant.scores == null) {
-        participant.scores = [];
-    }
-    participant.scores.push(participant.pointsForApp(this));
+app.messages.setAnswer = function (data) {
+    let player = this.participant.player;
+    player.answers[data.matrixId - 1] = data.answer;
 }

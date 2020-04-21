@@ -1,13 +1,13 @@
-jt.connected = function() {
-  jt.socket.on("playerUpdate", function(player) {
-    
+jt.connected = function () {
+  jt.socket.on("playerUpdate", function (player) {
+
     player = JSON.parse(player);
 
     if (player.roomId !== jt.vue.player.roomId) {
       resetRangeInputs();
     }
 
-    Vue.nextTick(function() {
+    Vue.nextTick(function () {
 
       if (player.status !== 'playing') {
         return;
@@ -18,7 +18,7 @@ jt.connected = function() {
         $('#myDivisionY').val(player.myDivisionProposal.y);
       } else {
         $('#myDivisionX').val(0);
-        $('#myDivisionY').val(0);        
+        $('#myDivisionY').val(0);
       }
 
       if (player.myDivisionProposal != null && player.myDivisionProposal.x !== '') {
@@ -37,14 +37,14 @@ jt.connected = function() {
       $('#confirmAllocationModal').on('hidden.bs.modal', function (e) {
         jt.showingAllocationModal = false;
       });
-            
+
     });
     if (player.partnerDivisionProposal != null && jt.messages.setPartnerDivisionProposal != null) {
       jt.messages.setPartnerDivisionProposal(player.partnerDivisionProposal);
     }
 
-    if (player.group.validProposals) {
-      $('#informMatchModal').modal({backdrop: 'static', keyboard: false});
+    if (player.group.validProposals && player.status === 'playing') {
+      $('#informMatchModal').modal({ backdrop: 'static', keyboard: false });
     } else {
       $('#informMatchModal').modal('hide');
     }
@@ -58,7 +58,7 @@ jt.connected = function() {
 };
 
 function enableChartMouseMoving() {
-  jt.chart.container.onmousemove = function(e) {
+  jt.chart.container.onmousemove = function (e) {
 
     let chartMax = 100;
     if (jt.vue.app.session != null) {
@@ -68,7 +68,7 @@ function enableChartMouseMoving() {
     e = jt.chart.pointer.normalize(e);
     let xVal = jt.chart.xAxis[0].toValue(e.chartX);
     let yVal = jt.chart.yAxis[0].toValue(e.chartY);
-    if (xVal < 0 && yVal < 0) {
+    if (xVal < 0 && yVal < 0) {
       return;
     }
     let yMax = jt.vue.player.maxY;
@@ -80,10 +80,10 @@ function enableChartMouseMoving() {
       xVal = xMax;
       yVal = 0;
     } else if (xVal > yVal) {
-      yVal = chartMax/xVal * yVal;
+      yVal = chartMax / xVal * yVal;
       xVal = chartMax;
     } else {
-      xVal = chartMax/yVal * xVal;
+      xVal = chartMax / yVal * xVal;
       yVal = chartMax;
     }
 
@@ -96,7 +96,7 @@ function enableChartMouseMoving() {
 
     draw_plot_lines(selX, xVal, yVal);
   };
-  jt.chart.container.onmouseleave = function(e) {
+  jt.chart.container.onmouseleave = function (e) {
     if (!jt.showingAllocationModal) {
       if (jt.vue.player.myAllocationProposal.x === '') {
         clearPlotLines();
@@ -111,24 +111,24 @@ function enableChartMouseMoving() {
 
 function clearPlotLines() {
   try {
-    if(lineX)
+    if (lineX)
       lineX.destroy();
-    if(lineY)
+    if (lineY)
       lineY.destroy();
-    if(lineMouse)
+    if (lineMouse)
       lineMouse.destroy();
   } catch (err) {
   }
 }
 
-function draw_plot_lines(xValue, xPos, yPos){
+function draw_plot_lines(xValue, xPos, yPos) {
 
   clearPlotLines();
 
   let player = jt.vue.player;
 
   if (player.group.validProposals) {
-      return;
+    return;
   }
 
   let xData = jt.chart.series[0].xData;
@@ -142,7 +142,7 @@ function draw_plot_lines(xValue, xPos, yPos){
   } else {
     let upperY = null;
     let lowerY = null;
-    for (let i = 0; i<xData.length; i++) {
+    for (let i = 0; i < xData.length; i++) {
       if (xValue < xData[i]) {
         upperY = yData[i];
         break;
@@ -154,11 +154,11 @@ function draw_plot_lines(xValue, xPos, yPos){
       yValue = lowerY;
     } else {
       yValue = 0;
-    } 
+    }
   }
 
-  xValue = Math.round(xValue*10)/10;
-  yValue = Math.round(yValue*10)/10;
+  xValue = Math.round(xValue * 10) / 10;
+  yValue = Math.round(yValue * 10) / 10;
 
   let otherProposal = jt.vue.player.partnerAllocationProposal;
   if (otherProposal != null && otherProposal.x !== "" && jt.vue.player.myAllocationProposal.x !== '') {
@@ -225,145 +225,145 @@ var lineY = null;
 var xInt = null;
 var yInt = null;
 
-jt.overwriteCrosshairImpl = function() {
+jt.overwriteCrosshairImpl = function () {
 
-  Highcharts.Axis.prototype.drawCrosshair = function(e, point) {
+  Highcharts.Axis.prototype.drawCrosshair = function (e, point) {
 
-      var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
-      fireEvent(this, 'drawCrosshair', { e: e, point: point });
-      // Use last available event when updating non-snapped crosshairs without
-      // mouse interaction (#5287)
-      if (!e) {
-          e = this.cross && this.cross.e;
-      }
-      if (
+    var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
+    fireEvent(this, 'drawCrosshair', { e: e, point: point });
+    // Use last available event when updating non-snapped crosshairs without
+    // mouse interaction (#5287)
+    if (!e) {
+      e = this.cross && this.cross.e;
+    }
+    if (
       // Disabled in options
       !this.crosshair ||
-          // Snap
-          ((defined(point) || !snap) === false)) {
-          this.hideCrosshair();
+      // Snap
+      ((defined(point) || !snap) === false)) {
+      this.hideCrosshair();
+    }
+    else {
+      // Get the path
+      if (!snap) {
+        pos = e &&
+          (this.horiz ?
+            e.chartX - this.pos :
+            this.len - e.chartY + this.pos);
       }
-      else {
-          // Get the path
-          if (!snap) {
-              pos = e &&
-                  (this.horiz ?
-                      e.chartX - this.pos :
-                      this.len - e.chartY + this.pos);
-          }
-          else if (defined(point)) {
-              // #3834
-              pos = pick(this.coll !== 'colorAxis' ?
-                  point.crosshairPos : // 3D axis extension
-                  null, this.isXAxis ?
-                  point.plotX :
-                  this.len - point.plotY);
-          }
-          if (defined(pos)) {
-              crossOptions = {
-                  // value, only used on radial
-                  value: point && (this.isXAxis ?
-                      point.x :
-                      pick(point.stackY, point.y)),
-                  translatedValue: pos
-              };
-              if (this.chart.polar) {
-                  // Additional information required for crosshairs in
-                  // polar chart
-                  extend(crossOptions, {
-                      isCrosshair: true,
-                      chartX: e && e.chartX,
-                      chartY: e && e.chartY,
-                      point: point
-                  });
-              }
-              path = this.getPlotLinePath(crossOptions) ||
-                  null; // #3189
-              // path = drawCrosshairLine(this, crossOptions) ||
-              //     null; // #3189
-            }
-          if (!defined(path)) {
-              this.hideCrosshair();
-              return;
-          }
-          categorized = this.categories && !this.isRadial;
-          // Draw the cross
-          if (!graphic) {
-              this.cross = graphic = this.chart.renderer
-                  .path()
-                  .addClass('highcharts-crosshair highcharts-crosshair-' +
-                  (categorized ? 'category ' : 'thin ') +
-                  options.className)
-                  .attr({
-                  zIndex: pick(options.zIndex, 2)
-              })
-                  .add();
-              // Presentational attributes
-              if (!this.chart.styledMode) {
-                  graphic.attr({
-                      stroke: options.color ||
-                          (categorized ?
-                              color('${palette.highlightColor20}')
-                                  .setOpacity(0.25).get() :
-                              '${palette.neutralColor20}'),
-                      'stroke-width': pick(options.width, 1)
-                  }).css({
-                      'pointer-events': 'none'
-                  });
-                  if (options.dashStyle) {
-                      graphic.attr({
-                          dashstyle: options.dashStyle
-                      });
-                  }
-              }
-          }
-          graphic.show().attr({
-              d: path
+      else if (defined(point)) {
+        // #3834
+        pos = pick(this.coll !== 'colorAxis' ?
+          point.crosshairPos : // 3D axis extension
+          null, this.isXAxis ?
+          point.plotX :
+          this.len - point.plotY);
+      }
+      if (defined(pos)) {
+        crossOptions = {
+          // value, only used on radial
+          value: point && (this.isXAxis ?
+            point.x :
+            pick(point.stackY, point.y)),
+          translatedValue: pos
+        };
+        if (this.chart.polar) {
+          // Additional information required for crosshairs in
+          // polar chart
+          extend(crossOptions, {
+            isCrosshair: true,
+            chartX: e && e.chartX,
+            chartY: e && e.chartY,
+            point: point
           });
-          if (categorized && !options.width) {
-              graphic.attr({
-                  'stroke-width': this.transA
-              });
+        }
+        path = this.getPlotLinePath(crossOptions) ||
+          null; // #3189
+        // path = drawCrosshairLine(this, crossOptions) ||
+        //     null; // #3189
+      }
+      if (!defined(path)) {
+        this.hideCrosshair();
+        return;
+      }
+      categorized = this.categories && !this.isRadial;
+      // Draw the cross
+      if (!graphic) {
+        this.cross = graphic = this.chart.renderer
+          .path()
+          .addClass('highcharts-crosshair highcharts-crosshair-' +
+            (categorized ? 'category ' : 'thin ') +
+            options.className)
+          .attr({
+            zIndex: pick(options.zIndex, 2)
+          })
+          .add();
+        // Presentational attributes
+        if (!this.chart.styledMode) {
+          graphic.attr({
+            stroke: options.color ||
+              (categorized ?
+                color('${palette.highlightColor20}')
+                  .setOpacity(0.25).get() :
+                '${palette.neutralColor20}'),
+            'stroke-width': pick(options.width, 1)
+          }).css({
+            'pointer-events': 'none'
+          });
+          if (options.dashStyle) {
+            graphic.attr({
+              dashstyle: options.dashStyle
+            });
           }
-          this.cross.e = e;
+        }
       }
-      fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
+      graphic.show().attr({
+        d: path
+      });
+      if (categorized && !options.width) {
+        graphic.attr({
+          'stroke-width': this.transA
+        });
+      }
+      this.cross.e = e;
+    }
+    fireEvent(this, 'afterDrawCrosshair', { e: e, point: point });
 
-      // console.log(crossOptions);
-      // console.log(path);
-  
-      if (this.isXAxis) {
-        if(lineX)
-          lineX.destroy();
-        let x1 = path[1];
-        let y1 = yInt;
-        let x2 = path[4];
-        let y2 = path[5];
-        xInt = x1;
-        lineX = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
-          'stroke-width': 1,
-          stroke: 'gray',
-          zIndex: 2001
-        }).add();
-      } else {
-        if(lineY)
-          lineY.destroy();
-        let x1 = path[1];
-        let y1 = path[2];
-        let x2 = xInt;
-        let y2 = path[5];
-        yInt = y1;
-        lineY = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
-          'stroke-width': 1,
-          stroke: 'gray',
-          zIndex: 2001
-        }).add();
-      }
-    };
+    // console.log(crossOptions);
+    // console.log(path);
+
+    if (this.isXAxis) {
+      if (lineX)
+        lineX.destroy();
+      let x1 = path[1];
+      let y1 = yInt;
+      let x2 = path[4];
+      let y2 = path[5];
+      xInt = x1;
+      lineX = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
+        'stroke-width': 1,
+        stroke: 'gray',
+        zIndex: 2001
+      }).add();
+    } else {
+      if (lineY)
+        lineY.destroy();
+      let x1 = path[1];
+      let y1 = path[2];
+      let x2 = xInt;
+      let y2 = path[5];
+      yInt = y1;
+      lineY = jt.chart.renderer.path(['M', x1, y1, 'L', x2, y2]).attr({
+        'stroke-width': 1,
+        stroke: 'gray',
+        zIndex: 2001
+      }).add();
+    }
+  };
 }
 
 
-jt.autoplay_decide = function() {
+jt.autoplay_decide = function () {
 
   if (jt.vue.group.validProposals) {
     confirmNewRound();
@@ -374,7 +374,7 @@ jt.autoplay_decide = function() {
     let point = randomEl(jt.budgetData);
     if (jt.vue.app.treatment == 'pair') {
       point = jt.budgetData[0];
-    } 
+    }
     let proposal = { x: point[0], y: point[1] };
     jt.sendMessage("setMyAllocationProposal", proposal);
     return;
@@ -392,20 +392,21 @@ jt.toolTipY = null;
 
 jt.showingAllocationModal = false;
 
-let confirmAllocationSelection = function(event) {
+let confirmAllocationSelection = function (event) {
   if (jt.vue.player.toolTipX < 0 || jt.vue.player.toolTipY < 0) {
     return;
   }
 
-  if (jt.vue.player.myAllocationProposal.x === jt.vue.player.partnerAllocationProposal.x &&
+  if (jt.vue.player.partnerAllocationProposal != null &&
+    jt.vue.player.myAllocationProposal.x === jt.vue.player.partnerAllocationProposal.x &&
     jt.vue.player.myAllocationProposal.y === jt.vue.player.partnerAllocationProposal.y) {
-      return;
-    }
+    return;
+  }
   jt.showingAllocationModal = true;
   $('#confirmAllocationModal').modal('show');
 };
 
-let cancelDivisionProposal = function() {
+let cancelDivisionProposal = function () {
   if (isNumeric(jt.vue.player.myDivisionProposal.x)) {
     $('#myDivisionX').val(jt.vue.player.myDivisionProposal.x);
   } else {
@@ -414,33 +415,12 @@ let cancelDivisionProposal = function() {
   $('#myDivisionY').val(jt.vue.player.myDivisionProposal.y);
 }
 
-let confirmDivisionSelection = function(event) {
-
-  let noCurChoice = null;
-  if (event.target.id === 'myDivisionX') {
-    jt.vue.player.newDivisionLetter = 'X';
-    noCurChoice = jt.vue.player.myDivisionProposal.x === '';
-  } else {
-    jt.vue.player.newDivisionLetter = 'Y';
-    noCurChoice = jt.vue.player.myDivisionProposal.y === '';
-  }
-  if (!noCurChoice &&
-    jt.vue.player.myDivisionProposal.x === jt.vue.player.partnerDivisionProposal.x &&
-    jt.vue.player.myDivisionProposal.y === jt.vue.player.partnerDivisionProposal.y
-  ) {
-      return;
-    }
-
-  jt.vue.player.newDivisionValue = event.target.value;
-  $('#confirmDivisionModal').modal('show');
-};
-
-jt.sendProposal = function() {
-    let proposal = { x: jt.toolTipX, y: jt.toolTipY };
-    jt.sendMessage("propose", proposal);  
+jt.sendProposal = function () {
+  let proposal = { x: jt.toolTipX, y: jt.toolTipY };
+  jt.sendMessage("propose", proposal);
 }
 
-updateChart = function(player) {
+updateChart = function (player) {
 
   let chartMax = 100;
   if (player.group.period.app.session != null) {
@@ -478,7 +458,7 @@ updateChart = function(player) {
         rotation: 0,
         margin: 25,
         style: {
-          "font-weight": "bolder",  
+          "font-weight": "bolder",
           "font-size": "14pt",
         },
       }
@@ -507,7 +487,7 @@ updateChart = function(player) {
   });
 }
 
-getSeries = function(player) {
+getSeries = function (player) {
   let group = player.group;
 
   jt.budgetData = [];
@@ -556,7 +536,7 @@ getSeries = function(player) {
       marker: {
         radius: 6
       }
-    });    
+    });
   }
   if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x !== '' && player.madeAllocationSelection) {
     series.push({
@@ -577,15 +557,15 @@ document.head.appendChild(sX);
 window.sY = document.createElement("style");
 document.head.appendChild(sY);
 
-resetRangeInputs = function() {
+resetRangeInputs = function () {
   window.sX.textContent = '';
-  window.sY.textContent = '';  
+  window.sY.textContent = '';
 }
 
 resetRangeInputs();
 
-showSliderThumb = function(letter) {
-    window['s' + letter].textContent = `
+showSliderThumb = function (letter) {
+  window['s' + letter].textContent = `
 
 #myDivision${letter}::-webkit-slider-thumb {
     width: 2px !important;
@@ -598,85 +578,108 @@ showSliderThumb = function(letter) {
 `;
 }
 
-confirmNewRound = function() {
+confirmNewRound = function () {
   resetRangeInputs();
   jt.sendMessage('endBargaining');
+  $('#informMatchModal').modal('hide');
 }
 
-keyUp = function(event) {
-    // Number 13 is the "Enter" key on the keyboard
-    if (event.keyCode === 13) {
-      // Cancel the default action, if needed
-      event.preventDefault();
-      sendChatMessageToServer();
-    }
-}
-showMyDivisionProposal = function(letter) {
-    let el = $('#myDivision' + letter)[0];
-    if (el == null) {
-        return;
-    }
-    let value = el.value;
-    if (isNaN(value)) {
-        return;
-    }
-    el.style.background = 'linear-gradient(to right, #666666 0%, #666666 ' + value + '%, #AAAAAA ' + value + '%, #AAAAAA 100%)';
-    showSliderThumb(letter);
-}
-setMyDivisionProposal = function() {
-    showSliderThumb(jt.vue.player.newDivisionLetter);
-    let el = $('#myDivision' + jt.vue.player.newDivisionLetter)[0];
-    let value = el.value;
-    showMyDivisionProposal(jt.vue.player.newDivisionLetter);
-    let out = {};
-    out[jt.vue.player.newDivisionLetter] = value;
-    jt.sendMessage('setMyDivisionProposal', out);
-}
-jt.sendAllocationProposal = function() {
-    let proposal = {
-        x: jt.toolTipX,
-        y: jt.toolTipY,
-    };
-    jt.sendMessage('setMyAllocationProposal', proposal);
-    jt.vue.player.initialCircle = false;
-}
-sendChatMessageToServer = function() {
-    let content = $('#chatMessageInput').val();
-    jt.sendMessage("sendMessage", content);
-    $('#chatMessageInput').val('');
-}
-jt.messages.setMyDivisionProposal = function(proposal) {
-    jt.vue.player.myDivisionProposal.x = proposal.x;
-    jt.vue.player.myDivisionProposal.y = proposal.y;
-}
-jt.messages.setPartnerDivisionProposal = function(proposal) {
-    jt.vue.player.partnerDivisionProposal = proposal;
-    if (isNumeric(proposal.x)) {
-        jt.setProposal('X', 100 - proposal.x, 'partner');
-    }
-    if (isNumeric(proposal.y)) {
-        jt.setProposal('Y', 100 - proposal.y, 'partner');
-    }
-}
-jt.setProposal = function(letter, value, person) {
-    if (isNaN(value) || value === '') {
-        return;
-    }
-    $('#' + person + 'Division' + letter + 'Bar').css('left', value + '%');
-    // $('#' + person + 'Division' + letter + 'Bar').css('display', 'flex');
-    $('#' + person + 'Division' + letter + 'Text').text(value);
-    let adjLeft = 3;
-    if (value >= 10 && value < 100) {
-        adjLeft = 6;
-    } else if (value >= 100) {
-        adjLeft = 11;
-    }
-    $('#' + person + 'Division' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
+keyUp = function (event) {
+  // Number 13 is the "Enter" key on the keyboard
+  if (event.keyCode === 13) {
+    // Cancel the default action, if needed
+    event.preventDefault();
+    sendChatMessageToServer();
+  }
 }
 
-var valueHover = 0;
+let lastHoverVal = -1;
+
+showMyDivisionProposal = function (letter) {
+  let value = jt.vue.player.myDivisionProposal[letter.toLowerCase()];
+  let bottomEl = $('#myDivision' + letter)[0];
+  if (value == 0) {
+    bottomEl.style.background = 'linear-gradient(to right, #AAAAAA 0%, #AAAAAA 100%)';
+  } else {
+    bottomEl.style.background = 'linear-gradient(to right, #666666 0%, #666666 ' + value + '%, #AAAAAA ' + value + '%, #AAAAAA 100%)';
+  }
+  $(bottomEl).val(value);
+  showSliderThumb(letter);
+}
+setMyDivisionProposal = function () {
+  let letter = jt.vue.player.newDivisionLetter;
+
+  // Show the thumb slider.
+  showSliderThumb(letter);
+
+  // Fill in the background.
+  let value = lastHoverVal;
+  let player = jt.vue.player;
+  if (player.myDivisionProposal == null) {
+    player.myDivisionProposal = {};
+  }
+  player.myDivisionProposal[letter.toLowerCase()] = value;
+  showMyDivisionProposal(letter);
+
+  // Notify server
+  let out = {};
+  out[letter] = value;
+  jt.sendMessage('setMyDivisionProposal', out);
+}
+jt.sendAllocationProposal = function () {
+  let proposal = {
+    x: jt.toolTipX,
+    y: jt.toolTipY,
+  };
+  jt.sendMessage('setMyAllocationProposal', proposal);
+  jt.vue.player.initialCircle = false;
+}
+sendChatMessageToServer = function () {
+  let content = $('#chatMessageInput').val();
+  jt.sendMessage("sendMessage", content);
+  $('#chatMessageInput').val('');
+}
+jt.messages.setMyDivisionProposal = function (proposal) {
+  jt.vue.player.myDivisionProposal.x = proposal.x;
+  jt.vue.player.myDivisionProposal.y = proposal.y;
+}
+jt.messages.setPartnerDivisionProposal = function (proposal) {
+  jt.vue.player.partnerDivisionProposal = proposal;
+  if (isNumeric(proposal.x)) {
+    jt.setProposal('X', 100 - proposal.x, 'partner');
+  }
+  if (isNumeric(proposal.y)) {
+    jt.setProposal('Y', 100 - proposal.y, 'partner');
+  }
+}
+jt.setProposal = function (letter, value, person) {
+  if (isNaN(value) || value === '') {
+    return;
+  }
+  $('#' + person + 'Division' + letter + 'Bar').css('left', 'calc(' + value + '/100 * (100% - ' + 2 * PADDING + 'px) + ' + PADDING + 'px)');
+  $('#' + person + 'Division' + letter + 'Text').text(value);
+  let adjLeft = 3;
+  if (value >= 10 && value < 100) {
+    adjLeft = 6;
+  } else if (value >= 100) {
+    adjLeft = 11;
+  }
+  $('#' + person + 'Division' + letter + 'Text').css('left', 'calc(' + value + '/100 * (100% - ' + 2 * PADDING + 'px) + ' + PADDING + 'px - ' + adjLeft + 'px)');
+}
+
+let showRhombus = function () {
+  jt.vue.player.initialCircleTemp = jt.vue.player.initialCircle;
+  jt.vue.player.initialCircle = false;
+}
+
+let hideRhombus = function () {
+  jt.vue.player.initialCircle = jt.vue.player.initialCircleTemp;
+}
+
+const PADDING = 10;
+
 function calcSliderPos(e) {
-  let x = (e.offsetX / e.target.clientWidth) *  parseInt(e.target.getAttribute('max'),10);
+  let x = 100 * (e.offsetX - PADDING - 2) / (e.target.clientWidth - 2 * PADDING);
   if (x > 100) {
     x = 100;
   }
@@ -685,41 +688,48 @@ function calcSliderPos(e) {
   }
   return x;
 }
-let mouseMove = function(event, letter) {
+
+let mouseMove = function (event, letter) {
   let value = calcSliderPos(event);
-  $('#hoverDivision' + letter + 'Bar').css('left', value + '%');
+  if (isNaN(value)) {
+    return;
+  }
+  lastHoverVal = value.toFixed(0);
+  $('#hoverDivision' + letter + 'Bar').css('left', 'calc(' + value + '/100 * (100% - ' + 2 * PADDING + 'px) + ' + PADDING + 'px)');
+  jt.vue.player['hoverDivision' + letter] = value.toFixed(0);
   $('#hoverDivision' + letter + 'Text').text(value.toFixed(0));
-  jt.vue.player['hoverDivision' + letter] = value;
   let adjLeft = 3;
   if (value >= 10 && value < 100) {
-      adjLeft = 6;
+    adjLeft = 11;
   } else if (value >= 100) {
-      adjLeft = 11;
+    adjLeft = 15;
   }
-  $('#hoverDivision' + letter + 'Text').css('left', 'calc(' + value + '% - ' + adjLeft + 'px)');
+  $('#hoverDivision' + letter + 'Text').css('left', 'calc(' + value + '/100 * (100% - ' + 2 * PADDING + 'px) + ' + PADDING + 'px - ' + adjLeft + 'px)');
 }
 
-let mouseLeave = function(letter) {
-  // jt.vue.player['hoverDivision' + letter] = -1;
+let mouseLeave = function (letter) {
+  jt.vue.player['hoverDivision' + letter] = -1;
 }
 
-let clickDivisionSelection = function(event, letter) {
+let confirmDivisionSelection = function (event) {
 
   let noCurChoice = null;
-  jt.vue.player.newDivisionLetter = letter;
-  if (letter === 'X') {
+  if (event.target.id === 'myDivisionX2') {
+    jt.vue.player.newDivisionLetter = 'X';
     noCurChoice = jt.vue.player.myDivisionProposal.x === '';
   } else {
+    jt.vue.player.newDivisionLetter = 'Y';
     noCurChoice = jt.vue.player.myDivisionProposal.y === '';
   }
   if (!noCurChoice &&
-    jt.vue.player.myDivisionProposal.x === jt.vue.player.partnerDivisionProposal.x &&
-    jt.vue.player.myDivisionProposal.y === jt.vue.player.partnerDivisionProposal.y
+    jt.vue.player.myDivisionProposal.x === 100 - jt.vue.player.partnerDivisionProposal.x &&
+    jt.vue.player.myDivisionProposal.y === 100 - jt.vue.player.partnerDivisionProposal.y
   ) {
-      return;
-    }
+    return;
+  }
 
-  let value = calcSliderPos(event);
-  jt.vue.player.newDivisionValue = value;
+  jt.vue.player.newDivisionValue = jt.vue.player['hoverDivision' + jt.vue.player.newDivisionLetter];
   $('#confirmDivisionModal').modal('show');
 };
+
+
