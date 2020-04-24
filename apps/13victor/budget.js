@@ -596,6 +596,9 @@ keyUp = function (event) {
 let lastHoverVal = -1;
 
 showMyDivisionProposal = function (letter) {
+  if (jt.vue.app.treatment === 'individual') {
+    return;
+  }
   let value = jt.vue.player.myDivisionProposal[letter.toLowerCase()];
   let bottomEl = $('#myDivision' + letter)[0];
   if (value == 0) {
