@@ -601,6 +601,7 @@ showMyDivisionProposal = function (letter) {
   }
   let value = jt.vue.player.myDivisionProposal[letter.toLowerCase()];
   let bottomEl = $('#myDivision' + letter)[0];
+  if (bottomEl == null) return
   if (value == 0) {
     bottomEl.style.background = 'linear-gradient(to right, #AAAAAA 0%, #AAAAAA 100%)';
   } else {

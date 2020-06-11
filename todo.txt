@@ -1,4 +1,4 @@
-TODO 2020.03.06
+ 2020.03.06
 - at the beginning of each round the dot starts in a randomly chosen allocation. This holds true for the beginning of each round for all parts of the experiment. This implies that the rule does not hold when couples have both selected an allocation and are reaching an agreement in a round. 
 
 DONE

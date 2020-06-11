@@ -3,7 +3,7 @@ app.waitForAll = false;
 app.stageWaitToStart = false;
 app.stageWaitToEnd = false;
 
-let instructions = app.newStage('instructions');
+let instructions = app.newStage('instr_ravens_p3');
 instructions.activeScreen = `
 <p>On the next screen, the real task with {{ app.session.ravenMatrices.questionIds.length }} questions will start.</p>
 <p>Recall that each question has only one correct answer.</p>

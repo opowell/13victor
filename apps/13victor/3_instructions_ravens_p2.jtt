@@ -3,7 +3,7 @@ app.waitForAll = false;
 app.stageWaitToStart = false;
 app.stageWaitToEnd = false;
 
-let instructions = app.newStage('instructions');
+let instructions = app.newStage('instr_ravens_p2');
 instructions.activeScreen = `
 <p>Before you can start answering the 12 questions under a time limit of 5 minutes, we show
 you two practise questions. Please use these two practise questions to familiarize yourself

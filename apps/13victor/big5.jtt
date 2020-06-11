@@ -32,6 +32,9 @@ app.legend = [
 ]
 
 let page1 = app.newStage('page1');
+page1.playerStart = function(player) {
+    player.numAnswered = 0
+}
 page1.activeScreen = `
 <p>
 Below you see a number of statements. For each statement, indicate how much you agree with this.
@@ -41,11 +44,20 @@ Below you see a number of statements. For each statement, indicate how much you 
     <div style='font-weight: bold'>{{ index+1 }}. {{ statement }}</div>
     <div style='display: flex'>
         <label :for='"input" + index + "_" + i' class="answerBox" v-for='(answer, i) in app.legend' style='display: flex; flex-direction: column;'>
-            <input :id='"input" + index + "_" + i' type='radio' :name="'player.A' + (index+1)" required :value='answer'>
+            <input :id='"input" + index + "_" + i' type='radio' :name="'player.A' + (index+1)" required :value='answer' onclick='countAnswers'>
             <span style='text-align: center'>{{ answer }}</span>
         </label>
     </div>
 </div>
+
+<script>
+countAnswers = function() {
+    let count = document.querySelector('input:checked').length
+    jt.vue.player.numAnswered = count
+}
+</script>
+
+<button :disabled='player.numAnswered < app.statements.length'>OK</button>
 
 <style>
 body {

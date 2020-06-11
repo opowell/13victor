@@ -1,18 +1,5 @@
 app.isStandaloneApp = false;
 
-/* TODO We notice that it is difficult to select an allocation, when the cursor is moved along
-the budget line, the highligthed point on the budget line and the projecting lines are
-not moving smoothly with the movement of the cursor, there are jumps in the sense
-that the point and the corresponding lines are elsewhere as compared to the cursor.
-*/
-/*
-TODO: Chat should be working as soon as both players have made their first decision in a round
-(not first round) in the group part. Right now it works after the first round.
-We could not check this! The bug that was in the individual part is also in the exogenous
-allocation group treatments.
-Mouse tip and supporting lines disappeared. Also choice cannot be made.
-*/
-
 if (app.treatment === 'individual') {
     app.groupSize = 1;
 }
@@ -226,7 +213,7 @@ decisionStage.activeScreen = /*html*/`
                 <div id="containerBargain" style='width: 600px; height: 600px' onclick='confirmAllocationSelection()' onmouseenter='showRhombus()' onmouseleave='hideRhombus()'></div>
                 <div 
                     id='text' 
-                    style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px;'
+                    style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px; pointer-events: none;'
                     v-show='!player.initialCircle && player.toolTipX !== "" && player.toolTipX > -1'
                     onclick='confirmAllocationSelection()'
                     onmousemove='draw_plot_lines(jt.toolTipX)'
@@ -235,7 +222,7 @@ decisionStage.activeScreen = /*html*/`
                 </div>
                 <div
                     id='circle'
-                    style='background-color: black; height: 10px; border-radius: 5px; width: 10px; position: absolute;'
+                    style='background-color: black; pointer-events: none; height: 10px; border-radius: 5px; width: 10px; position: absolute;'
                     v-show='player.toolTipX !== "" && player.toolTipX > -1'
                     onclick='confirmAllocationSelection()' 
                     onmousemove='draw_plot_lines(jt.toolTipX)'

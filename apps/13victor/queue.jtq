@@ -194,25 +194,28 @@ let paidBudgets = drawBudgets(session.numRounds);
 //     addPairApps();
 // }
 
-// session.addApp('results.jtt');
+// session.addApp('soc_prefs_instr.jtt');
+// session.addApp('soc_prefs.jtt');
 
-session.addApp('3_instructions_ravens_p1.jtt');
-session.addApp('3_instructions_ravens_p2.jtt');
+// session.addApp('3_instructions_ravens_p1.jtt');
+// session.addApp('3_instructions_ravens_p2.jtt');
 
-session.addApp('ravens.jtt', {
-    imagePrefix: 'Practice',
-    playType: 'practice',
-    matrices: session.ravenMatricesPractice,
-});
+// session.addApp('ravens.jtt', {
+//     imagePrefix: 'Practice',
+//     playType: 'practice',
+//     matrices: session.ravenMatricesPractice,
+// });
 
-session.addApp('3_instructions_ravens_p3.jtt');
+// session.addApp('3_instructions_ravens_p3.jtt');
 
-session.addApp('ravens.jtt', {
-    imagePrefix: 'Raven',
-    playType: 'real',
-    matrices: session.ravenMatrices,
-});
+// session.addApp('ravens.jtt', {
+//     imagePrefix: 'Raven',
+//     playType: 'real',
+//     matrices: session.ravenMatrices,
+// });
 
 session.addApp('big5.jtt');
 
 session.addApp('survey.jtt');
+
+session.addApp('results.jtt');

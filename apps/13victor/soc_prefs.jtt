@@ -1,0 +1,183 @@
+app.isStandaloneApp = false;
+app.groupSize = 1;
+app.stageWaitToEnd = false;
+app.stageWaitToStart = false;
+app.waitForAll = false;
+
+// TODO: Calculate payments at end.
+
+app.tables = [
+    [
+[10,10,5,3],
+[10,10,7,3],
+[10,10,9,3],
+[10,10,9.50,3],
+[10,10,10,3],
+[10,10,10.50,3],
+[10,10,11,3],
+[10,10,11.50,3],
+[10,10,12,3],
+[10,10,14,3]
+    ],
+    [
+[10,10,6,5],
+[10,10,8,5],
+[10,10,9,5],
+[10,10,9.50,5],
+[10,10,10,5],
+[10,10,10.50,5],
+[10,10,11,5],
+[10,10,11.50,5],
+[10,10,12,5],
+[10,10,14,5]
+    ],
+    [
+[10,10,8,7],
+[10,10,8.50,7],
+[10,10,9,7],
+[10,10,9.50,7],
+[10,10,10,7],
+[10,10,10.50,7],
+[10,10,11,7],
+[10,10,11.50,7],
+[10,10,12,7],
+[10,10,14,7]
+    ],
+    [
+[10,10,7,13],
+[10,10,8,13],
+[10,10,8.50,13],
+[10,10,9,13],
+[10,10,9.50,13],
+[10,10,10,13],
+[10,10,10.50,13],
+[10,10,11,13],
+[10,10,11.50,13],
+[10,10,12,13]
+    ],
+    [
+[10,10,7,15],
+[10,10,8,15],
+[10,10,8.50,15],
+[10,10,9,15],
+[10,10,9.50,15],
+[10,10,10,15],
+[10,10,10.50,15],
+[10,10,11,15],
+[10,10,12,15],
+[10,10,14,15]
+    ],
+    [
+[10,10,7,17],
+[10,10,8,17],
+[10,10,8.5,17],
+[10,10,9,17],
+[10,10,9.5,17],
+[10,10,10,17],
+[10,10,10.5,17],
+[10,10,11,17],
+[10,10,13,17],
+[10,10,16,17]
+    ]
+];
+app.numPeriods = app.tables.length;
+
+let stage = app.newStage('decide');
+stage.playerStart = function(player) {
+    player.switchRow = '';
+    player.table = app.tables[player.period().id - 1];
+    if (player.period().id === 1) {
+        player.participant.socPrefPayoffs = [];
+    }
+}
+stage.activeScreen = `
+    <p>Please choose the row in which you would like to change for the first time from the left to the right allocation. In order to do so, please mark the row of your choice. After you have marked the row, the rest of the table will be completed automatically as implied by your choice. That is, the row(s) in which you prefer the left allocation and the row(s) in which you prefer the right allocation will be automatically highlighted. Please check your decision then. Revise your choice or confirm it by clicking "Continue". All numbers in the table are in Points.
+    <table>
+        <tr>
+            <td></td>
+            <td colspan=2>Allocation: Left</td>
+            <td colspan=2>Allocation: Right</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>You get</td>
+            <td>The passive recipient gets</td>
+            <td>You get</td>
+            <td>The passive recipient gets</td>
+        </tr>
+        <tr v-for='(row, index) in player.table'>
+            <td><input type="radio" :value="index" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[0] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[1] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[2] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[3] }}</td>
+        </tr>
+        <tr>
+            <td><input type="radio" :value="player.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+            <td colspan=4 style='text-align: left'>I always prefer the left allocation.</td>
+        </tr>
+    </table>
+    <br>
+    <button :disabled="player.switchRow===''">Continue</button>
+    <style>
+        table {
+            border-spacing: 0px;
+            border-collapse: collapse;
+            font-size: inherit;
+            margin-top: 3rem;
+        }
+        td {
+            border: 1px solid black;
+        }
+        td {
+            padding: 12px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        td {
+            text-align: center;
+        }
+    </style>
+    <script>
+    showSwitchVal = function(val) {
+        if (val.trim != null) {
+            val = val.trim();
+        }
+        if (val == '') {
+            val = -1;
+        }
+        if (Math.floor(val) != val) {
+            val = -1;
+        }
+        jt.vue.player.switchRow = val;
+        if (val != -1) {
+            $('#switchRow').val(val);
+        }
+    }
+    </script>
+`
+stage.playerEnd = function(player) {
+    player.draw = Math.floor(Math.random()*(player.table.length));
+    if (player.draw < player.switchRow) {
+        player.payoffs = {
+            you: player.table[0],
+            other: player.table[1]
+        };
+    } else {
+        player.payoffs = {
+            you: player.table[2],
+            other: player.table[3]
+        };
+    }
+
+    player.participant.socPrefPayoffs.push(player.payoffs);
+}
+
+stage.autoplay = `
+    if (jt.vue.player.switchRow == '') {
+        let x = Math.floor(Math.random()*jt.vue.player.table.length);
+        showSwitchVal(x);
+    } else {
+        jt.endStage();
+    }
+`
