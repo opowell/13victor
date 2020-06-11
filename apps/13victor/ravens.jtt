@@ -1,4 +1,7 @@
-app.groupSize = 1;
+app.isStandaloneApp = false;
+app.waitForAll = false;
+app.stageWaitToStart = false;
+app.stageWaitToEnd = false;
 
 app.insertJtreeRefAtStartOfClientHTML = false;
 
@@ -35,12 +38,15 @@ let choiceStage = app.newStage('choice');
 choiceStage.playerStart = function (player) {
     player.matrixId = 1;
     player.question = app.matrices.questionIds[player.matrixId - 1];
+    player.correctAnswer = app.matrices.answers[player.matrixId - 1];
     player.answers = [];
     for (let i = 0; i < app.matrices.questionIds.length; i++) {
         player.answers.push('no answer');
     }
 }
-choiceStage.duration = app.playType === 'practice' ? 120 : 600;
+if (app.playType === 'real') {
+    choiceStage.duration = app.session.ravensDuration
+}
 choiceStage.addOKButtonIfNone = false;
 choiceStage.activeScreen = /*html*/`
 <!-- MAIN -->
@@ -49,7 +55,8 @@ choiceStage.activeScreen = /*html*/`
     <div>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
-                <h5 class="card-title">Time left (s): {{clock.totalSeconds}}</h5>
+                <h5 class="card-title" v-show="app.playType === 'real'">Time left: {{ clock.minutes }}:{{clock.seconds < 10 ? ('0' + clock.seconds) : clock.seconds}}</h5>
+                <h5>Please choose the element that correctly replaces the missing part!</h5>
             </div>
         </div>
         <div class="card" style='flex: 1 1 auto;'>
@@ -61,6 +68,7 @@ choiceStage.activeScreen = /*html*/`
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
                 <h5 class="card-title">Possible answers</h5>
+                <p v-show="app.playType === 'practice'">Hint: The correct answer is {{ player.correctAnswer }}.</p>
                 <div style='display: flex; flex-wrap: wrap;'>
                     <div class="answerBox" v-for='i in 8' :key='i' :id="'A' + i" onclick='jt.setAnswer(event)' :data-answer="i">
                         <label :for='"input" + i'>{{ i }}</label>&nbsp;
@@ -68,6 +76,9 @@ choiceStage.activeScreen = /*html*/`
                     </div>
                 </div>
             </div>
+        </div>
+        <div v-show="app.playType === 'practice'" class="card" style='flex: 1 1 auto;'>
+            <button onclick="jt.submitFormData({})">Click here when you are done with the practice questions.</button>
         </div>
     </div>
     <!-- RIGHT -->
@@ -107,6 +118,7 @@ jt.connected = function() {
             let i = event.target.dataset.question;
             jt.vue.player.matrixId = i;
             jt.vue.player.question = jt.vue.app.matrices.questionIds[jt.vue.player.matrixId-1];
+            jt.vue.player.correctAnswer = jt.vue.app.matrices.answers[jt.vue.player.matrixId-1];
             $('#Q' + i).addClass('selected');
             let answer = jt.vue.player.answers[i-1];
             if (answer !== "no answer") {
@@ -118,10 +130,17 @@ jt.connected = function() {
             $('input').prop('checked', false);
             let answer = event.target.dataset.answer;
             let i = jt.vue.player.matrixId;
+            
+            if (jt.vue.player.answers[i-1] === answer) {
+                answer = 'no answer'
+                $('#Q' + i).removeClass('answered');
+            } else {
+                $('#A' + answer).addClass('selected');
+                $('#input' + answer).prop('checked', true);    
+                $('#Q' + i).addClass('answered');
+            }
+
             jt.vue.player.answers[i-1] = answer;
-            $('#A' + answer).addClass('selected');
-            $('#input' + answer).prop('checked', true);
-            $('#Q' + i).addClass('answered');
             jt.sendMessage('setAnswer', { matrixId: i, answer: answer });
         }
 
@@ -155,7 +174,7 @@ jt.connected = function() {
         border: 3px solid orange;
     }
     .questionBox.answered {
-        background-color: #aed8ae;
+        background-color: #BBB;
     }
     </style>
 `;

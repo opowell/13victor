@@ -1,6 +1,8 @@
 app.isStandaloneApp = false;
 app.groupSize = 1;
 
+// TODO: When the questionnaire is not completed, the hint “Please select one of these options” appears as shown below. What we do not like is that it suggests a default, namely “strongly disagree”. Can you do something to change that default?
+
 app.statements = [
     "I see myself as someone who worries a lot",
     "I see myself as someone who gets nervous easily",
@@ -36,7 +38,7 @@ Below you see a number of statements. For each statement, indicate how much you 
 </p>
 
 <div class='question' v-for='(statement, index) in app.statements' :key='index'>
-    <div>{{ index+1 }}. {{ statement }}</div>
+    <div style='font-weight: bold'>{{ index+1 }}. {{ statement }}</div>
     <div style='display: flex'>
         <label :for='"input" + index + "_" + i' class="answerBox" v-for='(answer, i) in app.legend' style='display: flex; flex-direction: column;'>
             <input :id='"input" + index + "_" + i' type='radio' :name="'player.A' + (index+1)" required :value='answer'>
@@ -51,6 +53,7 @@ body {
 }
 .question {
     margin: 20px;
+    margin-top: 40px;
 }
 .answerBox {
     width: 120px;

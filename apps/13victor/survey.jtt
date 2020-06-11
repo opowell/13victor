@@ -4,7 +4,7 @@ app.groupSize = 1;
 let page1 = app.newStage('page1');
 page1.activeScreen = `
 <p>1. What is your age?</p>
-<input required name='player.age' type='text'>
+<input required name='player.age' type='number' min='18'>
 <br><br>
 
 <p>2. What is your gender?</p>
@@ -21,7 +21,7 @@ page1.activeScreen = `
 <br><br>
 
 <p>4. In which year did you first enroll in university?</p>
-<input required name='player.firstYearUni' type='text'>
+<input required name='player.firstYearUni' type='number'>
 <br><br>
 
 <p>5. What is your first (native) language?</p>

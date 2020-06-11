@@ -1,5 +1,18 @@
 app.isStandaloneApp = false;
 
+/* TODO We notice that it is difficult to select an allocation, when the cursor is moved along
+the budget line, the highligthed point on the budget line and the projecting lines are
+not moving smoothly with the movement of the cursor, there are jumps in the sense
+that the point and the corresponding lines are elsewhere as compared to the cursor.
+*/
+/*
+TODO: Chat should be working as soon as both players have made their first decision in a round
+(not first round) in the group part. Right now it works after the first round.
+We could not check this! The bug that was in the individual part is also in the exogenous
+allocation group treatments.
+Mouse tip and supporting lines disappeared. Also choice cannot be made.
+*/
+
 if (app.treatment === 'individual') {
     app.groupSize = 1;
 }
@@ -238,7 +251,7 @@ decisionStage.activeScreen = /*html*/`
                         X: {{player.myAllocationProposal.x | round(1)}}<br>
                         Y: {{player.myAllocationProposal.y | round(1)}}<br>
                     </div>
-                    <div class='proposalDiv' v-else>None.</div>
+                    <div class='proposalDiv' v-else>None yet.</div>
                 </div>
             </div>
             <div class="card" style='flex: 1 1 auto;'>
@@ -249,7 +262,7 @@ decisionStage.activeScreen = /*html*/`
                         X: {{player.partnerAllocationProposal.x}}<br>
                         Y: {{player.partnerAllocationProposal.y}}<br>
                     </div>
-                    <div class='proposalDiv' v-else>None.</div>
+                    <div class='proposalDiv' v-else>None yet.</div>
                 </div>
             </div>
             <div class="card" v-if='app.session.divisionType === "EXOG"' style='flex: 1 1 auto;'>

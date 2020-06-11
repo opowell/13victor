@@ -1,0 +1,21 @@
+app.isStandaloneApp = false;
+app.waitForAll = false;
+app.stageWaitToStart = false;
+app.stageWaitToEnd = false;
+
+let instructions = app.newStage('instructions');
+instructions.activeScreen = `
+<p>On the next screen, the real task with {{ app.session.ravenMatrices.questionIds.length }} questions will start.</p>
+<p>Recall that each question has only one correct answer.</p>
+<p>You have exactly 5 minutes to answer as many of the questions as possible. In the upper left
+corner of the screen you will see a timer that counts down from 5 minutes. When the 5
+minutes are over, the screen will stop automatically and you will not be able to answer
+anymore.</p>
+<p>During the 5 minutes, you can select any question you want and you can go back and forth to
+revise your answers at any time using the "Question list" in the upper right corner of the
+screen. You do not have to answer the questions in any order, and you can decide to leave
+questions (temporarily) unanswered. Questions you have already answered will be indicated
+with a grey background in the "Question list" in the top right corner of the screen.</p>
+<p>When you are ready to start the 12 questions, please click the "Start" button.</p>
+<button>Start</button>
+`
