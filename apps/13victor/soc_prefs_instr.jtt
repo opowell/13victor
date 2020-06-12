@@ -27,7 +27,7 @@ instructions.playerStart = function(player) {
 instructions.activeScreen = `
 <h4>Instructions for Additional Task 1</h4>
 <p>In the following, we ask you to distribute money between you and another anonymous participant. The other anonymous participant will be randomly selected at the end of the experiment, and it will NOT be the participant with whom you were matched during the group decision making task. We will call the other randomly chosen participant the "passive recipient". You will see below, why we call this person the "passive recipient".</p>
-<p>The decisions you will make concern real money as some randomly chosen decisions will actually be paid. All numbers appearing in the tables you will see are in Points. For every ??? Points you earn in this task, you will be paid EUR ??? at the end of the experiment.</p>
+<p>The decisions you will make concern real money as some randomly chosen decisions will actually be paid. All numbers appearing in the tables you will see are in Points. For every {{ app.session.socPrefsExRatePoints }} Points you earn in this task, you will be paid EUR {{ app.session.socPrefsExRateEuros }} at the end of the experiment.</p>
 <p>In this task, you will sequentially see six tables. An example of a table is shown here.</p>
 <table>
 <tr>

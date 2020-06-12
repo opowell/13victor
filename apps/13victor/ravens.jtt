@@ -2,6 +2,7 @@ app.isStandaloneApp = false;
 app.waitForAll = false;
 app.stageWaitToStart = false;
 app.stageWaitToEnd = false;
+app.groupSize = 1;
 
 app.insertJtreeRefAtStartOfClientHTML = false;
 
@@ -71,8 +72,8 @@ choiceStage.activeScreen = /*html*/`
                 <p v-show="app.playType === 'practice'">Hint: The correct answer is {{ player.correctAnswer }}.</p>
                 <div style='display: flex; flex-wrap: wrap;'>
                     <div class="answerBox" v-for='i in 8' :key='i' :id="'A' + i" onclick='jt.setAnswer(event)' :data-answer="i">
-                        <label :for='"input" + i'>{{ i }}</label>&nbsp;
-                        <input :id='"input" + i' type='radio' :data-answer="i" name='answer'>
+                        <label :for='"input" + i' style='pointer-events: none'>{{ i }}</label>&nbsp;
+                        <input :id='"input" + i' style='pointer-events: none' type='radio' :data-answer="i" name='answer'>
                     </div>
                 </div>
             </div>

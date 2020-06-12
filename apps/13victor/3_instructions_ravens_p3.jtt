@@ -2,6 +2,7 @@ app.isStandaloneApp = false;
 app.waitForAll = false;
 app.stageWaitToStart = false;
 app.stageWaitToEnd = false;
+app.groupSize = 1;
 
 let instructions = app.newStage('instr_ravens_p3');
 instructions.activeScreen = `

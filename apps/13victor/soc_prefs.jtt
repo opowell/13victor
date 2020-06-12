@@ -4,8 +4,6 @@ app.stageWaitToEnd = false;
 app.stageWaitToStart = false;
 app.waitForAll = false;
 
-// TODO: Calculate payments at end.
-
 app.tables = [
     [
 [10,10,5,3],
@@ -158,19 +156,28 @@ stage.activeScreen = `
 `
 stage.playerEnd = function(player) {
     player.draw = Math.floor(Math.random()*(player.table.length));
+    player.row = player.table[player.draw]
     if (player.draw < player.switchRow) {
         player.payoffs = {
-            you: player.table[0],
-            other: player.table[1]
+            you: player.row[0],
+            other: player.row[1]
         };
     } else {
         player.payoffs = {
-            you: player.table[2],
-            other: player.table[3]
+            you: player.row[2],
+            other: player.row[3]
         };
     }
 
     player.participant.socPrefPayoffs.push(player.payoffs);
+}
+
+app.participantEnd = function(participant) {
+    // Draw a random period.
+    let t = Math.floor(Math.random() * app.tables.length)
+    participant.spChosenTable = t
+    participant.spChosenRowPayoffs = participant.socPrefPayoffs[t]
+    participant.spActivePayoff = participant.spChosenRowPayoffs.you
 }
 
 stage.autoplay = `

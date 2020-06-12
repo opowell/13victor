@@ -89,6 +89,8 @@ decisionStage.groupStart = function (group) {
         let p2 = group.players[1];
         p1.partnerDivisionProposal = p2.myDivisionProposal;
         p2.partnerDivisionProposal = p1.myDivisionProposal;
+        p1.participant.partnerId = p2.participant.id;
+        p2.participant.partnerId = p1.participant.id;
     }
 }
 

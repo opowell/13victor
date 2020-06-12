@@ -1,4 +1,49 @@
 let results = app.newStage('results');
+
+app.start = function() {
+    if (this.started) {
+        return;
+    }
+    this.started = true;
+    let ids = Object.keys(app.session.participants)
+    let foundMatching = false
+    let matching = []
+    while (!foundMatching) {
+        let ints = []
+        let a = 0
+        for (let i in app.session.participants) {
+            ints.push(a)
+            a++
+        }
+        matching = Utils.shuffle(ints)
+        foundMatching = true
+        console.log('trying matching ' + JSON.stringify(matching))
+        for (let i=0; i<this.session.participants.length; i++) {
+            let part = this.session.participants[ids[i]]
+            if (part.id == ids[matching[i]]) {
+                foundMatching = false;
+                break
+            }
+            if (part.partnerId == ids[matching[i]]) {
+                foundMatching = false;
+                break
+            }
+        }
+        for (let i=0; i<matching.length; i++) {
+            if (matching[matching[i]] === i) {
+                foundMatching = false;
+                break;
+            }
+        }
+    }
+    console.log('FOUND MATCH!')
+    for (let i=0; i<ids.length; i++) {
+        let part = this.session.participants[ids[i]]
+        let activePlayer = this.session.participants[ids[matching[i]]]
+        part.spPassivePayoff = activePlayer.spChosenRowPayoffs.other
+    }
+}
+
 results.playerStart = function(player) {
     let participant = player.participant;
     participant.payoffs = [];
@@ -57,5 +102,6 @@ results.activeScreen = `
             <td><b>{{player.totalEuros | round(2)}}</b></td>
         </tr>
     </table>
-
+        <h4>Social preferences - active: {{ participant.spActivePayoff }}</h4>
+        <h4>Social preferences - passive: {{ participant.spPassivePayoff }}</h4>
 `;
