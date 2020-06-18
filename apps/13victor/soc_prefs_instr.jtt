@@ -43,14 +43,14 @@ instructions.activeScreen = `
     <td>The passive recipient gets</td>
 </tr>
 <tr v-for='(row, index) in app.table'>
-    <td><input type="radio" :value="index" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+    <td><input type="radio" :value="index" disabled name="player.switchRow"></td>
     <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[0] }}</td>
     <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[1] }}</td>
     <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[2] }}</td>
     <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[3] }}</td>
 </tr>
 <tr>
-    <td><input type="radio" :value="app.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+    <td><input type="radio" disabled :value="app.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
     <td colspan=4 style='text-align: left'>I always prefer the left allocation.</td>
 </tr>
 </table>
@@ -60,6 +60,7 @@ table {
     border-collapse: collapse;
     font-size: inherit;
     margin-top: 1rem;
+    background-color: white;
 }
 tr > td:first-child {
     border: none;
@@ -76,27 +77,9 @@ td {
     text-align: center;
 }
 </style>
-<script>
-showSwitchVal = function(val) {
-    if (val.trim != null) {
-        val = val.trim();
-    }
-    if (val == '') {
-        val = -1;
-    }
-    if (Math.floor(val) != val) {
-        val = -1;
-    }
-    jt.vue.player.switchRow = val;
-    if (val != -1) {
-        $('#switchRow').val(val);
-    }
-}
-</script>
-
-<p>The two left columns in this table always show allocations where you and the passive recipient are getting the same number of Points. The two right columns in the table always show allocations where the passive recipient always receives the same number of Points, while your number of Points increases as you move downwards in the table. In all of the six tables that you will see in this part of the experiment exhibit the same features: the allocations on the left hand side always stay the same, while the ones on the right hand side become more favorable for you, because you receive more Points the further down you go in a table.</p>
+<p>The two left columns in this table always show allocations where you and the passive recipient are getting the same number of Points. The two right columns in the table always show allocations where the passive recipient always receives the same number of Points, while your number of Points increases as you move downwards in the table. All of the six tables that you will see in this part of the experiment exhibit the same features: the allocations on the left hand side always stay the same, while the ones on the right hand side become more favorable for you, because you receive more Points the further down you go in a table.</p>
 <p>We would therefore expect that participants prefer the left allocations at the beginning and then want to switch to the right allocations at some point. However, there might be participants who always prefer one allocation over the other (left or right). We want you to indicate in which row you would like to switch from the left allocation to the right allocation, i.e., from which row onwards you prefer the right allocation.</p>
-<p>You can see in the above table that you and the passive recipient both receive 10 Points in each row in the left allocations. In the right allocations, your amount of money increases from row to row, while the passive recipient always receives 9 Points. You are now supposed to choose the row in which you prefer the right over the left allocation for the first time.</p>
+<p>You can see in the above table that you and the passive recipient both receive 10 Points in each row in the left allocations. In the right allocations, your amount of money increases from row to row, while the passive recipient always receives 9 Points. You are now supposed to choose the row in which you prefer the right over the left allocation for the first time. You can do so by clicking on the circle to the left of the corresponding row.</p>
 <p>For example, if you prefer for the first time the right over the left allocation in the second to last row in the table above, meaning you would rather receive 12 Points and the passive recipient 9 Points (right allocation) than both of you receiving 10 Points (left allocation) and you prefer the left allocation in all prior rows, then you should indicate the second to last row as the one where you prefer the right allocation over the left one for the first time.
 <p><b>Payment as Active Person:</b> At the end of the experiment and separately for each participant, the computer will first randomly select one of the six tables and then the computer will randomly select one of the 11 rows in the selected table. The allocation chosen by you in the selected table and the selected row will be actually paid out. If, for example, the randomly chosen table was the one shown above and the selected row in this table was the fourth row, and if in this task you had chosen the right allocation, then you would receive 9.5 Points as an active person, while your passive recipient would receive 9 Points.</p>
 <p><b>Payment as Passive Recipient:</b> In the exact same manner that your passive recipient receives a payment from your decision, without having taken any action, you receive a payment from another participant (who is again not the participant with whom you were matched during the group decision making task) without you doing anything, i.e., you are the passive recipient of this other participant. We make sure that you are not matched twice with the same participant as active and as passive recipient. This means that, if participant X is your passive recipient, then we make sure that you are not the passive recipient of participant X.</p>

@@ -393,13 +393,18 @@ jt.toolTipY = null;
 jt.showingAllocationModal = false;
 
 let confirmAllocationSelection = function (event) {
-  if (jt.vue.player.toolTipX < 0 || jt.vue.player.toolTipY < 0) {
+  let player = jt.vue.player
+  let app = jt.vue.app
+
+  if (player.toolTipX < 0 || player.toolTipY < 0) {
     return;
   }
 
-  if (jt.vue.player.partnerAllocationProposal != null &&
-    jt.vue.player.myAllocationProposal.x === jt.vue.player.partnerAllocationProposal.x &&
-    jt.vue.player.myAllocationProposal.y === jt.vue.player.partnerAllocationProposal.y) {
+  if (player.partnerAllocationProposal != null &&
+    player.myAllocationProposal.x === player.partnerAllocationProposal.x &&
+    player.myAllocationProposal.y === player.partnerAllocationProposal.y &&
+    (app.session.divisionType === "EXOG" || (player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y)))
+    {
     return;
   }
   jt.showingAllocationModal = true;
@@ -672,12 +677,11 @@ jt.setProposal = function (letter, value, person) {
 }
 
 let showRhombus = function () {
-  jt.vue.player.initialCircleTemp = jt.vue.player.initialCircle;
-  jt.vue.player.initialCircle = false;
+  jt.vue.player.showRhombus = true
 }
 
 let hideRhombus = function () {
-  jt.vue.player.initialCircle = jt.vue.player.initialCircleTemp;
+  jt.vue.player.showRhombus = false
 }
 
 const PADDING = 10;
@@ -717,17 +721,24 @@ let mouseLeave = function (letter) {
 
 let confirmDivisionSelection = function (event) {
 
+  let player = jt.vue.player;
+
   let noCurChoice = null;
   if (event.target.id === 'myDivisionX2') {
-    jt.vue.player.newDivisionLetter = 'X';
-    noCurChoice = jt.vue.player.myDivisionProposal.x === '';
+    player.newDivisionLetter = 'X';
+    noCurChoice = player.myDivisionProposal.x === '';
   } else {
-    jt.vue.player.newDivisionLetter = 'Y';
-    noCurChoice = jt.vue.player.myDivisionProposal.y === '';
+    player.newDivisionLetter = 'Y';
+    noCurChoice = player.myDivisionProposal.y === '';
   }
   if (!noCurChoice &&
-    jt.vue.player.myDivisionProposal.x === 100 - jt.vue.player.partnerDivisionProposal.x &&
-    jt.vue.player.myDivisionProposal.y === 100 - jt.vue.player.partnerDivisionProposal.y
+    player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x &&
+    player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y &&
+    (
+      player.partnerAllocationProposal != null &&
+      player.myAllocationProposal.x === player.partnerAllocationProposal.x &&
+      player.myAllocationProposal.y === player.partnerAllocationProposal.y
+    )
   ) {
     return;
   }
@@ -735,5 +746,3 @@ let confirmDivisionSelection = function (event) {
   jt.vue.player.newDivisionValue = jt.vue.player['hoverDivision' + jt.vue.player.newDivisionLetter];
   $('#confirmDivisionModal').modal('show');
 };
-
-

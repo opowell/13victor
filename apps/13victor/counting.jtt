@@ -101,7 +101,7 @@ decisionStage.playerStart = function (player) {
     player.newDivisionLetter = -1;
     player.newDivisionValue = -1;
     player.initialCircle = true;
-    // player.initialCircleTemp = true;
+    player.showRhombus = false;
     player.hoverDivisionX = -1;
     player.hoverDivisionY = -1;
     if (app.treatment === 'pair') {
@@ -216,7 +216,7 @@ decisionStage.activeScreen = /*html*/`
                 <div 
                     id='text' 
                     style='position: absolute; background-color: rgba(255, 255, 255, 0.9); border: 3px solid #000; border-radius: 5px; padding: 2px 5px; pointer-events: none;'
-                    v-show='!player.initialCircle && player.toolTipX !== "" && player.toolTipX > -1'
+                    v-show='player.showRhombus && player.toolTipX !== "" && player.toolTipX > -1'
                     onclick='confirmAllocationSelection()'
                     onmousemove='draw_plot_lines(jt.toolTipX)'
                 >
@@ -233,10 +233,10 @@ decisionStage.activeScreen = /*html*/`
         </div>
         <div style='display: flex; flex-direction: column; flex: 0 0 360px;' v-if="app.treatment === 'pair'">
             <div class="card" style='flex: 1 1 auto;'>
-                <div class='blocker' v-show='player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
+                <div class='blocker' v-show='(app.session.divisionType === "EXOG" || player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y) && player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body">
                     <h5 class="card-title">My allocation proposal</h5>
-                    <div class='proposalDiv' v-if='!player.initialCircle && !player.initialCircleTemp && player.myAllocationProposal.x !== ""'>
+                    <div class='proposalDiv' v-if='!player.initialCircle && player.myAllocationProposal.x !== ""'>
                         X: {{player.myAllocationProposal.x | round(1)}}<br>
                         Y: {{player.myAllocationProposal.y | round(1)}}<br>
                     </div>
@@ -244,7 +244,7 @@ decisionStage.activeScreen = /*html*/`
                 </div>
             </div>
             <div class="card" style='flex: 1 1 auto;'>
-                <div class='blocker' v-show='player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
+                <div class='blocker' v-show='(app.session.divisionType === "EXOG" || player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y) && player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body" style='color: blue'>
                     <h5 class="card-title">Other’s allocation proposal</h5>
                     <div class='proposalDiv' v-if='player.madeAllocationSelection'>
@@ -263,7 +263,7 @@ decisionStage.activeScreen = /*html*/`
                 </div>
             </div>
             <div class="card" v-if='app.session.divisionType === "ENDO"' style='flex: 1 1 auto;'>
-                <div class='blocker' v-show='player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y'></div>
+                <div class='blocker' v-show='(app.session.divisionType === "EXOG" || player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y) && player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body">
                     <h5 class="card-title">My proposed division</h5>
                     <div style='height: 120px;'>
@@ -309,7 +309,7 @@ decisionStage.activeScreen = /*html*/`
         </div>
     </div>
     <div class="card" v-if="app.treatment === 'pair'">
-        <div class='blocker' v-show='!player.madeAllocationSelection || player.partnerAllocationProposal.x == "" || (app.session.divisionType == "ENDO" && (player.myDivisionProposal.x === "" || player.myDivisionProposal.y === "" || player.partnerDivisionProposal.x === "" || player.partnerDivisionProposal.y === ""))'></div>
+        <div class='blocker' v-show='!player.madeAllocationSelection || player.partnerAllocationProposal.x === "" || (app.session.divisionType == "ENDO" && (player.myDivisionProposal.x === "" || player.myDivisionProposal.y === "" || player.partnerDivisionProposal.x === "" || player.partnerDivisionProposal.y === ""))'></div>
         <div class="card-body">
             <h5 class="card-title">Chat</h5>
             <div style='display: flex;'>

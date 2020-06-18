@@ -47,15 +47,14 @@ Below you see a number of statements. For each statement, indicate how much you 
         </label>
     </div>
 </div>
-
+<div><button :disabled='player.numAnswered < app.statements.length'>Submit</button></div>
+<p v-show='player.numAnswered < app.statements.length'>You have to answer all questions before you can submit your answers.</p>
 <script>
 countAnswers = function() {
     let count = document.querySelectorAll('input:checked').length
     jt.vue.player.numAnswered = count
 }
 </script>
-
-<button :disabled='player.numAnswered < app.statements.length'>OK</button>
 
 <style>
 body {

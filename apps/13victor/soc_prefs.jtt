@@ -3,6 +3,7 @@ app.groupSize = 1;
 app.stageWaitToEnd = false;
 app.stageWaitToStart = false;
 app.waitForAll = false;
+app.periodText = 'Table';
 
 app.tables = [
     [
@@ -89,7 +90,7 @@ stage.playerStart = function(player) {
     }
 }
 stage.activeScreen = `
-    <p>Please choose the row in which you would like to change for the first time from the left to the right allocation. In order to do so, please mark the row of your choice. After you have marked the row, the rest of the table will be completed automatically as implied by your choice. That is, the row(s) in which you prefer the left allocation and the row(s) in which you prefer the right allocation will be automatically highlighted. Please check your decision then. Revise your choice or confirm it by clicking "Continue". All numbers in the table are in Points.
+    <p>Please choose the row in which you would like to change for the first time from the left to the right allocation. In order to do so, please mark the row of your choice. After you have marked the row, the rest of the table will be completed automatically as implied by your choice. That is, the row(s) in which you prefer the left allocation and the row(s) in which you prefer the right allocation will be automatically highlighted in green. Please check your decision then. Revise your choice or confirm it by clicking "Continue". All numbers in the table are in Points.
     <table>
         <tr>
             <td></td>
@@ -104,14 +105,14 @@ stage.activeScreen = `
             <td>The passive recipient gets</td>
         </tr>
         <tr v-for='(row, index) in player.table'>
-            <td><input type="radio" :value="index" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[0] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'white'}">{{ row[1] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[2] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'white'}">{{ row[3] }}</td>
+            <td><input type="radio" tabindex='-1' :value="index" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[0] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[1] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[2] }}</td>
+            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[3] }}</td>
         </tr>
         <tr>
-            <td><input type="radio" :value="player.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
+            <td><input type="radio" tabindex='-1' :value="player.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
             <td colspan=4 style='text-align: left'>I always prefer the left allocation.</td>
         </tr>
     </table>

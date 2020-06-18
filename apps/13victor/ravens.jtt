@@ -37,6 +37,11 @@ app.modifyPathsToIncludeId = false;
 let choiceStage = app.newStage('choice');
 
 choiceStage.playerStart = function (player) {
+    if (app.showInstructions) {
+        player.page = 1;
+    } else {
+        player.page = 3;
+    }
     player.matrixId = 1;
     player.question = app.matrices.questionIds[player.matrixId - 1];
     player.correctAnswer = app.matrices.answers[player.matrixId - 1];
@@ -50,10 +55,53 @@ if (app.playType === 'real') {
 }
 choiceStage.addOKButtonIfNone = false;
 choiceStage.activeScreen = /*html*/`
+<div class="card" v-show='player.page === 1'>
+    <div class="card-body">
+<h4>Instructions for Additional Task 2</h4>
+<p>This task consists of {{ app.session.ravenMatrices.questionIds.length }} questions. For every question there will always be eight possible answers which complete a pattern. The questions are increasing in the level of difficulty.</p>
+<h4>You have a maximum of 5 minutes in total to answer the 12 questions.</h4>
+<p>For each of the {{ app.session.ravenMatrices.questionIds.length }} questions, your screen will look like this:</p>
+<img src='13victor/raven_instructions.png'>
+<p>In the upper part of the screen, you see a bigger picture with a missing part. Below this picture, 8 possible small pictures are displayed of which one should be inserted to replace the missing part in the picture above. Only one of the 8 answers is correct in each case.</p>
+<p>The top left corner of the screen will show the remaining time you have for completing all of the {{ app.session.ravenMatrices.questionIds.length }} questions. Each question that is not answered will be evaluated as incorrect.</p>
+<p>To answer a question, first select a question from the “Question list” in the top right corner of the screen. Then answer this question by clicking on one of the possible answers 1-8 on the bottom of the screen. Then select another question from the “Question list” in the top right corner of the screen and answer it by clicking on one of the possible answers 1-8 on the bottom of the screen, and so on.</p>
+<p>You can select and answer the {{ app.session.ravenMatrices.questionIds.length }} questions in any order you want. You can also go back and forth between questions to revise your answers at any time using the “Question list” in the upper right corner of the screen as long as the time limit of 5 minutes has not expired.</p>
+<p>To help you keeping an overview, those questions you have already answered will be indicated with a grey background in “Question list” in the top right corner of the screen. But as mentioned, you can revise your answer also for these questions.</p>
+<button type='button' onclick='showPage(2)'>OK</button>
+    </div>
+</div>
+
+<div class="card" v-show='player.page === 2'>
+    <div class="card-body">
+<p>Before you can start answering the 12 questions under a time limit of 5 minutes, we show you two practise questions. Please use these two practise questions to familiarize yourself with the decision screen. For each of the 2 practise questions, we will indicate the correct answer.</p>
+<button type='button' onclick='showPage(1)'>Go back to instructions</button>
+<button type='button' onclick='showPage(3)'>OK</button>
+    </div>
+</div>
+
+<script>
+showPage = function(x) {
+    jt.vue.player.page = x;
+}
+endStage = function() {
+    jt.submitFormData({});
+}
+</script>
+<style>
+img {
+    width: 500px;
+}
+#jtree {
+    max-width: 1000px;
+    align-self: flex-start;
+}
+</style>
+
 <!-- MAIN -->
+<div v-show='player.page === 3'>
 <div style='display: flex'>
     <!-- LEFT -->
-    <div>
+    <div style='display: flex; flex-direction: column;'>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
                 <h5 class="card-title" v-show="app.playType === 'real'">Time left: {{ clock.minutes }}:{{clock.seconds < 10 ? ('0' + clock.seconds) : clock.seconds}}</h5>
@@ -62,14 +110,15 @@ choiceStage.activeScreen = /*html*/`
         </div>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
-                <h5 class="card-title">Question {{ player.matrixId }}</h5>
+                <h5 class="card-title">{{ app.questionLabel }} {{ player.matrixId }}</h5>
                 <img :src='"13victor/RavensPictures/" + app.imagePrefix + player.question + ".jpg"'>
             </div>
         </div>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
                 <h5 class="card-title">Possible answers</h5>
-                <p v-show="app.playType === 'practice'">Hint: The correct answer is {{ player.correctAnswer }}.</p>
+                <p v-show="app.playType === 'practice'" class='text-success'>Hint: The correct answer is {{ player.correctAnswer }}.</p>
+                <p v-show="app.playType === 'practice'">(Hints are only shown for practice questions.)</p>
                 <div style='display: flex; flex-wrap: wrap;'>
                     <div class="answerBox" v-for='i in 8' :key='i' :id="'A' + i" onclick='jt.setAnswer(event)' :data-answer="i">
                         <label :for='"input" + i' style='pointer-events: none'>{{ i }}</label>&nbsp;
@@ -78,12 +127,9 @@ choiceStage.activeScreen = /*html*/`
                 </div>
             </div>
         </div>
-        <div v-show="app.playType === 'practice'" class="card" style='flex: 1 1 auto;'>
-            <button onclick="jt.submitFormData({})">Click here when you are done with the practice questions.</button>
-        </div>
     </div>
     <!-- RIGHT -->
-    <div style='display: flex; max-width: 200px;'>
+    <div style='display: flex; max-width: 200px; flex-direction: column;'>
         <div class="card" style='flex: 1 1 auto;'>
             <div class="card-body">
                 <h5 class="card-title">Question list</h5>
@@ -92,9 +138,20 @@ choiceStage.activeScreen = /*html*/`
                         {{i}}
                     </div>
                 </div>
+                <div style='margin-top: 1rem;'>Note: the questions you have already answered are indicated by a gray background.</div>
             </div>
         </div>
     </div>
+</div>
+<div v-show="app.playType === 'practice'" style='display: flex;'>
+    <div class="card" style='flex: 0 0 auto; align-self: flex-start; display: flex; align-items: flex-start;'>
+        <button onclick="showPage(1)">Go back to instructions.</button>
+    </div>
+    <div style='flex: 1 1 1px;'></div>
+    <div class="card" style='flex: 0 0 auto; align-self: flex-end;'>
+        <button onclick="jt.submitFormData({})">Click here when you are done with the practice questions.</button>
+    </div>
+</div>
 </div>
     <script>
 jt.connected = function() {
