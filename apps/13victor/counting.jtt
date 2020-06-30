@@ -7,6 +7,8 @@ if (app.treatment === 'pair') {
     app.groupSize = 2;
 }
 
+app.budgets = [...app.regularBudgets, ...app.addBudgets]
+
 app.numPeriods = app.budgets.length;
 app.groupMatchingType = 'PARTNER_RANDOM';
 app.modifyPathsToIncludeId = false;
@@ -174,7 +176,7 @@ decisionStage.activeScreen = /*html*/`
   </div>
 </div>
 <div style='display: flex; flex-direction: column;'>
-    <div :style='"display: flex; flex-direction: row; width: " + ((app.treatment === "pair" && app.session.divisionType === "ENDO") ? 1180 : 1000) + "px; justify-content: center;"'>
+    <div :style='"display: flex; flex-direction: row; width: 1180px; justify-content: center;"'>
         <div class="card" :style='app.treatment === "pair" ? "flex: 1 1 auto" : ""'>
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
@@ -246,8 +248,8 @@ decisionStage.activeScreen = /*html*/`
             <div class="card" style='flex: 1 1 auto;'>
                 <div class='blocker' v-show='(app.session.divisionType === "EXOG" || player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y) && player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body" style='color: blue'>
-                    <h5 class="card-title">Other’s allocation proposal</h5>
-                    <div class='proposalDiv' v-if='player.madeAllocationSelection'>
+                    <h5 class="card-title">Other's allocation proposal</h5>
+                    <div class='proposalDiv' v-if='player.madeAllocationSelection && player.partnerAllocationProposal.x !== "" && (app.session.divisionType != "ENDO" || (player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== "" && player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== ""))'>
                         X: {{player.partnerAllocationProposal.x}}<br>
                         Y: {{player.partnerAllocationProposal.y}}<br>
                     </div>

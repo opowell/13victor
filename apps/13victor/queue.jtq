@@ -93,6 +93,7 @@ session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting g
 session.addNumberOption('numPracticeRounds', 1, 0, 100, 1, 'Number of practice rounds.');
 session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of randomly paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
+session.addNumberOption('numAddRounds', 10, 0, 5000, 1, 'Number of additional rounds for out-of-sample prediction.');
 session.addSelectOption('payPracticeRound', ['yes', 'no'], 'Whether or not the practice round is paid.');
 session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round, if paid.');
 session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate for individual part.');
@@ -160,12 +161,14 @@ function drawBudgets(numBudgets) {
 
 let exampleBudgets = drawBudgets(session.numPracticeRounds);
 let paidBudgets = drawBudgets(session.numRounds);
+let addBudgets = drawBudgets(session.numAddRounds);
 
 session.addApp('1_instructions_training.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
     text: 'training',
-    budgets: exampleBudgets,
+    regularBudgets: exampleBudgets,
+    addBudgets: [],
     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
 });
@@ -176,7 +179,8 @@ function addPairApps() {
         treatment: 'pair',
         numPaidDecisions: session.numPaidDecisionsPerRound,
         text: 'standard',
-        budgets: paidBudgets,
+        regularBudgets: paidBudgets,
+        addBudgets: addBudgets,
         exRate: session.exchangeRatePairs,
     });
 }
@@ -190,7 +194,8 @@ session.addApp('counting.jtt', {
     treatment: 'individual',
     numPaidDecisions: session.numPaidDecisionsPerRound,
     text: 'standard',
-    budgets: paidBudgets,
+    regularBudgets: paidBudgets,
+    addBudgets: addBudgets,
     exRate: session.exchangeRateIndiv,
 });
 

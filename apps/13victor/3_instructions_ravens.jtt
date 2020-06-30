@@ -18,5 +18,8 @@ screen. You do not have to answer the questions in any order, and you can decide
 questions (temporarily) unanswered. Questions you have already answered will be indicated
 with a grey background in the "Question list" in the top right corner of the screen.</p>
 <p>When you are ready to start the 12 questions, please click the "Start" button.</p>
-<button>Start</button>
+<div style="display: flex; width: 100%">
+    <span style="flex: 1 1 auto"></span>
+    <button style="flex: 0 0 auto">Start</button>
+</div>
 `

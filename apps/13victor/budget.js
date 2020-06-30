@@ -494,7 +494,8 @@ updateChart = function (player) {
 
 getSeries = function (player) {
   let group = player.group;
-
+  let app = group.period.app;
+  
   jt.budgetData = [];
   for (let i = 0; i <= group.maxX * 10; i++) {
     let x = i / 10;
@@ -543,7 +544,7 @@ getSeries = function (player) {
       }
     });
   }
-  if (player.partnerAllocationProposal != null && player.partnerAllocationProposal.x !== '' && player.madeAllocationSelection) {
+  if (player.madeAllocationSelection && player.partnerAllocationProposal.x !== "" && (app.session.divisionType != "ENDO" || (player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== "" && player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== ""))) {
     series.push({
       type: "scatter",
       name: "Other's allocation proposal",
