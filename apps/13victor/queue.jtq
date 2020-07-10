@@ -75,7 +75,7 @@ for (let i in treatments) {
     for (let j in treatments[i].fieldValues) {
         name += ', ' + j + '=' + treatments[i].fieldValues[j];
     }
-    treatments[i].fullNanme = name;
+    treatments[i].fullName = name;
     treatmentNames.push(name);
 }
 
