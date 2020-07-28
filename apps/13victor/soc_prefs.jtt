@@ -90,6 +90,9 @@ stage.playerStart = function(player) {
     }
 }
 stage.activeScreen = `
+<link rel="stylesheet" href="/shared/bootstrap.min.css">
+<div class="card" style='background-color: inherit; border: none;'>
+    <div class="card-body">
     <p>Please choose the row in which you would like to change for the first time from the left to the right allocation. In order to do so, please mark the row of your choice. After you have marked the row, the rest of the table will be completed automatically as implied by your choice. That is, the row(s) in which you prefer the left allocation and the row(s) in which you prefer the right allocation will be automatically highlighted in green. Please check your decision then. Revise your choice or confirm it by clicking "Continue". All numbers in the table are in Points.
     <table>
         <tr>
@@ -118,7 +121,12 @@ stage.activeScreen = `
     </table>
     <br>
     <button :disabled="player.switchRow===''">Continue</button>
+  </div>
+</div>
     <style>
+    body {
+      margin: auto;
+    }
     table {
         border-spacing: 0px;
         border-collapse: collapse;

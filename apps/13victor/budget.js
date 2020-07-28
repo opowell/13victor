@@ -362,6 +362,11 @@ jt.overwriteCrosshairImpl = function () {
   };
 }
 
+isFirstBudgetPoint = function (point) {
+  if (point.x != jt.budgetData[0][0]) return false
+  if (point.y != jt.budgetData[0][1]) return false
+  return true
+}
 
 jt.autoplay_decide = function () {
 
@@ -370,7 +375,7 @@ jt.autoplay_decide = function () {
     return;
   }
 
-  if (!jt.vue.player.madeAllocationSelection) {
+  if (!jt.vue.player.madeAllocationSelection || !isFirstBudgetPoint(jt.vue.player.myAllocationProposal)) {
     let point = randomEl(jt.budgetData);
     if (jt.vue.app.treatment == 'pair') {
       point = jt.budgetData[0];

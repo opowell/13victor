@@ -25,6 +25,9 @@ instructions.playerStart = function(player) {
 }
 
 instructions.activeScreen = `
+<link rel="stylesheet" href="/shared/bootstrap.min.css">
+<div class="card" style='background-color: inherit; border: none;'>
+    <div class="card-body">
 <h4>Instructions for Additional Task 1</h4>
 <p>In the following, we ask you to distribute money between you and another anonymous participant. The other anonymous participant will be randomly selected at the end of the experiment, and it will NOT be the participant with whom you were matched during the group decision making task. We will call the other randomly chosen participant the "passive recipient". You will see below, why we call this person the "passive recipient".</p>
 <p>The decisions you will make concern real money as some randomly chosen decisions will actually be paid. All numbers appearing in the tables you will see are in Points. For every {{ app.session.socPrefsExRatePoints }} Points you earn in this task, you will be paid EUR {{ app.session.socPrefsExRateEuros }} at the end of the experiment.</p>
@@ -55,6 +58,9 @@ instructions.activeScreen = `
 </tr>
 </table>
 <style>
+body {
+  margin: auto;
+}
 table {
     border-spacing: 0px;
     border-collapse: collapse;
@@ -82,4 +88,5 @@ td {
 <p><b>Payment as Active Person:</b> At the end of the experiment and separately for each participant, the computer will first randomly select one of the six tables and then the computer will randomly select one of the 11 rows in the selected table. The allocation chosen by you in the selected table and the selected row will be actually paid out. If, for example, the randomly chosen table was the one shown above and the selected row in this table was the fourth row, and if in this task you had chosen the right allocation, then you would receive 9.5 Points as an active person, while your passive recipient would receive 9 Points.</p>
 <p><b>Payment as Passive Recipient:</b> In the exact same manner that your passive recipient receives a payment from your decision, without having taken any action, you receive a payment from another participant (who is again not the participant with whom you were matched during the group decision making task) without you doing anything, i.e., you are the passive recipient of this other participant. We make sure that you are not matched twice with the same participant as active and as passive recipient. This means that, if participant X is your passive recipient, then we make sure that you are not the passive recipient of participant X.</p>
 <p>To sum up: In this part of the experiment, you are taking decisions in six tables in which you are asked to indicate the row for which you prefer for the first time the right allocation over the left allocation. Besides you earning Points as an active decision maker, you will also earn Points as a passive recipient.</p>
+</div></div>
 `

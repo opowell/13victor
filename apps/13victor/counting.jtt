@@ -7,6 +7,12 @@ if (app.treatment === 'pair') {
     app.groupSize = 2;
 }
 
+for (let i in app.regularBudgets) {
+  app.regularBudgets[i].type = 'regular';
+}
+for (let i in app.addBudgets) {
+  app.addBudgets[i].type = 'additional';
+}
 app.budgets = [...app.regularBudgets, ...app.addBudgets]
 
 app.numPeriods = app.budgets.length;
@@ -64,6 +70,7 @@ decisionStage.groupStart = function (group) {
     group.maxX = group.budgetX * app.session.m;
     group.maxY = group.budgetY * app.session.m;
     group.budgetId = app.budgets[group.period.id - 1].id;
+    group.budgetType = app.budgets[group.period.id - 1].type;
     group.validProposals = false;
 
     for (let p in group.players) {
