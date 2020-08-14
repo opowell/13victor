@@ -11,5 +11,5 @@ app.participantStart = function(participant) {
 
 let instructions = app.newStage('instructions_main');
 instructions.activeScreen = `
-    <p>You will now make decisions in the {{ app.session.numRounds }} round{{ app.session.numRounds === 1 ? '' : 's'}} of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} as described in the instructions.</p>
+    <p>You will now make decisions in the {{ app.session.numRounds + app.session.numAddRounds }} round{{ app.session.numRounds +  + app.session.numAddRounds === 1 ? '' : 's'}} of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} as described in the instructions.</p>
 `
