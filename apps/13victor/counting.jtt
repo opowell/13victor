@@ -193,7 +193,7 @@ decisionStage.activeScreen = /*html*/`
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
                     <div style='margin-right: 10px;'>
-                        <div style='padding-bottom: 5px'>{{participant.numDecParts == null ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
+                        <div style='padding-bottom: 5px'><span style='font-weight: bold; font-size: 1.5rem'>Token Allocation</span> - {{participant.numDecParts == null ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
                         <h5 style='padding-bottom: 5px'>Please choose your preferred allocation{{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}}!</h5>
                     </div>
                     <div

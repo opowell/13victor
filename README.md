@@ -35,10 +35,5 @@ the group part.
 Layout
 - In the individual part and the group parts please introduce a button so that subjects can check
 the instructions of the part they are currently working on.
-- For the main panel, e.g. that containing the allocation task, add the title: “Token Allocation”.
-Please insert this title to the left of the message Part A/B round x of X, but with bigger and bold
-letters.
-
--
 - When a choice is made in the allocation part, the graph is slighlty shifted upwards, can
 something be done to avoid that?
