@@ -279,7 +279,7 @@ decisionStage.activeScreen = /*html*/`
             <div class="card" v-if='app.session.divisionType === "ENDO"' style='flex: 1 1 auto;'>
                 <div class='blocker' v-show='(app.session.divisionType === "EXOG" || player.myDivisionProposal.x !== "" && player.myDivisionProposal.x === 100 - player.partnerDivisionProposal.x && player.myDivisionProposal.y !== "" && player.myDivisionProposal.y === 100 - player.partnerDivisionProposal.y) && player.madeAllocationSelection && player.myAllocationProposal.x === player.partnerAllocationProposal.x'></div>
                 <div class="card-body">
-                    <h5 class="card-title">My proposed division</h5>
+                    <h5 class="card-title">Token division</h5>
                     <div style='height: 120px;'>
                         <div>My share of the eventually agreed X: <b>{{(player.myDivisionProposal == null || player.myDivisionProposal.x === '') ? '' : (player.myDivisionProposal.x + "%")}}</b></div>
                         <div style='display: flex; margin-top: 30px; margin-bottom: 20px;'>

@@ -39,8 +39,6 @@ the instructions of the part they are currently working on.
 Please insert this title to the left of the message Part A/B round x of X, but with bigger and bold
 letters.
 
-- In the endogenous treatment for the panel that is called “My proposed division” change the
-name to “Token Division”.
 -
 - When a choice is made in the allocation part, the graph is slighlty shifted upwards, can
 something be done to avoid that?
