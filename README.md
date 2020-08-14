@@ -35,5 +35,3 @@ the group part.
 Layout
 - In the individual part and the group parts please introduce a button so that subjects can check
 the instructions of the part they are currently working on.
-- When a choice is made in the allocation part, the graph is slighlty shifted upwards, can
-something be done to avoid that?

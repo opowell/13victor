@@ -530,14 +530,14 @@ getSeries = function (player) {
         radius: 6
       }
     });
-  } else if (player.stage.app.treatment === 'pairs') {
+  } else if (player.stage.app.treatment === 'pair') {
     series.push({
       type: "scatter",
-      name: ".",
+      name: "-",
       color: "white",
-      data: [],
+      data: [[1, 1]],
       marker: {
-        radius: 6
+        radius: 1
       }
     });
   }
