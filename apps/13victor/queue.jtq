@@ -1,5 +1,3 @@
-let trainingBudgets = [{ maxX: 50, maxY: 50, id: 1 }];
-
 let treatments = [
     {
         name: 'Custom',
@@ -109,6 +107,7 @@ session.ravenMatricesPractice = {
     questionIds: [1, 2],
     answers: [8, 4],
 };
+
 session.ravenMatrices = {
     questionIds: [3, 10, 12, 15, 16, 18, 21, 22, 28, 30, 31, 34],
     answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
@@ -139,41 +138,42 @@ function drawBudgetMax2() {
     return Utils.randomInt(10, 101);
 }
 
+function drawBudget() {
+  let x = drawBudgetMax1();
+  let y = drawBudgetMax2();
+  // 50% chance to switch.
+  if (Math.random() < 0.5) {
+      let z = x;
+      x = y;
+      y = z;
+  }
+  return {maxX: x, maxY: y}
+}
+
 function drawBudgets(numBudgets) {
     let budgets = [];
     for (let i = 0; i < numBudgets; i++) {
-        let x = drawBudgetMax1();
-        let y = drawBudgetMax2();
-        // 50% chance to switch.
-        if (Math.random() < 0.5) {
-            let z = x;
-            x = y;
-            y = z;
-        }
-        budgets.push({
-            maxX: x,
-            maxY: y,
-            id: i
-        });
+      let budget = drawBudget();
+      budget.id = i
+      budgets.push(budget);
     }
     return budgets;
 }
 
-let exampleBudgets = drawBudgets(session.numPracticeRounds);
+let practiceBudgets = drawBudgets(session.numPracticeRounds);
 let paidBudgets = drawBudgets(session.numRounds);
 let addBudgets = drawBudgets(session.numAddRounds);
 
-session.addApp('1_instructions_training.jtt');
-session.addApp('counting.jtt', {
-    treatment: 'individual',
-    text: 'training',
-    regularBudgets: exampleBudgets,
-    addBudgets: [],
-    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
-    exRate: session.exchangeRatePracticeRound,
-});
-
 function addPairApps() {
+  session.addApp('1_instructions_training.jtt');
+  session.addApp('counting.jtt', {
+      treatment: 'pair',
+      text: 'training',
+      regularBudgets: practiceBudgets,
+      addBudgets: [],
+      numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+      exRate: session.exchangeRatePracticeRound,
+  });
     session.addApp('2_instructions_main.jtt');
     session.addApp('counting.jtt', {
         treatment: 'pair',
@@ -189,6 +189,15 @@ if (session.playFirst === 'pair') {
     addPairApps();
 }
 
+session.addApp('1_instructions_training.jtt');
+session.addApp('counting.jtt', {
+    treatment: 'individual',
+    text: 'training',
+    regularBudgets: practiceBudgets,
+    addBudgets: [],
+    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+    exRate: session.exchangeRatePracticeRound,
+});
 session.addApp('2_instructions_main.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
