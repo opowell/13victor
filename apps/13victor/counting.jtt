@@ -67,8 +67,13 @@ decisionStage.groupStart = function (group) {
     group.addTable('divisionProposals');
     group.budgetX = app.budgets[group.period.id - 1].maxX;
     group.budgetY = app.budgets[group.period.id - 1].maxY;
+  if (app.treatment === 'pair') {
     group.maxX = group.budgetX * app.session.m;
     group.maxY = group.budgetY * app.session.m;
+  } else {
+    group.maxX = group.budgetX;
+    group.maxY = group.budgetY;
+    }
     group.budgetId = app.budgets[group.period.id - 1].id;
     group.budgetType = app.budgets[group.period.id - 1].type;
     group.validProposals = false;

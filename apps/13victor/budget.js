@@ -79,12 +79,6 @@ function enableChartMouseMoving() {
     } else if (yVal < 0) {
       xVal = xMax;
       yVal = 0;
-    } else if (xVal > yVal) {
-      yVal = chartMax / xVal * yVal;
-      xVal = chartMax;
-    } else {
-      xVal = chartMax / yVal * xVal;
-      yVal = chartMax;
     }
 
     let selX = null;
@@ -93,7 +87,6 @@ function enableChartMouseMoving() {
     } else {
       selX = yMax / (yMax / xMax + yVal / xVal);
     }
-
     draw_plot_lines(selX, xVal, yVal);
   };
   jt.chart.container.onmouseleave = function (e) {
@@ -122,7 +115,6 @@ function clearPlotLines() {
 }
 
 function draw_plot_lines(xValue, xPos, yPos) {
-
   clearPlotLines();
 
   let player = jt.vue.player;
@@ -502,10 +494,10 @@ getSeries = function (player) {
   let app = group.period.app;
   
   jt.budgetData = [];
-  for (let i = 0; i <= group.maxX * 10; i++) {
+  for (let i = 0; i <= player.maxX * 10; i++) {
     let x = i / 10;
     x = round(x, 2);
-    let y = group.maxY - (group.maxY * i) / 10 / group.maxX;
+    let y = player.maxY - (player.maxY * i) / 10 / player.maxX;
     y = round(y, 2);
     jt.budgetData.push([x, y]);
   }
