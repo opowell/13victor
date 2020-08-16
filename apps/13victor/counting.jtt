@@ -58,6 +58,12 @@ app.html = /*html*/`
 </html>
 `;
 
+if (app.treatment === 'pair') {
+  app.getGroupIdsForPeriod = function (period) {
+    return app.text === 'training' ? app.session.matchTraining : app.session.matchReal
+  }
+}
+
 let decisionStage = app.newStage('decide');
 decisionStage.wrapPlayingScreenInFormTag = false;
 decisionStage.addOKButtonIfNone = false;

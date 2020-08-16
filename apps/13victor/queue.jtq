@@ -126,7 +126,6 @@ for (let i in treatments) {
     }
 }
 
-
 // Draw budget lines.
 // - intersect at least one axis at or above the 50-token level
 // - intersect both axes at or below the 100-token level.

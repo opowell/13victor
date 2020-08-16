@@ -4,6 +4,52 @@ app.participantStart = function (participant) {
   delete participant.numDecParts;
 }
 
+if (app.session.match == null) {
+  const pIds = Object.keys(app.session.participants)
+  let match = {}
+  let matchTraining = []
+  let matchReal = []
+  for (let p in pIds) {
+    match[pIds[p]] = {} 
+  }
+  const pIds1 = Utils.shuffle(pIds) // training partners
+  for (let i = 0; i < pIds.length; i++) {
+    let p1 = pIds1[i]
+    let p2 = pIds1[i + 1]
+    i++
+    match[p1].trainingPartner = p2
+    match[p2].trainingPartner = p1
+    matchTraining.push([p1, p2])
+  }
+  let valid = false
+  let count = 0
+  while (!valid) {
+    count++
+    console.log('count', count, match)
+    valid = true
+    matchReal = [];
+    let pIds2 = Utils.shuffle(pIds) // real partners
+    for (let i = 0; i < pIds2.length; i++) {
+      let p1 = pIds2[i]
+      let p2 = pIds2[i + 1]
+      i++
+      match[p1].realPartner = p2
+      match[p2].realPartner = p1
+      matchReal.push([p1, p2])
+    }
+    for (let i in match) {
+      if (match[i].trainingPartner === match[i].realPartner) {
+        valid = false
+        break
+      }
+    }
+  }
+  if (app.session != null) {
+    app.session.matchTraining = matchTraining
+    app.session.matchReal = matchReal
+  }
+}
+
 let instructions = app.newStage('instructions_training');
 instructions.activeScreen = `
     <p>
