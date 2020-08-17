@@ -7,15 +7,30 @@ if (app.treatment === 'pair') {
     app.groupSize = 2;
 }
 
-for (let i in app.regularBudgets) {
-  app.regularBudgets[i].type = 'regular';
+// Draw budget lines.
+// - intersect at least one axis at or above the 50-token level
+// - intersect both axes at or below the 100-token level.
+function drawBudgetMax1() {
+  return Utils.randomInt(50, 101);
 }
-for (let i in app.addBudgets) {
-  app.addBudgets[i].type = 'additional';
-}
-app.budgets = [...app.regularBudgets, ...app.addBudgets]
 
-app.numPeriods = app.budgets.length;
+function drawBudgetMax2() {
+  return Utils.randomInt(10, 101);
+}
+
+function drawBudget() {
+  let x = drawBudgetMax1();
+  let y = drawBudgetMax2();
+  // 50% chance to switch.
+  if (Math.random() < 0.5) {
+      let z = x;
+      x = y;
+      y = z;
+  }
+  return {maxX: x, maxY: y}
+}
+
+app.numPeriods = app.numRegularBudgets + app.numAddBudgets;
 app.groupMatchingType = 'PARTNER_RANDOM';
 app.modifyPathsToIncludeId = false;
 app.waitingScreen = /*html*/`
@@ -142,9 +157,11 @@ decisionStage.addOKButtonIfNone = false;
 decisionStage.groupStart = function (group) {
     group.addTable('messages');
     group.addTable('allocationProposals');
-    group.addTable('divisionProposals');
-    group.budgetX = app.budgets[group.period.id - 1].maxX;
-    group.budgetY = app.budgets[group.period.id - 1].maxY;
+  group.addTable('divisionProposals');
+  group.budget = drawBudget()
+  group.budget.type = group.period.id < app.numRegularBudgets ? 'regular' : 'additional';
+    group.budgetX = group.budget.maxX;
+    group.budgetY = group.budget.maxY;
   if (app.treatment === 'pair') {
     group.maxX = group.budgetX * app.session.m;
     group.maxY = group.budgetY * app.session.m;
@@ -152,8 +169,6 @@ decisionStage.groupStart = function (group) {
     group.maxX = group.budgetX;
     group.maxY = group.budgetY;
     }
-    group.budgetId = app.budgets[group.period.id - 1].id;
-    group.budgetType = app.budgets[group.period.id - 1].type;
     group.validProposals = false;
 
     for (let p in group.players) {
@@ -276,7 +291,7 @@ decisionStage.activeScreen = /*html*/`
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
                     <div style='margin-right: 10px;'>
-                        <div style='padding-bottom: 5px'><span style='font-weight: bold; font-size: 1.5rem'>Token Allocation</span> - {{participant.numDecParts == null ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
+                        <div style='padding-bottom: 5px'><span style='font-weight: bold; font-size: 1.5rem'>Token Allocation</span> - {{app.text == 'training' ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
                         <h5 style='padding-bottom: 5px'>Please choose your preferred allocation{{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}}!</h5>
                     </div>
                     <div

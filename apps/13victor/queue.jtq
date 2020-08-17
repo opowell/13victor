@@ -126,49 +126,16 @@ for (let i in treatments) {
     }
 }
 
-// Draw budget lines.
-// - intersect at least one axis at or above the 50-token level
-// - intersect both axes at or below the 100-token level.
-function drawBudgetMax1() {
-    return Utils.randomInt(50, 101);
-}
-
-function drawBudgetMax2() {
-    return Utils.randomInt(10, 101);
-}
-
-function drawBudget() {
-  let x = drawBudgetMax1();
-  let y = drawBudgetMax2();
-  // 50% chance to switch.
-  if (Math.random() < 0.5) {
-      let z = x;
-      x = y;
-      y = z;
-  }
-  return {maxX: x, maxY: y}
-}
-
-function drawBudgets(numBudgets) {
-    let budgets = [];
-    for (let i = 0; i < numBudgets; i++) {
-      let budget = drawBudget();
-      budget.id = i
-      budgets.push(budget);
-    }
-    return budgets;
-}
-
-let practiceBudgets = drawBudgets(session.numPracticeRounds);
-let paidBudgets = drawBudgets(session.numRounds);
-let addBudgets = drawBudgets(session.numAddRounds);
+// let practiceBudgets = drawBudgets(session.numPracticeRounds);
+// let paidBudgets = drawBudgets(session.numRounds);
+// let addBudgets = drawBudgets(session.numAddRounds);
 
 function addPairApps() {
   session.addApp('counting.jtt', {
       treatment: 'pair',
       text: 'training',
-      regularBudgets: practiceBudgets,
-      addBudgets: [],
+      numRegularBudgets: session.numPracticeRounds,
+      numAddBudgets: 0,
       numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
       exRate: session.exchangeRatePracticeRound,
   });
@@ -176,9 +143,9 @@ function addPairApps() {
         treatment: 'pair',
         numPaidDecisions: session.numPaidDecisionsPerRound,
         text: 'standard',
-        regularBudgets: paidBudgets,
-        addBudgets: addBudgets,
-        exRate: session.exchangeRatePairs,
+        numRegularBudgets: session.numRounds,
+        numAddBudgets: session.numAddRounds,
+          exRate: session.exchangeRatePairs,
     });
 }
 
@@ -189,18 +156,18 @@ if (session.playFirst === 'pair') {
 session.addApp('counting.jtt', {
     treatment: 'individual',
     text: 'training',
-    regularBudgets: practiceBudgets,
-    addBudgets: [],
-    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+    numRegularBudgets: session.numPracticeRounds,
+    numAddBudgets: 0,
+  numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
 });
 session.addApp('counting.jtt', {
     treatment: 'individual',
     numPaidDecisions: session.numPaidDecisionsPerRound,
     text: 'standard',
-    regularBudgets: paidBudgets,
-    addBudgets: addBudgets,
-    exRate: session.exchangeRateIndiv,
+    numRegularBudgets: session.numRounds,
+    numAddBudgets: session.numAddRounds,
+  exRate: session.exchangeRateIndiv,
 });
 
 if (session.playFirst !== 'pair') {
