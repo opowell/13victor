@@ -19,6 +19,3 @@ treatment the subject was assigned to. For example, if the subject is assigned t
 which the maximum amount she/he can allocate to an account is 70 tokens, the budget lines in
 the practice rounds should also have that property.
 
-Layout
-- In the individual part and the group parts please introduce a button so that subjects can check
-the instructions of the part they are currently working on.

@@ -164,7 +164,6 @@ let paidBudgets = drawBudgets(session.numRounds);
 let addBudgets = drawBudgets(session.numAddRounds);
 
 function addPairApps() {
-  session.addApp('1_instructions_training.jtt');
   session.addApp('counting.jtt', {
       treatment: 'pair',
       text: 'training',
@@ -173,7 +172,6 @@ function addPairApps() {
       numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
       exRate: session.exchangeRatePracticeRound,
   });
-    session.addApp('2_instructions_main.jtt');
     session.addApp('counting.jtt', {
         treatment: 'pair',
         numPaidDecisions: session.numPaidDecisionsPerRound,
@@ -188,7 +186,6 @@ if (session.playFirst === 'pair') {
     addPairApps();
 }
 
-session.addApp('1_instructions_training.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
     text: 'training',
@@ -197,7 +194,6 @@ session.addApp('counting.jtt', {
     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
 });
-session.addApp('2_instructions_main.jtt');
 session.addApp('counting.jtt', {
     treatment: 'individual',
     numPaidDecisions: session.numPaidDecisionsPerRound,

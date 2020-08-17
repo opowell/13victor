@@ -45,23 +45,95 @@ app.html = /*html*/`
         <link rel="stylesheet" href="/13victor/counting.css">
     </head>
     <body class='hidden' style='background-color: #AAA'>
-        <div id='jtree'>
-            <span v-show='player.status=="playing"'>
-                {{stages}}
-            </span>
-            <span v-show='["ready", "waiting", "finished", "done"].includes(player.status)'>
-                {{waiting-screens}}
-            </span>
+      <div id='jtree'>
+        <div v-if="player.page === 'instructions'" style='position: absolute; background-color: #aaa; z-index: 20; height: 100%; width: 1180px; padding-top: 300px; align-items: flex-start; display: flex; justify-content: center'>
+          <div class="card" style='flex: 0 0 400px;'>
+            <div class="card-body">
+              <p v-if="app.text === 'standard'">You will now make decisions in the {{ app.session.numRounds + app.session.numAddRounds }} round{{ app.session.numRounds +  + app.session.numAddRounds === 1 ? '' : 's'}} of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} as described in the instructions.</p>
+              <p v-else>To familiarize yourself with the graphical interface, you can now practice for {{ app.session.numPracticeRounds }} round{{ app.session.numPracticeRounds === 1 ? '' : 's'}}. All earnings are expressed in Tokens. <span v-if='app.session.payPracticeRound === "yes"'>At the end of the {{ app.session.numPracticeRounds }} round{{ (app.session.numPracticeRounds === 1 ? '' : 's') }}, one round will be randomly selected. For each Token earned you will receive {{ app.session.exchangeRatePracticeRound}} Euro{{ app.session.exchangeRatePracticeRound === 1 ? '' : 's'}} in cash at the end of the experiment.</span></p>
+              <button onclick="jt.vue.player.page = 'game'">OK</button>
+            </div>
+          </div>
         </div>
-        {{scripts}}
+        <span v-show='player.status=="playing"'>
+          {{stages}}
+        </span>
+        <span v-show='["ready", "waiting", "finished", "done"].includes(player.status)'>
+          {{waiting-screens}}
+        </span>
+      </div>
+      {{scripts}}
     </body>
 </html>
 `;
 
 if (app.treatment === 'pair') {
   app.getGroupIdsForPeriod = function (period) {
-    return app.text === 'training' ? app.session.matchTraining : app.session.matchReal
+    let ids = app.text === 'training' ? app.session.matchTraining : app.session.matchReal
+    console.log('got group ids', ids)
+    return ids
   }
+}
+
+app.drawMatching = function () {
+  
+  if (app.session.match == null) {
+    const pIds = Object.keys(app.session.participants)
+    let match = {}
+    let matchTraining = []
+    let matchReal = []
+    for (let p in pIds) {
+      match[pIds[p]] = {} 
+    }
+    const pIds1 = Utils.shuffle(pIds) // training partners
+    for (let i = 0; i < pIds.length; i++) {
+      let p1 = pIds1[i]
+      let p2 = pIds1[i + 1]
+      i++
+      match[p1].trainingPartner = p2
+      match[p2].trainingPartner = p1
+      matchTraining.push([p1, p2])
+    }
+    let valid = false
+    let count = 0
+    while (!valid) {
+      count++
+      console.log('count', count, match)
+      valid = true
+      matchReal = [];
+      let pIds2 = Utils.shuffle(pIds) // real partners
+      for (let i = 0; i < pIds2.length; i++) {
+        let p1 = pIds2[i]
+        let p2 = pIds2[i + 1]
+        i++
+        match[p1].realPartner = p2
+        match[p2].realPartner = p1
+        matchReal.push([p1, p2])
+      }
+      for (let i in match) {
+        if (match[i].trainingPartner === match[i].realPartner) {
+          valid = false
+          break
+        }
+      }
+    }
+    if (app.session != null) {
+      app.session.matchTraining = matchTraining
+      app.session.matchReal = matchReal
+    }
+  }
+}
+
+app.participantStart = function (participant) {
+  if (app.session.matchingReal == null) {
+    app.drawMatching();
+  }
+
+  if (app.text !== 'standard') return
+  if (participant.numDecParts == null) {
+      participant.numDecParts = 0;
+  }
+  participant.numDecParts++;
 }
 
 let decisionStage = app.newStage('decide');
@@ -115,6 +187,11 @@ decisionStage.groupStart = function (group) {
 }
 
 decisionStage.playerStart = function (player) {
+  if (player.group.period.id == 1) {
+    player.page = 'instructions'
+  } else {
+    player.page = 'game'
+  }
     player.toolTipX = -1;
     player.toolTipY = -1;
     player.madeAllocationSelection = false;
@@ -194,7 +271,7 @@ decisionStage.activeScreen = /*html*/`
   </div>
 </div>
 <div style='display: flex; flex-direction: column;'>
-    <div :style='"display: flex; flex-direction: row; width: 1180px; justify-content: center;"'>
+  <div :style='"display: flex; flex-direction: row; width: 1180px; justify-content: center;"'>
         <div class="card" :style='app.treatment === "pair" ? "flex: 1 1 auto" : ""'>
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
@@ -249,6 +326,9 @@ decisionStage.activeScreen = /*html*/`
                     onclick='confirmAllocationSelection()' 
                     onmousemove='draw_plot_lines(jt.toolTipX)'
                 ></div>
+            </div>
+            <div style='display: flex; width: 100%; justify-content: center; margin-bottom: 1rem;'>
+                <button onclick="jt.vue.player.page = 'instructions'">Show instructions</button>
             </div>
         </div>
         <div style='display: flex; flex-direction: column; flex: 0 0 360px;' v-if="app.treatment === 'pair'">
