@@ -159,7 +159,7 @@ decisionStage.groupStart = function (group) {
     group.addTable('allocationProposals');
   group.addTable('divisionProposals');
   group.budget = drawBudget()
-  group.budget.type = group.period.id < app.numRegularBudgets ? 'regular' : 'additional';
+  group.budget.type = group.period.id <= app.numRegularBudgets ? 'regular' : 'additional';
     group.budgetX = group.budget.maxX;
     group.budgetY = group.budget.maxY;
   if (app.treatment === 'pair') {
