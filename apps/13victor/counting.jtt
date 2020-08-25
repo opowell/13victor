@@ -113,7 +113,7 @@ app.drawMatching = function () {
     let count = 0
     while (!valid) {
       count++
-      console.log('count', count, match)
+      console.log('count', count)
       valid = true
       matchReal = [];
       let pIds2 = Utils.shuffle(pIds) // real partners
@@ -136,6 +136,24 @@ app.drawMatching = function () {
       app.session.matchTraining = matchTraining
       app.session.matchReal = matchReal
     }
+    console.log('match', match)
+    app.session.match = match
+    for (let i in app.session.participants) {
+      let p = app.session.participants[i]
+      console.log('player', i, p.id, match[i], p.budgets)
+      let partner = app.session.participants[match[i].realPartner]
+      if (partner.budgets != null) {
+        p.budgets = partner.budgets
+        p.shuffledBudgets = partner.shuffledBudgets
+      } else {
+        p.budgets = []
+        for (let j = 0; j < app.session.numRounds + app.session.numAddRounds; j++) {
+          p.budgets.push(drawBudget())
+        }
+        p.shuffledBudgets = Utils.shuffle([...p.budgets])
+      }
+      console.log('budgets', p.budgets, p.shuffledBudgets)
+    }
   }
 }
 
@@ -155,13 +173,22 @@ let decisionStage = app.newStage('decide');
 decisionStage.wrapPlayingScreenInFormTag = false;
 decisionStage.addOKButtonIfNone = false;
 decisionStage.groupStart = function (group) {
-    group.addTable('messages');
-    group.addTable('allocationProposals');
+  group.addTable('messages');
+  group.addTable('allocationProposals');
   group.addTable('divisionProposals');
-  group.budget = drawBudget()
+  let part1 = group.players[0].participant;
+  if (app.text === 'training') {
+    group.budget = drawBudget()
+  } else {
+    if (part1.numDecParts === 1) {
+      group.budget = part1.budgets[group.period.id - 1]
+    } else {
+      group.budget = part1.shuffledBudgets[group.period.id - 1]
+    }
+  }
   group.budget.type = group.period.id <= app.numRegularBudgets ? 'regular' : 'additional';
-    group.budgetX = group.budget.maxX;
-    group.budgetY = group.budget.maxY;
+  group.budgetX = group.budget.maxX;
+  group.budgetY = group.budget.maxY;
   if (app.treatment === 'pair') {
     group.maxX = group.budgetX * app.session.m;
     group.maxY = group.budgetY * app.session.m;
