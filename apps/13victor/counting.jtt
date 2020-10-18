@@ -66,7 +66,7 @@ app.html = /*html*/`
             <div class="card-body">
               <p v-if="app.text === 'standard'">You will now make decisions in the {{ app.session.numRounds + app.session.numAddRounds }} round{{ app.session.numRounds +  + app.session.numAddRounds === 1 ? '' : 's'}} of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} as described in the instructions.</p>
               <p v-else>To familiarize yourself with the graphical interface, you can now practice for {{ app.session.numPracticeRounds }} round{{ app.session.numPracticeRounds === 1 ? '' : 's'}}. All earnings are expressed in Tokens. <span v-if='app.session.payPracticeRound === "yes"'>At the end of the {{ app.session.numPracticeRounds }} round{{ (app.session.numPracticeRounds === 1 ? '' : 's') }}, one round will be randomly selected. For each Token earned you will receive {{ app.session.exchangeRatePracticeRound}} Euro{{ app.session.exchangeRatePracticeRound === 1 ? '' : 's'}} in cash at the end of the experiment.</span></p>
-              <button onclick="jt.vue.player.page = 'game'">OK</button>
+              <button onclick="jt.setPlayerPage('game')">OK</button>
             </div>
           </div>
         </div>
@@ -106,14 +106,13 @@ app.drawMatching = function () {
       let p2 = pIds1[i + 1]
       i++
       match[p1].trainingPartner = p2
+      match[p1].isTrainingP1 = true
       match[p2].trainingPartner = p1
+      match[p2].isTrainingP1 = false
       matchTraining.push([p1, p2])
     }
     let valid = false
-    let count = 0
     while (!valid) {
-      count++
-      console.log('count', count)
       valid = true
       matchReal = [];
       let pIds2 = Utils.shuffle(pIds) // real partners
@@ -122,7 +121,9 @@ app.drawMatching = function () {
         let p2 = pIds2[i + 1]
         i++
         match[p1].realPartner = p2
+        match[p1].isRealP1 = true
         match[p2].realPartner = p1
+        match[p2].isRealP1 = false
         matchReal.push([p1, p2])
       }
       for (let i in match) {
@@ -136,11 +137,13 @@ app.drawMatching = function () {
       app.session.matchTraining = matchTraining
       app.session.matchReal = matchReal
     }
-    console.log('match', match)
+    // console.log('match', match)
     app.session.match = match
     for (let i in app.session.participants) {
       let p = app.session.participants[i]
-      console.log('player', i, p.id, match[i], p.budgets)
+      // console.log('player', i, p.id, match[i], p.budgets)
+      p.isRealP1 = match[i].isRealP1
+      p.isTrainingP1 = match[i].isTrainingP1
       let partner = app.session.participants[match[i].realPartner]
       if (partner.budgets != null) {
         p.budgets = partner.budgets
@@ -152,7 +155,7 @@ app.drawMatching = function () {
         }
         p.shuffledBudgets = Utils.shuffle([...p.budgets])
       }
-      console.log('budgets', p.budgets, p.shuffledBudgets)
+      // console.log('budgets', p.budgets, p.shuffledBudgets)
     }
   }
 }
@@ -247,7 +250,7 @@ decisionStage.playerStart = function (player) {
         player.partnerAllocationProposal = { x: '', y: '' };
         player.allocationMultiplier = 1;
     } else {
-        if (player.idInGroup === 1) {
+        if (player.participant.isRealP1) {
             player.allocationMultiplier = app.session.e1;
         } else {
             player.allocationMultiplier = app.session.e2;
@@ -319,7 +322,7 @@ decisionStage.activeScreen = /*html*/`
                 <div style='display: flex; height: 72px;'>
                     <div style='margin-right: 10px;'>
                         <div style='padding-bottom: 5px'><span style='font-weight: bold; font-size: 1.5rem'>Token Allocation</span> - {{app.text == 'training' ? 'Practice' : (participant.numDecParts === 1 ? 'Part A' : 'Part B')}}: Round {{period.id}} of {{app.numPeriods}}</div>
-                        <h5 style='padding-bottom: 5px'>Please choose your preferred allocation{{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}}!</h5>
+                        <h5 style='padding-bottom: 5px; font-size: inherit'>Please choose your preferred allocation{{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}}!</h5>
                     </div>
                     <div
                         v-if='
@@ -573,6 +576,10 @@ app.messages.setMyDivisionProposal = function (proposal) {
 
     app.checkIfValid(group, player, partner, this);
 
+}
+
+app.messages.setPlayerPage = function (page) {
+  this.participant.player.page = page
 }
 
 decisionStage.playerEnd = function (player) {

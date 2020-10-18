@@ -11,7 +11,8 @@ let treatments = [
             e2: 1,
             m: 1,
             d1: 1,
-            d2: 1,
+          d2: 1,
+            chartMax: 100,
         },
     },
     {
@@ -23,6 +24,7 @@ let treatments = [
             m: 2,
             d1: 0.5,
             d2: 0.5,
+            chartMax: 200,
         },
     },
     {
@@ -33,7 +35,8 @@ let treatments = [
             e2: 0.7,
             m: 2,
             d1: 0.5,
-            d2: 0.5,
+          d2: 0.5,
+          chartMax: 200,
         },
     },
     {
@@ -45,6 +48,7 @@ let treatments = [
             m: 2,
             d1: 0.65,
             d2: 0.35,
+            chartMax: 200,
         },
     },
     {
@@ -53,7 +57,8 @@ let treatments = [
             divisionType: 'ENDO',
             e1: 1,
             e2: 1,
-            m: 2,
+          m: 2,
+          chartMax: 200,
         },
     },
     {
@@ -62,7 +67,8 @@ let treatments = [
             divisionType: 'ENDO',
             e1: 1.3,
             e2: 0.7,
-            m: 2,
+          m: 2,
+          chartMax: 200,
         },
     },
 ]
@@ -88,11 +94,11 @@ session.addNumberOption('d2', 1, 0, 100, 0.01, 'If EXOG division, Player 2 share
 
 session.addNumberOption('chartMax', 200, 0, 1000, 1, 'Chart scale.');
 session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
-session.addNumberOption('numPracticeRounds', 1, 0, 100, 1, 'Number of practice rounds.');
+session.addNumberOption('numPracticeRounds', 5, 0, 100, 1, 'Number of practice rounds.');
 session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of randomly paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
 session.addNumberOption('numAddRounds', 10, 0, 5000, 1, 'Number of additional rounds for out-of-sample prediction.');
-session.addSelectOption('payPracticeRound', ['yes', 'no'], 'Whether or not the practice round is paid.');
+session.addSelectOption('payPracticeRound', ['no', 'yes'], 'Whether or not the practice round is paid.');
 session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round, if paid.');
 session.addNumberOption('exchangeRateIndiv', 1, 0, 1000, 0.001, 'Exchange rate for individual part.');
 session.addNumberOption('exchangeRatePairs', 1, 0, 1000, 0.001, 'Exchange rate for pairs part.');
@@ -113,22 +119,23 @@ session.ravenMatrices = {
     answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
 }
 
-for (let i in treatments) {
-    let tr = treatments[i];
-    if (tr.name === 'Custom') {
-        break;
-    }
-    if (session.treatment.startsWith(tr.name)) {
+session.participantStart = function (participant) {
+  if (session.setTreatment !== true) {
+    session.setTreatment = true
+    for (let i in treatments) {
+      let tr = treatments[i];
+      if (tr.name === 'Custom') {
+          continue;
+      }
+      if (session.treatment.startsWith(tr.name)) {
         for (let j in tr.fieldValues) {
-            session[j] = tr.fieldValues[j];
+          session[j] = tr.fieldValues[j];
         }
         break;
+      }
     }
+  }
 }
-
-// let practiceBudgets = drawBudgets(session.numPracticeRounds);
-// let paidBudgets = drawBudgets(session.numRounds);
-// let addBudgets = drawBudgets(session.numAddRounds);
 
 function addPairApps() {
   session.addApp('counting.jtt', {

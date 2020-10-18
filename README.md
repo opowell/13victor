@@ -11,11 +11,3 @@ All pages should be opened in Google Chrome.
 5. Start session.
 
 To run on non-Windows operating system, get executable from github.com/opowell/jtree.
-
-TODO:
-Practice rounds
-- The budget lines in the practice rounds should have the same properties as those in the
-treatment the subject was assigned to. For example, if the subject is assigned to a treatment in
-which the maximum amount she/he can allocate to an account is 70 tokens, the budget lines in
-the practice rounds should also have that property.
-

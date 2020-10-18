@@ -1,0 +1,59 @@
+2020.10.18
+
+General
+• Set as default numPracticeRounds: 5
+> DONE.
+
+• Set as default payPracticeRound: no
+> DONE.
+
+* Fix: when a treatment is chosen (T1-T6), the settings apply.
+> DONE.
+
+T1 (Baseline)
+• When this treatment is selected please set as default Chartmax:100
+> DONE.
+
+T2, T3, T4, T5 and T6 (Variation 1 , Variation 2, and Variation 3)
+• When one of these treatments are selected please set as default Chartmax:200
+> DONE.
+
+• The “show instructions” button in the following screen can have the white
+surrounding, but make sure that the width coincides with the text box above. In that
+way it would look nicer.
+> UNABLE TO REPRODUCE[1].
+
+• In the groups part, every time a decision is made, every time a chat message is sent,
+AND even every time a message is received the announcement shown below appears.
+We do not want that announcement to be shown unless subjects are about to start
+playing round 1.
+> DONE.
+
+* In the first rounds, the cursor is at times stuck. One needs either to either wait or to
+choose another tab in the explorer so that the cursor moves with the mouse and the
+preferred allocation can be chosen. A manifestation of that problem is that -1 can be
+chosen in the endogenous treatment.
+> UNABLE TO REPRODUCE. Added extra check to prevent selection of value < 0.
+
+When one chooses e1:0.7 and e2: 1.3, I get the following in the Participants screen in
+the individual part. So it seems that only one allocation is working and not the two of
+them.
+> DONE.
+
+• The phrase “please choose your preferred allocation and division” on the top panel
+needs to be readable, this phrase cannot be read in its totality, please adjust letter size
+and do not sacrifice the allocation interface space to do this. .
+> DONE (but unable to reproduce).
+
+• In the token division panel, the numbers 48% and 15%, corresponding to the choice of
+division in the example below, must be shown next to the phrases “My share of the
+eventually agreed X” and “My share of the eventually agreed Y”, respectively and not
+below them.
+> UNABLE TO REPRODUCE.
+
+• In the token division panel, the blue numbers, 59 and 78 in the examples below, are to
+close to the next line. Please make sure that there is a space between these two
+elements.
+> UNABLE TO REPRODUCE.
+
+[1] I am using Google Chrome on MacOS, with a screen resolution of at least 1200 x 1000. All of these characteristics are potential causes of UI bugs. It is important to test on a setup as similar as possible to the one you will be running the experiment on (I assume this is Google Chrome / Windows / large screen (at least 1200 x 1000)). If this is not correct (or you want to support multiple setups),you need to specify which systems you want to support so that we can test them.

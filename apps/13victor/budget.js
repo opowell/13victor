@@ -360,8 +360,17 @@ isFirstBudgetPoint = function (point) {
   return true
 }
 
+jt.setPlayerPage = function (page) {
+  jt.vue.player.page = page
+  jt.sendMessage('setPlayerPage', page)
+}
+
 jt.autoplay_decide = function () {
 
+  if (jt.vue.player.page !== 'game') {
+    jt.setPlayerPage('game')
+    return
+  }
   if (jt.vue.group.validProposals) {
     confirmNewRound();
     return;
@@ -742,5 +751,6 @@ let confirmDivisionSelection = function (event) {
   }
 
   jt.vue.player.newDivisionValue = jt.vue.player['hoverDivision' + jt.vue.player.newDivisionLetter];
-  $('#confirmDivisionModal').modal('show');
+  if (jt.vue.player.newDivisionValue >= 0)
+    $('#confirmDivisionModal').modal('show');
 };
