@@ -219,6 +219,8 @@ decisionStage.groupStart = function (group) {
             x,
             y,
         }
+        player.initialDivisionProposal = { x, y };
+        player.numDivisionProposals = 0;
     }
 
     if (group.app().treatment === 'pair') {
@@ -262,6 +264,11 @@ decisionStage.playerStart = function (player) {
     let randX = Math.random() * player.maxX;
     let randY = (1 - randX / player.maxX) * player.maxY;
     player.myAllocationProposal = { x: randX, y: randY };
+    player.initialAllocationProposal = { x : randX, y: randY };
+    player.numAllocationProposals = 0;
+    player.allocationProposals = [];
+    player.numDivisionProposals = 0;
+    player.divisionProposals = [];
 }
 
 decisionStage.activeScreen = /*html*/`
@@ -512,7 +519,8 @@ app.messages.setMyAllocationProposal = function (proposal) {
         timePosted,
     };
     group.allocationProposals.new(message);
-
+    player.allocationProposals.push(message);
+    player.numAllocationProposals++;
     player.madeAllocationSelection = true;
     player.myAllocationProposal = proposal;
     player.initialCircle = false;
@@ -561,6 +569,8 @@ app.messages.setMyDivisionProposal = function (proposal) {
         timePosted,
     };
     group.divisionProposals.new(message);
+    player.divisionProposals.push(message);
+    player.numDivisionProposals++;
 
     if (proposal.x != null) {
         player.myDivisionProposal.x = proposal.x;
