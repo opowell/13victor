@@ -36,6 +36,28 @@ app.modifyPathsToIncludeId = false;
 
 let choiceStage = app.newStage('choice');
 
+choiceStage.autoplay = `
+    const player = jt.vue.player;
+    if (player.page != 3) {
+        showPage(3)
+        return
+    }
+    
+    if (player.answers[player.matrixId-1] === 'no answer') {
+        jt.setAnswer({ target: { dataset: { answer: Math.floor(Math.random()*8)}}});
+        return
+    }
+    
+    for (let i=0; i<player.answers.length; i++) {
+        if (player.answers[i] === 'no answer') {
+            jt.changeToQuestion({ target: { dataset: { question: i+1 }}});
+            return;
+        }
+    }
+    
+    jt.submitFormData({});
+`
+
 choiceStage.playerStart = function (player) {
     if (app.showInstructions) {
         player.page = 1;
