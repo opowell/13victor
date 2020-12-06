@@ -156,6 +156,8 @@ function addPairApps() {
     });
 }
 
+session.addApp('1_general_instructions.jtt');
+
 if (session.playFirst === 'pair') {
     addPairApps();
 }
