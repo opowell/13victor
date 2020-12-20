@@ -45,6 +45,27 @@ app.waitingScreen = /*html*/`
 `
 app.insertJtreeRefAtStartOfClientHTML = false;
 
+app.fig1Src = 'unknown'
+app.fig2Src = 'unknown'
+app.fig3Src = 'unknown'
+switch (app.session.color) {
+  case 'magenta':
+    app.fig1Src = 'individualt1.png'
+    app.fig2Src = 'groupfirstt1.png'
+    app.fig3Src = 'groupt1.png'
+    break;
+  case 'cyan':
+    app.fig1Src = 'individualt2.png'
+    app.fig2Src = 'groupfirstt2.png'
+    app.fig3Src = 'groupt2.png'
+    break;
+  case 'yellow':
+    app.fig1Src = 'individualt5.png'
+    app.fig2Src = 'groupfirstt5.png'
+    app.fig3Src = 'groupt3.png'
+    break;
+}
+
 app.html = /*html*/`
 <!DOCTYPE html>
 <html>
@@ -63,112 +84,212 @@ app.html = /*html*/`
       <div id='jtree'>
         <div v-if="player.page === 'instructions'" style='background-color: #aaa; height: 100%; align-items: flex-start; display: flex; justify-content: center'>
           <div class="card">
-            <div v-if="app.treatment === 'pair'" class="card-body">
-<div style="margin-top: 5rem;">
-    <button :disabled="player.instructionsPage == 1" @click="jt.vue.player.instructionsPage = 1">Page 1</button>
-    <button :disabled="player.instructionsPage == 2" @click="jt.vue.player.instructionsPage = 2">Page 2</button>
-    <button onclick="jt.setPlayerPage('game')">OK</button>
-</div>
-<div style="display: flex;">
-       <div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
+            <div v-if="app.treatment === 'pair'" class="card-body" style="display: flex">
+<div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
 <h4>Instructions for Part {{participant.numDecParts === 1 ? 'A' : 'B'}}</h4>
-<p>This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.</p>
-<p>Recall that in each round, you will be asked to allocate tokens between two accounts, labeled
-X and Y. Each choice will involve choosing a point on a line representing possible token
-allocations.</p>
-<p><span v-if="app.session.playFirst === 'individual'">But instead of doing so individually as in Part A, </span>
-<span v-if="app.session.playFirst === 'pair'">But instead of doing so individually as described above, </span>
-you will now do so jointly with another participant. For this purpose, at
-the beginning of this part of the experiment you will be randomly matched with one other
-participant in the room. You will then stay matched with this other participant for all
-decision rounds in {{participant.numDecParts === 1 ? 'A' : 'B'}}. We will refer to the other participant
-you will be matched with as the "other".</p>
-
-<p>The decision screen that you will use to make your decisions in this part looks like the one in Figure 2.
-The main panel in the decision screen in Figure 2 is similar
-to the one you saw <span v-if="app.session.playFirst === 'individual'">in Figure 1</span> before. But next 
-to the main panel there are also other panels that we will explain as we go along in the instructions.</p>
-<p v-if="app.session.playFirst === 'individual'">When decisions were made individually instead of jointly,</p>
-<p v-if="app.session.playFirst === 'pair'">If decisions were to be made individually instead of jointly,</p>
+<p>
+This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.
+</p>
+<p>
+Recall that in each round, you will be asked to allocate tokens between two
+accounts, labeled X and Y. Each choice will involve choosing a point on a
+line representing possible token allocations.
+</p>
+<p>
+<span v-if="app.session.playFirst === 'individual'">But instead of doing so individually as in Part A, you will now do so
+jointly with another participant.</span>
+<span v-if="app.session.playFirst === 'pair'">But instead of doing so individually as described above, you will now do so
+jointly with another participant.</span>
+For this purpose, at the beginning of this part of the experiment you will be randomly matched with one other
+participant in the room. You will then stay matched with this other
+participant for all decision rounds in Part {{participant.numDecParts === 1 ? 'A' : 'B'}}. We will refer to the other
+participant you will be matched with as the <q>other</q>.
+</p>
+<p>
+The decision screen that you will use to make your decisions in this part
+looks like the one in Figure 2. The main panel in the decision screen in Figure 2 is similar to the one you saw <span v-if="app.session.playFirst === 'pair'">in Figure 1</span> before. But next to the main panel
+there are also other panels that we will explain as we go along in the
+instructions.
+</p>
+<p style="display: flex; flex-direction: column; align-items: center">
+<img style='width: 100%;' :src="'/13victor/' + app.fig2Src">
+<span>Figure 2: The decision screen for joint decision making</span>
+</p>
+</div>
+<div v-if="player.instructionsPage == 1" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+<div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
+<p v-if="app.session.playFirst === 'pair'">If decisions were to be made individually instead of jointly,
+</p>
+<p v-if="app.session.playFirst === 'individual'">When decisions were made individually instead of jointly,
+</p>
 <ul>
-<li>lines for you were selected according to the following rules: Each decision round started
-by having the computer select a line randomly from the set of lines that intersect with
-at least one of the axes at {{ 50*player.ei }} or more tokens but with no intercept exceeding
-{{ 100*player.ei }} tokens.</li>
-<li>lines for the other were selected according to the following rules: Each decision round
-started by having the computer select a line randomly from the set of lines that intersect
-with at least one of the axes at {{ 50*player.ej }} or more tokens but with no intercept
-exceeding {{ 100*player.ej }} tokens.</li>
+<li>lines for you were selected according to the following rules: Each
+decision round started by having the computer select a line randomly from
+the set of lines that intersect with at least one of the axes at {{ 50*player.ei }} or
+more tokens but with no intercept exceeding {{ 100*player.ei }} tokens.
+</li>
+
+<li>lines for the other were selected according to the following rules:
+Each decision round started by having the computer select a line randomly
+from the set of lines that intersect with at least one of the axes at {{ 50*player.ej }}
+or more tokens but with no intercept exceeding {{ 100*player.ej }} tokens.
+</li>
 </ul>
 <p>For the joint decision making between you and the other, the above rules will be combined
 as follows:</p>
 <ul>
-<li>Each decision round will start by having the computer select a line randomly from the
-set of lines that intersect with at least one of the axes at {{ 50*app.session.m }} or more tokens
-but with no intercept exceeding {{ 100*app.session.m }} tokens. (The selected lines will not depend on
-your choices in any of the earlier decision problems.)</li>
+<li>Each decision round will start by having the computer select a line
+randomly from the set of lines that intersect with at least one of the axes
+at {{ 50*app.session.m }} or more tokens but with no intercept exceeding {{ 100*app.session.m }} tokens. (The
+selected lines will not depend on your choices in any of the earlier
+decision problems.)
+</li>
 </ul>
-<p>In each decision round, you and the other must decide jointly which choice to make and the
-payoff of both of you will depend on this choice. This will be done in two steps:</p>
-</div>
-<div v-if="player.instructionsPage == 1" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
-<div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
-<p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' src="/13victor/fig2.png">
-<span>Figure 2: The decision screen for joint decision making</span>
+<p v-if="app.color === 'magenta'">
+So the individual maximal number of tokens that you contribute to the joint
+maximal number of tokens available to allocate jointly to an account in any
+of the decision rounds is {{ 100 * player.ei }}.
 </p>
-<p><b>Step 1:</b><br>You and the other first individually and independently make:</p>
+<p v-if="app.color === 'yellow'">
+So the individual maximal number of tokens that you contribute to the joint
+maximal number of tokens available to allocate jointly to an account in any
+of the decision rounds is {{ 100 * player.ei }}.
+</p>
+<p v-if="app.color === 'magenta'">
+And the individual maximal number of tokens that the other contributes to
+the joint maximal number of tokens available to allocate jointly to an
+account in any of the decision rounds is {{ 100 * player.ej }}.
+</p>
+<p v-if="app.color === 'yellow'">
+And the individual maximal number of tokens that the other contributes to
+the joint maximal number of tokens available to allocate jointly to an
+account in any of the decision rounds is {{ 100 * player.ej }}.
+</p>
+<p>
+In each decision round, you and the other must decide jointly which choice
+to make and the payoff of both of you will depend on this choice. This will
+be done in two steps:
+</p>
+<b>Step 1:</b>
+<br />
+<p>
+You and the other first individually and independently make <span v-if="app.color === 'yellow'">three decisions</span>:
+</p>
 <ul>
-<li>a decision on token allocation: You and the other individually and independently
-make a token allocation choice on the line that is shown on the decision screen. Note
-that in each decision round you and the other see exactly the same line from which to
-choose on your screens.
+<li>
+A decision on <b>token allocation</b>: You and the other
+individually and independently make a token allocation choice on the line
+that is shown on the decision screen. Note that in each decision round you
+and the other see exactly the same line from which to choose on your screens.
+<ul><li>
+Once you have made this independent decision, it will also be shown in
+the panel in the upper right hand corner in your decision screen labeled
+<q>My allocation proposal</q>.
+</li></ul>
+</li>
+<li v-if="app.color !== 'yellow'">
+Once both of you have made your independent decisions, the other's independent token allocation decision will be shown in blue on the line in the main panel and in the panel labeled <q>Other's allocation
+proposal</q> on the right of your decision screen (see Figure 3);
+</li>
+<li v-if="app.color === 'yellow'">
+Two decisions on <b>token divisions</b>: You and the other
+individually and independently make a proposal on how to divide between
+yourself and the other the number of tokens you propose to allocate to the X
+account, and a proposal on how to divide between yourself and the other the
+number of tokens you propose to allocate to the Y account. These two
+decisions will be made in the panel labeled <q>Token
+Division</q>> on the right hand side of the decision screen.
+To do so, move the sliders below the labels <q>My share of
+tokens in account X</q> and <q>My share of
+tokens in account Y</q> to the shares you want to propose.
+The idea here is that these are the shares of tokens allocated to the X and
+the Y account that you propose to get yourself in the event that the X or
+the Y account is selected at the end of a round. The complementary shares
+of (100 - your share of X) and (100 - your share of Y) are thus the
+shares that you propose the other gets.
 <ul>
-<li>Once you have made this independent decision, it will also be shown in the panel
-in the upper right hand corner in your decision screen labeled “My allocation
-proposal.”</li>
-<li>Once both of you have made your independent decisions, the other’s independent
-token allocation decision will be shown in blue on the line in the main panel and
-in the panel labeled “Other’s allocation proposal” on the right of your decision
-screen (see Figure 3);</li>
-</ul></li></ul>
+<li>Once both of you have made your independent decisions, the other's independent token allocation decision will be shown in blue on the line in
+the main panel and in the panel labeled <q>Other's allocation
+proposal</q> on the right of your decision screen (see Figure 3);
+</li>
+<li>Once both of you have made these three independent decisions,
+<ul><li>
+the other's independent token allocation decision will be shown in blue on the line in
+the main panel and in the panel labeled <q>Other's allocation
+proposal</q> on the right of your decision screen (see Figure 3);
+</li>
+<li>
+the other's independent token division decisions will be shown in blue
+on the slider bars below the labels <q>My share of tokens in
+account X/Y</q>. Note that the <q>Other's
+division proposals</q> indicated on your screen are just the
+numbers (100 - other's share of X) and (100 - other's share of Y), where
+<q>other's share of X</q> and <q>other's share of Y</q> are the shares that the other proposes
+to get him- or herself.
+</li></ul>
+</li></ul>
+</li>
+</ul>
+<b>Step 2:</b>
+<br />
+<p>
+As mentioned above, in each decision round you and the other must make a
+joint decision. That is, the token allocations must match.
+</p>
+<p>
+To facilitate coordination on the token allocation, once both you and the
+other have made your independent decisions (step 1), a chat box will become
+available at the bottom of the decision screen (see Figure 3). You will then be able to send messages back and forth to each other. Although we will record these messages, only you and the other but no other participant in
+the room will see them.
+</p>
 </div>
-<div v-if="player.instructionsPage == 2" style="flex: 1 1 100px; max-width: 700px;">
-<p><b>Step 2:</b><br>As mentioned above, in each decision round you and the other must make a joint decision.
-That is, the token allocations must match.</p>
-<p>To facilitate coordination on the token allocation, once both you and the other have made
-your independent decisions (step 1), a chat box will become available at the bottom of the
-decision screen (see Figure 3). You will then be able to send messages back and
-forth to each other. Although we will record these messages, only you and the other but no
-other participant in the room will see them.</p>
-<p>Note, in sending messages back and forth between you and the other we request you follow
-three simple rules: (1) Discussion must be in English. No other language is allowed. (2) Be
-civil to each other, do not use bad language, and do not make any threats to each other. (3)
-Do not identify yourself, your seat number or anything that might reveal your identity. The
-communication channel is intended for you to use to discuss and coordinate your choice and
-should be used that way.</p>
-<p>To send a message hit the enter key. Both your messages and the other’s messages will
-appear at the top of the chat box with the IDs “Me” and “Other” in front.</p>
-
+  <div v-if="player.instructionsPage == 2" style="flex: 1 1 100px; max-width: 700px;">
+<p>
+Note, in sending messages back and forth between you and the other we
+request you follow three simple rules: (1) Discussion must be in English. No
+other language is allowed. (2) Be civil to each other, do not use bad
+language, and do not make any threats to each other. (3) Do not identify
+yourself, your seat number or anything that might reveal your identity. The
+communication channel is intended for you to use to discuss and coordinate
+your choice and should be used that way.
+</p>
+<p>
+To send a message hit the enter key. Both your messages and the other's
+messages will appear at the top of the chat box with the IDs
+<q>Me</q> and <q>Other</q> in front.
+</p>
 <p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' src="/13victor/fig3.png">
+<img style='width: 100%;' :src="'/13victor/' + app.fig3Src">
 <span>Figure 3: The decision screen for joint decision making with chat</span>
 </p>
-</div>
-<div v-if="player.instructionsPage == 2" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
-<div v-if="player.instructionsPage == 2" style="flex: 1 1 100px; max-width: 700px;">
-<ul><li>If the token allocation proposals you and the other made match, the “Status” line on
-top of the main panel will read in green letters “Allocation proposals DO match.” This
-indicates to you and the other that there is agreement on the token allocation. Then,
-the current decision screen will disappear and a new round will start.</li>
-<li>If the token allocation proposals you and the other made do not match, the “Status”
-line on top of the main panel will read in red letters “Allocation proposals DO NOT
-match.” This indicates to you and the other that there is still disagreement on the
-token allocation. You can change your token allocation proposal in the main panel by
-moving the mouse along the line to a new allocation that you want to propose. A new
-confirmed proposal regarding the token allocation will immediately also appear on the
-screen of the other (and the other way around). You and the other can also continue
-to use the chat box to reach agreement.</li></ul>
+  </div>
+  <div v-if="player.instructionsPage == 2" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+  <div v-if="player.instructionsPage == 2" style="flex: 1 1 100px; max-width: 700px;">
+<ul>
+<li>
+If the token allocation proposals you and the other made match, the
+<q>Status</q> line on top of the main panel
+will read in green letters <q>Allocation proposals DO
+match</q> <span v-if="app.color === 'yellow'">and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.color === 'yellow'"><b>and</b> the
+token divisions</span>. Then, the current decision screen will
+disappear and a new round will start.
+</li>
+<li>
+If the token allocation proposals you and the other made do not match,
+the <q>Status</q> line on top of the main
+panel will read in red letters <q>Allocation proposals DO NOT
+match</q>.<span v-if="app.color === 'yellow'">If the token divisions you and the other made do
+not match, the <q>Status</q> line will read in
+red letters <q>Division proposals DO NOT
+match</q></span>. This indicates to you and the other that there is
+still disagreement on the token allocation<span v-if="app.color === 'yellow'"><b>or</b> either of the token
+divisions or both</span>. You can change your token allocation proposal in the main panel by moving the mouse along the line to a new allocation that you want to propose <span v-if="app.color === 'yellow'">or change either of the token division proposals in the panel labeled <q>Token Division</q> by moving a
+slider to a new division proposal that you want to propose</span>. A new confirmed proposal
+regarding the token allocation <span v-if="app.color === 'yellow'">or either of the token divisions</span> will immediately also appear on the screen of
+the other (and the other way around). You and the other can also continue to
+use the chat box to reach agreement.
+</li>
+</ul>
 <p>
 <span v-if="app.session.playFirst === 'individual'">As in Part A</span>
 <span v-if="app.session.playFirst === 'pair'">Recall from the introduction that</span>, 
@@ -176,14 +297,12 @@ at the end of a round, account X will be selected with a 1 out of {{ 1 / app.ses
 chance and account Y will be selected with 1 out of {{ 1 / (1 - app.session.probSelX) }} chance. <b>Each
 of you will only receive the number of tokens you allocated to the account that was selected. The 
 tokens you allocated to the other account will be lost.</b>
-<p>Note that the fact that each of you gets the number of tokens allocated to the selected
-account (either X or Y) means that each of you gets 100% of the number of tokens allocated
-to the selected account (either X or Y). This is indicated in the panel on the right in the
-decision screen labeled “Token Division.”</p>
+</p>
+<p v-if="app.session.color === 'magenta'">Note that the fact that each of you gets the number of tokens allocated to the selected account (either X or Y) means that each of you gets {{ player.di * 100 }}% of the number of tokens allocated
+to the selected account (either X or Y) and the other gets {{ player.dj * 100 }}%. This is indicated in the panel on the right in the
+decision screen labeled <q>Token Division</q>.</p>
 <p>The process described above will be repeated until all {{ app.session.numRounds + app.session.numAddRounds }} rounds
-are completed.
-
-<h4>Earnings in Part {{participant.numDecParts === 1 ? 'A' : 'B'}}</h4>
+are completed.</p>
 <p>Your earnings in this part of the experiment are determined as follows: At the end of
 the entire experiment, the computer will randomly select one of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} of this part of the experiment. The round selected only depends
 on chance, and each of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} is equally likely to be
@@ -198,47 +317,79 @@ for the round that was selected for payment.</p>
 <p>Before the {{ app.session.numRounds + app.session.numAddRounds }} rounds of Part 
 {{participant.numDecParts === 1 ? 'A' : 'B'}} will start, there will be {{ app.session.numPracticeRounds }}
 practice rounds that will not be relevant for actual payment.</p>
-</div>
-</div>
+  </div>
             </div>
-            <div v-if="app.treatment === 'individual'" class="card-body" style="max-width: 600px">
+            <div v-if="app.treatment === 'individual'" class="card-body" style="display: flex">
+  <div style="flex: 1 1 100px; max-width: 700px;">
 <h4>Instructions for Part {{participant.numDecParts === 1 ? 'A' : 'B'}}</h4>
-<p>This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.</p>
-<p v-if="app.session.playFirst === 'individual'">Recall that in each round, you will be asked to allocate tokens between two accounts, labeled
-X and Y. Each choice will involve choosing a point on a line representing possible token
-allocations.</p>
-<p v-if="app.session.playFirst === 'pair'">But instead of doing so jointly with another participant as in Part A, you will now do so
-individually.</p>
-<p v-if="app.session.playFirst === 'pair'">The decision screen that you will use to make your decisions in this part looks like the one
-in Figure 1. It just consists of the main panel that you saw in Part A as all panels that had
-to do with joint decision making are not needed anymore. Below we display Figure 1 again.</p>
-<p v-if="app.session.playFirst === 'pair'" style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' src="/13victor/fig1.png">
-<span>Figure 1</span>
+<p>
+This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.
 </p>
-<p>Each decision round will start by having the computer select a line randomly from the set
-of lines that intersect with at least one of the axes at {{ 50*player.ei }} or more tokens but with
-no intercept exceeding {{ 100*player.ei }} tokens. (The selected lines will not depend on your choices in
-any of the earlier decision problems.)</p>
-<p v-if="app.session.playFirst === 'pair'">As in Part A, at the end of a round account X will be selected with a 1 out of {{ 1 / app.session.probSelX }} chance
-and account Y will be selected with 1 out of {{ 1 / (1 - app.session.probSelX) }} chance. You will only receive
-the number of tokens you allocated to the account that was selected. The tokens
-you allocated to the other account will be lost.</p>
-<p v-if="app.session.playFirst === 'individual'">Your payoff in each decision round will be determined as described above.</p>
+<p v-if="app.session.playFirst === 'pair'">
+Recall that in each round, you will be asked to allocate tokens between two accounts, labeled
+X and Y. Each choice will involve choosing a point on a line representing possible token
+allocations.
+</p>
+<p v-if="app.session.playFirst === 'pair'">
+But instead of doing so jointly with another participant as in Part A, you
+will now do so individually.
+</p>
+<p v-if="app.session.playFirst === 'pair'">
+The decision screen that you will use to make your decisions in this part
+looks like the one in Figure 1. It just consists of the main panel that you
+saw in Part A as all panels that had to do with joint decision making are
+not needed anymore. Below we display Figure 1 again.
+</p>
+
+<p>
+Each decision round will start by having the computer select a line randomly
+from the set of lines that intersect with at least one of the axes at {{ 50*player.ei }} 
+or more tokens but with no intercept exceeding {{ 100*player.ei }} tokens. (The selected
+lines will not depend on your choices in any of the earlier decision problems.)
+</p>
+
+<p v-if="app.session.playFirst === 'pair'">
+As in Part A, at the end of a round account X will be selected with a 1 out of {{ 1 / app.session.probSelX }}
+chance and account Y will be selected with 1 out of {{ 1 / (1 - app.session.probSelX) }}
+chance. <b>You will only receive the number of tokens you allocated to the account that was selected. The tokens you allocated to the other account will be lost</b>.
+</p>
+
+<p v-if="app.session.playFirst === 'individual'">
+Your payoff in each decision round will be determined as described above.
+</p>
+
 <h4>Earnings in Part {{participant.numDecParts === 1 ? 'A' : 'B'}}</h4>
-<p>Your earnings in this part of the experiment are determined as follows: At the end of
-the entire experiment, the computer will randomly select one of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} of this part of the experiment. The round selected only depends
-on chance, and each of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} is equally likely to be
-selected. At the end of the entire experiment, you will be informed about (a) which round
-of this part was chosen for payment, (b) your choice in this round, (c) the account that
-was drawn in the selected payment round, and (d) your payment in tokens. The tokens you
-earned in this part of the experiment will be converted into euros. For each {{ app.session.exchangeRateIndiv }} tokens earned in this part of the experiment you will receive 1 euro.</p>
-<p>Note that during the experiment, you will not be informed about which account was selected
-after a round. You will only learn at the end of the experiment which account was selected
-for the round that was selected for payment.</p>
-<p>Before the {{ app.session.numRounds + app.session.numAddRounds }} rounds of Part {{participant.numDecParts === 1 ? 'A' : 'B'}} will start, there will be
-{{ app.session.numPracticeRounds }} practice rounds that will not be relevant for actual payment.</p>
+
+<p>
+Your earnings in this part of the experiment are determined as follows: At
+the end of the entire experiment, the computer will randomly select one of
+the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} of this part of the experiment. The round selected
+only depends on chance, and each of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} is equally likely to be selected. At the end of the entire experiment, you will be informed about (a) which round of this part was chosen for payment, (b) your choice in this round, (c) the account that was drawn in the selected payment
+round, and (d) your payment in tokens. The tokens you earned in this part of the experiment will be converted into euros. For each {{ app.session.exchangeRateIndiv }} tokens earned in this part of the experiment you will receive 1 euro.
+</p>
+
+<p>
+Note that during the experiment, you will not be informed about which account was selected after a round. You will only learn at the end of the experiment which account was selected for the round that was selected for payment.
+</p>
+<p>
+Before the {{ app.session.numRounds + app.session.numAddRounds }} rounds of {{participant.numDecParts === 1 ? 'A' : 'B'}} will start, there will be {{ app.session.numPracticeRounds }} practice rounds that will not be relevant for actual payment.
+</p>
+  </div>
+  <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;">
+  </div>
+  <div style="flex: 1 1 100px; max-width: 700px;">
+
+<div v-if="app.session.playFirst === 'individual'" style="display: flex; flex-direction: column; align-items: center">
+<img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
+<span>Figure 1</span>
+</div>
             </div>
+            </div>
+            <div style="margin-top: 1rem; margin-bottom: 1rem; align-self: center">
+    <button v-if="app.treatment === 'pair'" :disabled="player.instructionsPage == 1" @click="jt.vue.player.instructionsPage = 1">Page 1</button>
+    <button v-if="app.treatment === 'pair'" :disabled="player.instructionsPage == 2" @click="jt.vue.player.instructionsPage = 2">Page 2</button>
+    <button onclick="jt.setPlayerPage('game')">OK</button>
+</div>
           </div>
         </div>
         <div v-show="player.page === 'game'">
@@ -408,7 +559,7 @@ decisionStage.groupStart = function (group) {
 
 decisionStage.playerStart = function (player) {
   player.instructionsPage = 1;
-  if (player.group.period.id == 1) {
+  if (player.group.period.id == 1 && app.text === 'training') {
     player.page = 'instructions'
   } else {
     player.page = 'game'
@@ -435,9 +586,13 @@ decisionStage.playerStart = function (player) {
     if (player.participant.isRealP1) {
       player.ei = app.session.e1
       player.ej = app.session.e2
+      player.di = app.session.d1
+      player.dj = app.session.d2
     } else {
       player.ei = app.session.e2
       player.ej = app.session.e1
+      player.di = app.session.d2
+      player.dj = app.session.d1
     }
     player.maxX = player.group.maxX * player.allocationMultiplier;
     player.maxY = player.group.maxY * player.allocationMultiplier;
