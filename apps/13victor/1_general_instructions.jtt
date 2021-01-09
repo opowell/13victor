@@ -112,7 +112,7 @@ next decision round will start automatically.
     <div style="flex: 1 1 100px; max-width: 700px;">
 <p style="display: flex; flex-direction: column; align-items: center">
 <img style='width: 700px;' :src="'/13victor/' + app.fig1Src">
-<span>Figure 1</span>
+<span>Figure 1: The decision screen for the token allocation</span>
 </p>
 
 <p>
