@@ -14,7 +14,7 @@ function drawBudgetMax1(A) {
   return Utils.randomInt(A/2, A+1);
 }
 
-function drawBudgetMax2() {
+function drawBudgetMax2(A) {
   return Utils.randomInt(A/10, A+1);
 }
 
