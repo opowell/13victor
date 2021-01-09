@@ -380,8 +380,12 @@ Before the {{ app.session.numRounds + app.session.numAddRounds }} rounds of {{pa
   <div style="flex: 1 1 100px; max-width: 700px;">
 
 <div v-if="app.session.playFirst === 'individual'" style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
-<span>Figure 1</span>
+  <img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
+  <span>Figure 1: The decision screen for the token allocation</span>
+</div>
+<div v-if="app.session.playFirst === 'pair'" style="display: flex; flex-direction: column; align-items: center">
+  <img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
+  <span>Figure 1: The decision screen for the token allocation</span>
 </div>
             </div>
             </div>
