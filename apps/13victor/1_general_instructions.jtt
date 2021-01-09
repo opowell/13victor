@@ -129,7 +129,7 @@ other account will be lost.</b>
 <p>This process will be repeated until all rounds are completed.</p>
 <div style="display: flex; width: 100%">
     <span style="flex: 1 1 auto"></span>
-    <button style="flex: 0 0 auto">Start</button>
+    <button style="flex: 0 0 auto">Continue</button>
 </div>
     </div>
 </div>
