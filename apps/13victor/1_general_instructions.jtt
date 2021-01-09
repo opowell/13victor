@@ -80,7 +80,7 @@ example, as illustrated in Figure 1, the selected choice represents a
 decision to allocate {{ app.exXAmount }} tokens to the X account and {{ app.exYAmount }} tokens to the
 Y account. You may also choose to allocate all tokens to either the X or the
 Y account. (Note that the allocation shown in Figure 1 was selected randomly
-and does not represent a <q>good</q> or <q>bad</q>> decision.)
+and does not represent a <q>good</q> or <q>bad</q> decision.)
 </p>
 <p>Each decision round will start by having the computer select such a line
 randomly from the set of lines that intersect with at least one of the axes
