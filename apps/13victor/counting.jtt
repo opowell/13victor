@@ -325,7 +325,7 @@ practice rounds that will not be relevant for actual payment.</p>
 <p>
 This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.
 </p>
-<p v-if="app.session.playFirst === 'pair'">
+<p v-if="app.session.playFirst === 'individual'">
 Recall that in each round, you will be asked to allocate tokens between two accounts, labeled
 X and Y. Each choice will involve choosing a point on a line representing possible token
 allocations.
