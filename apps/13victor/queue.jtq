@@ -1,8 +1,8 @@
 let treatments = [
-    {
-        name: 'Custom',
-        fieldValues: {},
-    },
+    // {
+    //     name: 'Custom',
+    //     fieldValues: {},
+    // },
     {
         name: 'T1',
         fieldValues: {
