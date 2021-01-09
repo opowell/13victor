@@ -31,7 +31,7 @@ we will indicate how tokens earned in a part or task will be converted into
 euros at the end of the experiment.</p>
 <div style="display: flex; width: 100%">
     <span style="flex: 1 1 auto"></span>
-    <button style="flex: 0 0 auto">Start</button>
+    <button style="flex: 0 0 auto">Continue</button>
 </div>
 </div>
 `
