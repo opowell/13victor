@@ -987,7 +987,7 @@ app.participantEnd = function (participant) {
         }
         chosenDivisions.push(division);
         chosenPayouts.push(payout);
-        chosenEuros.push(payout * app.exRate);
+        chosenEuros.push(payout / app.exRate);
     }
     participant.chosenDecisions.push(chosenDecisions);
     participant.chosenGoods.push(chosenGoods);
