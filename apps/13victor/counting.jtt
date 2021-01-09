@@ -10,17 +10,17 @@ if (app.treatment === 'pair') {
 // Draw budget lines.
 // - intersect at least one axis at or above the 50-token level
 // - intersect both axes at or below the 100-token level.
-function drawBudgetMax1() {
-  return Utils.randomInt(50, 101);
+function drawBudgetMax1(A) {
+  return Utils.randomInt(A/2, A+1);
 }
 
 function drawBudgetMax2() {
-  return Utils.randomInt(10, 101);
+  return Utils.randomInt(A/10, A+1);
 }
 
-function drawBudget() {
-  let x = drawBudgetMax1();
-  let y = drawBudgetMax2();
+function drawBudget(A) {
+  let x = drawBudgetMax1(A);
+  let y = drawBudgetMax2(A);
   // 50% chance to switch.
   if (Math.random() < 0.5) {
       let z = x;
@@ -475,7 +475,7 @@ app.drawMatching = function () {
       } else {
         p.budgets = []
         for (let j = 0; j < app.session.numRounds + app.session.numAddRounds; j++) {
-          p.budgets.push(drawBudget())
+          p.budgets.push(drawBudget(100))
         }
         p.shuffledBudgets = Utils.shuffle([...p.budgets])
       }
@@ -505,7 +505,7 @@ decisionStage.groupStart = function (group) {
   group.addTable('divisionProposals');
   let part1 = group.players[0].participant;
   if (app.text === 'training') {
-    group.budget = drawBudget()
+    group.budget = drawBudget(100)
   } else {
     if (part1.numDecParts === 1) {
       group.budget = part1.budgets[group.period.id - 1]
