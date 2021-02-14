@@ -7,3 +7,4 @@ internal/clients/shared/shared.js
 *.hot-update.js
 .DS_Store
 *.code-workspace
+internal/clients/shared/shared.js

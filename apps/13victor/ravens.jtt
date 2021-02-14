@@ -80,16 +80,23 @@ choiceStage.activeScreen = /*html*/`
 <div class="card" v-show='player.page === 1'>
     <div class="card-body">
 <h4>Instructions for Additional Task 2</h4>
+<div style="display: flex;">
+<div style="flex: 1 1 800px;">
 <p>This task consists of {{ app.session.ravenMatrices.questionIds.length }} questions. For every question there will always be eight possible answers which complete a pattern. The questions are increasing in the level of difficulty.</p>
 <p>You will receive a fixed pay of 3 Euros for completing this part of the experiment.</p>
 <h4>You have a maximum of 5 minutes in total to answer the 12 questions.</h4>
 <p>For each of the {{ app.session.ravenMatrices.questionIds.length }} questions, your screen will look like this:</p>
 <p><img src='13victor/images/raven/raven_instructions.png'></p>
+</div>
+<div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+<div style="flex: 1 1 800px;">
 <p>In the upper part of the screen, you see a bigger picture with a missing part. Below this picture, 8 possible small pictures are displayed of which one should be inserted to replace the missing part in the picture above. Only one of the 8 answers is correct in each case.</p>
 <p>The top left corner of the screen will show the remaining time you have for completing all of the {{ app.session.ravenMatrices.questionIds.length }} questions. Each question that is not answered will be evaluated as incorrect.</p>
 <p>To answer a question, first select a question from the “Question list” in the top right corner of the screen. Then answer this question by clicking on one of the possible answers 1-8 on the bottom of the screen. Then select another question from the “Question list” in the top right corner of the screen and answer it by clicking on one of the possible answers 1-8 on the bottom of the screen, and so on.</p>
 <p>You can select and answer the {{ app.session.ravenMatrices.questionIds.length }} questions in any order you want. You can also go back and forth between questions to revise your answers at any time using the “Question list” in the upper right corner of the screen as long as the time limit of 5 minutes has not expired.</p>
 <p>To help you keeping an overview, those questions you have already answered will be indicated with a grey background in the “Question list” in the top right corner of the screen. But as mentioned, you can revise your answer also for these questions.</p>
+</div>
+</div>
 <p style="text-align: end;">
     <button type='button' onclick='showPage(2)'>Continue</button>
 </p>

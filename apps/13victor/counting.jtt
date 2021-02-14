@@ -1,21 +1,21 @@
 app.isStandaloneApp = false;
 
 if (app.treatment === 'individual') {
-    app.groupSize = 1;
+  app.groupSize = 1;
 }
 if (app.treatment === 'pair') {
-    app.groupSize = 2;
+  app.groupSize = 2;
 }
 
 // Draw budget lines.
 // - intersect at least one axis at or above the 50-token level
 // - intersect both axes at or below the 100-token level.
 function drawBudgetMax1(A) {
-  return Utils.randomInt(A/2, A+1);
+  return Utils.randomInt(A / 2, A + 1);
 }
 
 function drawBudgetMax2(A) {
-  return Utils.randomInt(A/10, A+1);
+  return Utils.randomInt(A / 10, A + 1);
 }
 
 function drawBudget(A) {
@@ -23,11 +23,11 @@ function drawBudget(A) {
   let y = drawBudgetMax2(A);
   // 50% chance to switch.
   if (Math.random() < 0.5) {
-      let z = x;
-      x = y;
-      y = z;
+    let z = x;
+    x = y;
+    y = z;
   }
-  return {maxX: x, maxY: y}
+  return { maxX: x, maxY: y }
 }
 
 app.numPeriods = app.numRegularBudgets + app.numAddBudgets;
@@ -86,7 +86,7 @@ app.html = /*html*/`
           <div class="card">
             <div v-if="app.treatment === 'pair'" class="card-body" style="display: flex">
 <div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
-  <div style="max-width: 700px">
+  <div style="max-width: 900px">
     <h4>General Instructions</h4>
     <p>Welcome to this experiment! Please remain silent during the experiment and
     do not speak to other participants. If you have a question or need
@@ -112,11 +112,18 @@ app.html = /*html*/`
 
 <div v-if="player.instructionsPage == 2" style="display: flex">
 
-   <div style="flex: 1 1 100px; max-width: 700px;">
+  <div style="flex: 1 1 800px;">
 <h4>A decision problem: token allocation</h4>
 <p>This section describes the basic decision making problem (which is called <b>token allocation</b>)
 and the decision screen that you will use to make your decisions in several rounds.
 </p>
+<p style="display: flex; flex-direction: column; align-items: center">
+<img style='width: 700px;' :src="'/13victor/images/counting/' + app.fig1Src">
+<span>Figure 1: The decision screen for the token allocation</span>
+</p>
+</div>
+    <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+    <div style="flex: 1 0 800px;">
 <p>In each decision round, you will be asked to allocate tokens between two
 accounts, labeled X and Y. The X account corresponds to the <i>x</i>-axis (the
 horizontal axis) and the Y account corresponds to the <i>y</i>-axis (the vertical
@@ -133,9 +140,9 @@ and does not represent a <q>good</q> or <q>bad</q> decision.)
 <p>Each decision round will start by having the computer select such a line
 randomly from the set of lines that intersect with at least one of the axes
 at <i>A</i>/2 or more tokens but with no intercept exceeding <i>A</i> tokens. (For
-instance, <i>A</i> could have the value of {{ app.ei }}, implying that each randomly
-selected line intersects with at least one of the axes at {{ app.ei/2 }} or more
-tokens but intersects with none of the axes at more than {{ app.ei }}, tokens.)
+instance, <i>A</i> could have the value of 100, implying that each randomly
+selected line intersects with at least one of the axes at 50 or more
+tokens but intersects with none of the axes at more than 100, tokens.)
 </p>
 <p>The number <i>A</i> can be interpreted as the maximal number of tokens that you
 may have available to allocate to an account in any of the decision rounds.
@@ -155,14 +162,6 @@ Yes button. If you want to revise your decision, click on the No button.
 Once you have confirmed your decision, it cannot be revised anymore and the
 next decision round will start automatically.
 </p>
-    </div>
-    <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
-    <div style="flex: 1 1 100px; max-width: 700px;">
-<p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 700px;' :src="'/13victor/images/counting/' + app.fig1Src">
-<span>Figure 1: The decision screen for the token allocation</span>
-</p>
-
 <p>
 Your payoff in each decision round is determined by the number of tokens you
 allocated to the X account or the number of tokens you allocated to the Y
@@ -178,7 +177,7 @@ other account will be lost.</b>
     </div>
 </div>
 
-<div v-if="player.instructionsPage == 3" style="flex: 1 1 100px; max-width: 700px;">
+<div v-if="player.instructionsPage == 3" style="flex: 1 0 500px;">
 <h4>Instructions for Part {{participant.numDecParts === 1 ? 'A' : 'B'}} - Page 1 out of 2</h4>
 <p>
 This Part of the experiment will consist of {{ app.session.numRounds + app.session.numAddRounds }} decision rounds.
@@ -198,19 +197,19 @@ participant in the room. You will then stay matched with this other
 participant for all decision rounds in Part {{participant.numDecParts === 1 ? 'A' : 'B'}}. We will refer to the other
 participant you will be matched with as the <q>other</q>.
 </p>
+<p style="display: flex; flex-direction: column; align-items: center">
+<img style='width: 700px' :src="'/13victor/images/counting/' + app.fig2Src">
+<span>Figure 2: The decision screen for joint decision making</span>
+</p>
+</div>
+<div v-if="player.instructionsPage == 3" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+<div v-if="player.instructionsPage == 3" style="flex: 1 0 800px">
 <p>
 The decision screen that you will use to make your decisions in this part
 looks like the one in Figure 2. The main panel in the decision screen in Figure 2 is similar to the one you saw <span v-if="app.session.playFirst === 'pair'">in Figure 1</span> before. But next to the main panel
 there are also other panels that we will explain as we go along in the
 instructions.
 </p>
-<p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' :src="'/13victor/images/counting/' + app.fig2Src">
-<span>Figure 2: The decision screen for joint decision making</span>
-</p>
-</div>
-<div v-if="player.instructionsPage == 3" style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
-<div v-if="player.instructionsPage == 3" style="flex: 1 1 100px; max-width: 700px;">
 <p v-if="app.session.playFirst === 'pair'">If decisions were to be made individually instead of jointly,
 </p>
 <p v-if="app.session.playFirst === 'individual'">When decisions were made individually instead of jointly,
@@ -266,7 +265,7 @@ be done in two steps:
 <b>Step 1:</b>
 <br />
 <p>
-You and the other first individually and independently make <span v-if="app.session.color === 'yellow'">three decisions</span>:
+You and the other first individually and independently make<span v-if="app.session.color === 'yellow'"> three decisions</span>:
 </p>
 <ul>
 <li>
@@ -419,7 +418,7 @@ practice rounds that will not be relevant for actual payment.</p>
             </div>
             <div v-if="app.treatment === 'individual'" class="card-body" style="display: flex">
 <div v-if="player.instructionsPage == 1" style="flex: 1 1 100px; max-width: 700px;">
-  <div style="max-width: 700px">
+  <div style="max-width: 900px">
     <h4>General Instructions</h4>
     <p>Welcome to this experiment! Please remain silent during the experiment and
     do not speak to other participants. If you have a question or need
@@ -443,11 +442,18 @@ practice rounds that will not be relevant for actual payment.</p>
   </div>
 </div>
 <div v-if="player.instructionsPage == 2" style="flex: 1 1 100px; display: flex">
-   <div style="flex: 1 1 100px; max-width: 700px;">
+  <div style="flex: 1 1 800px;">
 <h4>A decision problem: token allocation</h4>
 <p>This section describes the basic decision making problem (which is called <b>token allocation</b>)
 and the decision screen that you will use to make your decisions in several rounds.
 </p>
+<p style="display: flex; flex-direction: column; align-items: center">
+<img style='width: 700px;' :src="'/13victor/images/counting/' + app.fig1Src">
+<span>Figure 1: The decision screen for the token allocation</span>
+</p>
+</div>
+    <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+    <div style="flex: 1 0 800px;">
 <p>In each decision round, you will be asked to allocate tokens between two
 accounts, labeled X and Y. The X account corresponds to the <i>x</i>-axis (the
 horizontal axis) and the Y account corresponds to the <i>y</i>-axis (the vertical
@@ -464,9 +470,9 @@ and does not represent a <q>good</q> or <q>bad</q> decision.)
 <p>Each decision round will start by having the computer select such a line
 randomly from the set of lines that intersect with at least one of the axes
 at <i>A</i>/2 or more tokens but with no intercept exceeding <i>A</i> tokens. (For
-instance, <i>A</i> could have the value of {{ app.ei }}, implying that each randomly
-selected line intersects with at least one of the axes at {{ app.ei/2 }} or more
-tokens but intersects with none of the axes at more than {{ app.ei }}, tokens.)
+instance, <i>A</i> could have the value of 100, implying that each randomly
+selected line intersects with at least one of the axes at 50 or more
+tokens but intersects with none of the axes at more than 100, tokens.)
 </p>
 <p>The number <i>A</i> can be interpreted as the maximal number of tokens that you
 may have available to allocate to an account in any of the decision rounds.
@@ -486,14 +492,6 @@ Yes button. If you want to revise your decision, click on the No button.
 Once you have confirmed your decision, it cannot be revised anymore and the
 next decision round will start automatically.
 </p>
-    </div>
-    <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
-    <div style="flex: 1 1 100px; max-width: 700px;">
-<p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 700px;' :src="'/13victor/images/counting/' + app.fig1Src">
-<span>Figure 1: The decision screen for the token allocation</span>
-</p>
-
 <p>
 Your payoff in each decision round is determined by the number of tokens you
 allocated to the X account or the number of tokens you allocated to the Y
@@ -613,14 +611,14 @@ if (app.treatment === 'pair') {
 }
 
 app.drawMatching = function () {
-  
+
   if (app.session.match == null) {
     const pIds = Object.keys(app.session.participants)
     let match = {}
     let matchTraining = []
     let matchReal = []
     for (let p in pIds) {
-      match[pIds[p]] = {} 
+      match[pIds[p]] = {}
     }
     const pIds1 = Utils.shuffle(pIds) // training partners
     for (let i = 0; i < pIds.length; i++) {
@@ -689,7 +687,7 @@ app.participantStart = function (participant) {
 
   if (app.text !== 'training') return
   if (participant.numDecParts == null) {
-      participant.numDecParts = 0;
+    participant.numDecParts = 0;
   }
   participant.numDecParts++;
 }
@@ -720,39 +718,39 @@ decisionStage.groupStart = function (group) {
   } else {
     group.maxX = group.budgetX;
     group.maxY = group.budgetY;
-    }
-    group.validProposals = false;
+  }
+  group.validProposals = false;
 
-    for (let p in group.players) {
-        let x, y = '';
-        let player = group.players[p];
-        if (group.session().divisionType === 'EXOG') {
-            let d = group.session().d1;
-            if (player.idInGroup === 2) {
-                d = group.session().d2;
-            }
-            x = d * 100;
-            y = d * 100;
-        } else {
-            x = '';
-            y = '';
-        }
-        player.myDivisionProposal = {
-            x,
-            y,
-        }
-        player.initialDivisionProposal = { x, y };
-        player.numDivisionProposals = 0;
+  for (let p in group.players) {
+    let x, y = '';
+    let player = group.players[p];
+    if (group.session().divisionType === 'EXOG') {
+      let d = group.session().d1;
+      if (player.idInGroup === 2) {
+        d = group.session().d2;
+      }
+      x = d * 100;
+      y = d * 100;
+    } else {
+      x = '';
+      y = '';
     }
+    player.myDivisionProposal = {
+      x,
+      y,
+    }
+    player.initialDivisionProposal = { x, y };
+    player.numDivisionProposals = 0;
+  }
 
-    if (group.app().treatment === 'pair') {
-        let p1 = group.players[0];
-        let p2 = group.players[1];
-        p1.partnerDivisionProposal = p2.myDivisionProposal;
-        p2.partnerDivisionProposal = p1.myDivisionProposal;
-        p1.participant.partnerId = p2.participant.id;
-        p2.participant.partnerId = p1.participant.id;
-    }
+  if (group.app().treatment === 'pair') {
+    let p1 = group.players[0];
+    let p2 = group.players[1];
+    p1.partnerDivisionProposal = p2.myDivisionProposal;
+    p2.partnerDivisionProposal = p1.myDivisionProposal;
+    p1.participant.partnerId = p2.participant.id;
+    p2.participant.partnerId = p1.participant.id;
+  }
 }
 
 decisionStage.playerStart = function (player) {
@@ -762,47 +760,47 @@ decisionStage.playerStart = function (player) {
   } else {
     player.page = 'game'
   }
-    player.toolTipX = -1;
-    player.toolTipY = -1;
-    player.madeAllocationSelection = false;
-    player.newDivisionLetter = -1;
-    player.newDivisionValue = -1;
-    player.initialCircle = true;
-    player.showRhombus = false;
-    player.hoverDivisionX = -1;
-    player.hoverDivisionY = -1;
-    if (app.treatment === 'pair') {
-        player.partnerAllocationProposal = { x: '', y: '' };
-        player.allocationMultiplier = 1;
-    } else {
-        if (player.participant.isRealP1) {
-            player.allocationMultiplier = app.session.e1;
-        } else {
-            player.allocationMultiplier = app.session.e2;
-        }
-    }
+  player.toolTipX = -1;
+  player.toolTipY = -1;
+  player.madeAllocationSelection = false;
+  player.newDivisionLetter = -1;
+  player.newDivisionValue = -1;
+  player.initialCircle = true;
+  player.showRhombus = false;
+  player.hoverDivisionX = -1;
+  player.hoverDivisionY = -1;
+  if (app.treatment === 'pair') {
+    player.partnerAllocationProposal = { x: '', y: '' };
+    player.allocationMultiplier = 1;
+  } else {
     if (player.participant.isRealP1) {
-      player.ei = app.session.e1
-      player.ej = app.session.e2
-      player.di = app.session.d1
-      player.dj = app.session.d2
+      player.allocationMultiplier = app.session.e1;
     } else {
-      player.ei = app.session.e2
-      player.ej = app.session.e1
-      player.di = app.session.d2
-      player.dj = app.session.d1
+      player.allocationMultiplier = app.session.e2;
     }
-    player.maxX = player.group.maxX * player.allocationMultiplier;
-    player.maxY = player.group.maxY * player.allocationMultiplier;
+  }
+  if (player.participant.isRealP1) {
+    player.ei = app.session.e1
+    player.ej = app.session.e2
+    player.di = app.session.d1
+    player.dj = app.session.d2
+  } else {
+    player.ei = app.session.e2
+    player.ej = app.session.e1
+    player.di = app.session.d2
+    player.dj = app.session.d1
+  }
+  player.maxX = player.group.maxX * player.allocationMultiplier;
+  player.maxY = player.group.maxY * player.allocationMultiplier;
 
-    let randX = Math.random() * player.maxX;
-    let randY = (1 - randX / player.maxX) * player.maxY;
-    player.myAllocationProposal = { x: randX, y: randY };
-    player.initialAllocationProposal = { x : randX, y: randY };
-    player.numAllocationProposals = 0;
-    player.allocationProposals = [];
-    player.numDivisionProposals = 0;
-    player.divisionProposals = [];
+  let randX = Math.random() * player.maxX;
+  let randY = (1 - randX / player.maxX) * player.maxY;
+  player.myAllocationProposal = { x: randX, y: randY };
+  player.initialAllocationProposal = { x: randX, y: randY };
+  player.numAllocationProposals = 0;
+  player.allocationProposals = [];
+  player.numDivisionProposals = 0;
+  player.divisionProposals = [];
 }
 
 decisionStage.activeScreen = /*html*/`
@@ -1015,110 +1013,110 @@ decisionStage.activeScreen = /*html*/`
     `
 
 app.messages.endBargaining = function () {
-    let player = this.participant.player;
-    player.endStage(false);
-    for (let i in player.group.players) {
-        if (player.group.players[i].status === 'playing') {
-            return;
-        }
+  let player = this.participant.player;
+  player.endStage(false);
+  for (let i in player.group.players) {
+    if (player.group.players[i].status === 'playing') {
+      return;
     }
-    player.group.forceEndStage(player.stage);
+  }
+  player.group.forceEndStage(player.stage);
 }
 
 app.messages.sendMessage = function (content) {
-    let player = this.participant.player;
-    let group = player.group;
-    let timePosted = player.timeInStage();
-    let message = {
-        content,
-        player: player.id,
-        timePosted,
-    };
-    group.messages.new(message); // Notifies group's players about new message.
-    for (let p in group.players) {
-        group.players[p].saveAndUpdate();
-    }
+  let player = this.participant.player;
+  let group = player.group;
+  let timePosted = player.timeInStage();
+  let message = {
+    content,
+    player: player.id,
+    timePosted,
+  };
+  group.messages.new(message); // Notifies group's players about new message.
+  for (let p in group.players) {
+    group.players[p].saveAndUpdate();
+  }
 }
 
 app.messages.setMyAllocationProposal = function (proposal) {
-    // 'this' is the client sending the proposal.
-    let player = this.participant.player;
-    let group = player.group;
+  // 'this' is the client sending the proposal.
+  let player = this.participant.player;
+  let group = player.group;
 
-    let timePosted = player.timeInStage();
-    let message = {
-        x: proposal.x,
-        y: proposal.y,
-        player: player.id,
-        timePosted,
-    };
-    group.allocationProposals.new(message);
-    player.allocationProposals.push(message);
-    player.numAllocationProposals++;
-    player.madeAllocationSelection = true;
-    player.myAllocationProposal = proposal;
-    player.initialCircle = false;
-    player.emit('setMyAllocationProposal', proposal);
-    let partner = null;
-    if (app.treatment === 'pair') {
-        partner = group.playersExcept(player)[0];
-        partner.partnerAllocationProposal = proposal;
-        partner.emit('setPartnerAllocationProposal', proposal);
-    }
+  let timePosted = player.timeInStage();
+  let message = {
+    x: proposal.x,
+    y: proposal.y,
+    player: player.id,
+    timePosted,
+  };
+  group.allocationProposals.new(message);
+  player.allocationProposals.push(message);
+  player.numAllocationProposals++;
+  player.madeAllocationSelection = true;
+  player.myAllocationProposal = proposal;
+  player.initialCircle = false;
+  player.emit('setMyAllocationProposal', proposal);
+  let partner = null;
+  if (app.treatment === 'pair') {
+    partner = group.playersExcept(player)[0];
+    partner.partnerAllocationProposal = proposal;
+    partner.emit('setPartnerAllocationProposal', proposal);
+  }
 
-    app.checkIfValid(group, player, partner, this);
+  app.checkIfValid(group, player, partner, this);
 
 }
 
 app.checkIfValid = function (group, player, partner, client) {
-    let valid = app.areProposalsValid(group);
-    if (valid) {
-        group.validProposals = true;
-    }
+  let valid = app.areProposalsValid(group);
+  if (valid) {
+    group.validProposals = true;
+  }
 
-    // Player exits decision stage after making proposal.
-    if (app.treatment !== 'pair') {
-        let end = app.messages.endBargaining.bind(client);
-        end();
-    }
-    else {
-        player.saveAndUpdate();
-        partner.saveAndUpdate();
-    }
+  // Player exits decision stage after making proposal.
+  if (app.treatment !== 'pair') {
+    let end = app.messages.endBargaining.bind(client);
+    end();
+  }
+  else {
+    player.saveAndUpdate();
+    partner.saveAndUpdate();
+  }
 
 }
 
 app.messages.setMyDivisionProposal = function (proposal) {
 
-    proposal = { x: proposal.X, y: proposal.Y };
+  proposal = { x: proposal.X, y: proposal.Y };
 
-    let player = this.participant.player;
-    let group = player.group;
+  let player = this.participant.player;
+  let group = player.group;
 
-    let timePosted = player.timeInStage();
-    let message = {
-        x: proposal.x,
-        y: proposal.y,
-        player: player.id,
-        timePosted,
-    };
-    group.divisionProposals.new(message);
-    player.divisionProposals.push(message);
-    player.numDivisionProposals++;
+  let timePosted = player.timeInStage();
+  let message = {
+    x: proposal.x,
+    y: proposal.y,
+    player: player.id,
+    timePosted,
+  };
+  group.divisionProposals.new(message);
+  player.divisionProposals.push(message);
+  player.numDivisionProposals++;
 
-    if (proposal.x != null) {
-        player.myDivisionProposal.x = proposal.x;
-    }
-    if (proposal.y != null) {
-        player.myDivisionProposal.y = proposal.y;
-    }
-    // console.log('new proposal = ', proposal, player.myDivisionProposal);
-    player.emit('setMyDivisionProposal', player.myDivisionProposal);
-    let partner = group.playersExcept(player)[0];
-    partner.partnerDivisionProposal = player.myDivisionProposal;
-    partner.emit('setPartnerDivisionProposal', player.myDivisionProposal);
+  if (proposal.x != null) {
+    player.myDivisionProposal.x = proposal.x;
+  }
+  if (proposal.y != null) {
+    player.myDivisionProposal.y = proposal.y;
+  }
+  // console.log('new proposal = ', proposal, player.myDivisionProposal);
+  player.emit('setMyDivisionProposal', player.myDivisionProposal);
+  let partner = group.playersExcept(player)[0];
+  partner.partnerDivisionProposal = player.myDivisionProposal;
+  partner.emit('setPartnerDivisionProposal', player.myDivisionProposal);
 
-    app.checkIfValid(group, player, partner, this);
+  app.checkIfValid(group, player, partner, this);
 
 }
 
@@ -1128,17 +1126,17 @@ app.messages.setPlayerPage = function (page) {
 
 decisionStage.playerEnd = function (player) {
 
-    if (player.group.period.id == 1) {
-        player.participant.allocationOutcomes = [];
-        player.participant.divisionOutcomes = [];
-    }
-    player.participant.allocationOutcomes.push({ x: player.myAllocationProposal.x, y: player.myAllocationProposal.y });
-    player.participant.divisionOutcomes.push({ x: player.myDivisionProposal.x, y: player.myDivisionProposal.y });
+  if (player.group.period.id == 1) {
+    player.participant.allocationOutcomes = [];
+    player.participant.divisionOutcomes = [];
+  }
+  player.participant.allocationOutcomes.push({ x: player.myAllocationProposal.x, y: player.myAllocationProposal.y });
+  player.participant.divisionOutcomes.push({ x: player.myDivisionProposal.x, y: player.myDivisionProposal.y });
 
 }
 
 const transitionStage = app.newStage('transition');
-transitionStage.canPlayerParticipate = function(player) {
+transitionStage.canPlayerParticipate = function (player) {
   return app.text === 'training' && player.group.period.id == app.numPeriods;
 }
 transitionStage.activeScreen = `
@@ -1159,60 +1157,60 @@ You have now finished Part A of the experiment. We now ask you to make decisions
 
 app.participantEnd = function (participant) {
 
-    if (participant.chosenPayouts == null) {
-        participant.chosenDecisions = [];
-        participant.chosenPayouts = [];
-        participant.chosenDivisions = [];
-        participant.chosenAllocations = [];
-        participant.chosenGoods = [];
-        participant.chosenEuros = [];
+  if (participant.chosenPayouts == null) {
+    participant.chosenDecisions = [];
+    participant.chosenPayouts = [];
+    participant.chosenDivisions = [];
+    participant.chosenAllocations = [];
+    participant.chosenGoods = [];
+    participant.chosenEuros = [];
+  }
+
+  let N = app.numPaidDecisions;
+
+  if (N > app.numPeriods) {
+    console.log('error: not enough paid periods');
+    return;
+  }
+
+  let ints = [];
+  for (let i = 0; i < app.numPeriods; i++) {
+    ints.push(i);
+  }
+  Utils.shuffle(ints);
+  ints = ints.splice(0, N);
+
+  let chosenDecisions = [];
+  let chosenGoods = [];
+  let chosenPayouts = [];
+  let chosenAllocations = [];
+  let chosenDivisions = [];
+  let chosenEuros = [];
+
+  for (let i = 0; i < ints.length; i++) {
+    let selectedGood = (Math.random() < app.session.probSelX) ? 'x' : 'y';
+    let p = ints[i];
+    chosenDecisions.push(p + 1);
+    chosenGoods.push(selectedGood);
+    let allocation = participant.allocationOutcomes[p];
+    chosenAllocations.push(allocation);
+    let division = participant.divisionOutcomes[p];
+    let payout = allocation[selectedGood];
+    if (division.x === '') {
+      division = '-';
+    } else {
+      payout *= division[selectedGood] / 100;
     }
-
-    let N = app.numPaidDecisions;
-
-    if (N > app.numPeriods) {
-        console.log('error: not enough paid periods');
-        return;
-    }
-
-    let ints = [];
-    for (let i = 0; i < app.numPeriods; i++) {
-        ints.push(i);
-    }
-    Utils.shuffle(ints);
-    ints = ints.splice(0, N);
-
-    let chosenDecisions = [];
-    let chosenGoods = [];
-    let chosenPayouts = [];
-    let chosenAllocations = [];
-    let chosenDivisions = [];
-    let chosenEuros = [];
-
-    for (let i = 0; i < ints.length; i++) {
-        let selectedGood = (Math.random() < app.session.probSelX) ? 'x' : 'y';
-        let p = ints[i];
-        chosenDecisions.push(p + 1);
-        chosenGoods.push(selectedGood);
-        let allocation = participant.allocationOutcomes[p];
-        chosenAllocations.push(allocation);
-        let division = participant.divisionOutcomes[p];
-        let payout = allocation[selectedGood];
-        if (division.x === '') {
-            division = '-';
-        } else {
-            payout *= division[selectedGood] / 100;
-        }
-        chosenDivisions.push(division);
-        chosenPayouts.push(payout);
-        chosenEuros.push(payout / app.exRate);
-    }
-    participant.chosenDecisions.push(chosenDecisions);
-    participant.chosenGoods.push(chosenGoods);
-    participant.chosenPayouts.push(chosenPayouts);
-    participant.chosenDivisions.push(chosenDivisions);
-    participant.chosenAllocations.push(chosenAllocations);
-    participant.chosenEuros.push(chosenEuros);
+    chosenDivisions.push(division);
+    chosenPayouts.push(payout);
+    chosenEuros.push(payout / app.exRate);
+  }
+  participant.chosenDecisions.push(chosenDecisions);
+  participant.chosenGoods.push(chosenGoods);
+  participant.chosenPayouts.push(chosenPayouts);
+  participant.chosenDivisions.push(chosenDivisions);
+  participant.chosenAllocations.push(chosenAllocations);
+  participant.chosenEuros.push(chosenEuros);
 
 }
 
@@ -1221,35 +1219,35 @@ app.participantEnd = function (participant) {
 // Returns sum of all individual player proposals (for x and y), or false if not all players have made a proposal yet.
 app.areProposalsValid = function (group) {
 
-    if (group.players.length < 2) {
-        return true;
-    }
-
-    let p1 = group.players[0];
-    let p2 = group.players[1];
-
-    if (group.app().treatment === 'individual') {
-        return true;
-    }
-
-    let matchingAllocationProposals =
-        p1.myAllocationProposal.x === p2.myAllocationProposal.x &&
-        p1.myAllocationProposal.y === p2.myAllocationProposal.y;
-
-    if (!matchingAllocationProposals) {
-        return false;
-    }
-
-    let matchingDivisionProposals =
-        group.app().session.divisionType === 'EXOG' ||
-        (p1.myDivisionProposal.x === 100 - p2.myDivisionProposal.x &&
-            p1.myDivisionProposal.y === 100 - p2.myDivisionProposal.y);
-
-    if (!matchingDivisionProposals) {
-        return false;
-    }
-
+  if (group.players.length < 2) {
     return true;
+  }
+
+  let p1 = group.players[0];
+  let p2 = group.players[1];
+
+  if (group.app().treatment === 'individual') {
+    return true;
+  }
+
+  let matchingAllocationProposals =
+    p1.myAllocationProposal.x === p2.myAllocationProposal.x &&
+    p1.myAllocationProposal.y === p2.myAllocationProposal.y;
+
+  if (!matchingAllocationProposals) {
+    return false;
+  }
+
+  let matchingDivisionProposals =
+    group.app().session.divisionType === 'EXOG' ||
+    (p1.myDivisionProposal.x === 100 - p2.myDivisionProposal.x &&
+      p1.myDivisionProposal.y === 100 - p2.myDivisionProposal.y);
+
+  if (!matchingDivisionProposals) {
+    return false;
+  }
+
+  return true;
 
 }
 
