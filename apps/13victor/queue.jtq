@@ -140,7 +140,7 @@ session.participantStart = function (participant) {
   }
 }
 
-function addPairApps(wait) {
+function addPairApps() {
   session.addApp('counting.jtt', {
     treatment: 'pair',
     text: 'training',
@@ -148,16 +148,14 @@ function addPairApps(wait) {
     numAddBudgets: 0,
     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
-    waitForAll: false
   });
-  session.addApp('counting.jtt', {
-    treatment: 'pair',
-    numPaidDecisions: session.numPaidDecisionsPerRound,
-    text: 'standard',
-    numRegularBudgets: session.numRounds,
-    numAddBudgets: session.numAddRounds,
-    exRate: session.exchangeRatePairs,
-    waitForAll: true
+    session.addApp('counting.jtt', {
+      treatment: 'pair',
+      numPaidDecisions: session.numPaidDecisionsPerRound,
+      text: 'standard',
+      numRegularBudgets: session.numRounds,
+      numAddBudgets: session.numAddRounds,
+      exRate: session.exchangeRatePairs,
   });
 }
 
@@ -165,6 +163,7 @@ session.addApp('1_general_instructions.jtt');
 
 if (session.playFirst === 'pair') {
   addPairApps();
+  session.addApp('partAComplete.jtt');
 }
 
 session.addApp('counting.jtt', {
@@ -174,7 +173,6 @@ session.addApp('counting.jtt', {
   numAddBudgets: 0,
   numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
   exRate: session.exchangeRatePracticeRound,
-  waitForAll: false
 });
 session.addApp('counting.jtt', {
   treatment: 'individual',
@@ -183,10 +181,10 @@ session.addApp('counting.jtt', {
   numRegularBudgets: session.numRounds,
   numAddBudgets: session.numAddRounds,
   exRate: session.exchangeRateIndiv,
-  waitForAll: true
 });
 
 if (session.playFirst !== 'pair') {
+  session.addApp('partAComplete.jtt');
   addPairApps();
 }
 

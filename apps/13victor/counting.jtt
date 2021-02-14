@@ -115,7 +115,7 @@ there are also other panels that we will explain as we go along in the
 instructions.
 </p>
 <p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' :src="'/13victor/' + app.fig2Src">
+<img style='width: 100%;' :src="'/13victor/images/counting/' + app.fig2Src">
 <span>Figure 2: The decision screen for joint decision making</span>
 </p>
 </div>
@@ -262,7 +262,7 @@ messages will appear at the top of the chat box with the IDs
 <q>Me</q> and <q>Other</q> in front.
 </p>
 <p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 100%;' :src="'/13victor/' + app.fig3Src">
+<img style='width: 100%;' :src="'/13victor/images/counting/' + app.fig3Src">
 <span>Figure 3: The decision screen for joint decision making with chat</span>
 </p>
   </div>
@@ -395,7 +395,7 @@ next decision round will start automatically.
     <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
     <div style="flex: 1 1 100px; max-width: 700px;">
 <p style="display: flex; flex-direction: column; align-items: center">
-<img style='width: 700px;' :src="'/13victor/' + app.fig1Src">
+<img style='width: 700px;' :src="'/13victor/images/counting/' + app.fig1Src">
 <span>Figure 1: The decision screen for the token allocation</span>
 </p>
 
@@ -473,11 +473,11 @@ Before the {{ app.session.numRounds + app.session.numAddRounds }} rounds of {{pa
   </div>
   <div style="flex: 1 1 100px; max-width: 700px;">
 <div v-if="app.session.playFirst === 'individual'" style="display: flex; flex-direction: column; align-items: center">
-  <img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
+  <img style='width: 100%;' :src="'/13victor/images/counting/' + app.fig1Src">
   <span>Figure 1: The decision screen for the token allocation</span>
 </div>
 <div v-if="app.session.playFirst === 'pair'" style="display: flex; flex-direction: column; align-items: center">
-  <img style='width: 100%;' :src="'/13victor/' + app.fig1Src">
+  <img style='width: 100%;' :src="'/13victor/images/counting/' + app.fig1Src">
   <span>Figure 1: The decision screen for the token allocation</span>
 </div>
   </div>

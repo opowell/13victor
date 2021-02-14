@@ -1,0 +1,8 @@
+app.isStandaloneApp = false;
+app.waitForAll = true;
+
+let stage = app.newStage('message')
+stage.activeScreen = `
+<p>You have now finished Part A of the experiment. We now ask you to make decisions in Part B.
+</p>
+`
