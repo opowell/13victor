@@ -12,9 +12,9 @@
 5. Start session.
 
 # WORKLOG since 2020.11.24
-2020.12.01 - 1 hour
-2020.12.06 - 3 hours
-2020.12.20 - 4 hours
-2021.01.09 - 3 hours
-2021.02.15 - 6 hours
+* 2020.12.01 - 1 hour
+* 2020.12.06 - 3 hours
+* 2020.12.20 - 4 hours
+* 2021.01.09 - 3 hours
+* 2021.02.15 - 6 hours
 ## TOTAL - 17 hours
