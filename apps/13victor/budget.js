@@ -9,6 +9,11 @@ jt.connected = function () {
 
     Vue.nextTick(function () {
 
+      if (player.stage.id === 'transition') {
+        $('.modal').modal('hide');
+        return
+      }
+
       if (player.status !== 'playing') {
         return;
       }
