@@ -555,7 +555,7 @@ getSeries = function (player) {
       }
     });
   }
-  if (player.madeAllocationSelection && player.partnerAllocationProposal.x !== "" && (app.session.divisionType != "ENDO" || (player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== "" && player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== ""))) {
+  if (player.madeAllocationSelection && player.partnerAllocationProposal && player.partnerAllocationProposal.x !== "" && (app.session.divisionType != "ENDO" || (player.myDivisionProposal.x !== "" && player.myDivisionProposal.y !== "" && player.partnerDivisionProposal.x !== "" && player.partnerDivisionProposal.y !== ""))) {
     series.push({
       type: "scatter",
       name: "Other's allocation proposal",
