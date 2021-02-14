@@ -1,92 +1,88 @@
 let treatments = [
-    // {
-    //     name: 'Custom',
-    //     fieldValues: {},
-    // },
-    {
-        name: 'T1',
-        fieldValues: {
-            divisionType: 'EXOG',
-            e1: 1,
-            e2: 1,
-            m: 1,
-            d1: 1,
-            d2: 1,
-            chartMax: 100,
-        },
-        color: 'magenta'
+  {
+    name: 'T1',
+    fieldValues: {
+      divisionType: 'EXOG',
+      e1: 1,
+      e2: 1,
+      m: 1,
+      d1: 1,
+      d2: 1,
+      chartMax: 100,
     },
-    {
-        name: 'T2',
-        fieldValues: {
-            divisionType: 'EXOG',
-            e1: 1,
-            e2: 1,
-            m: 2,
-            d1: 0.5,
-            d2: 0.5,
-            chartMax: 200,
-        },
-        color: 'cyan'
+    color: 'magenta'
+  },
+  {
+    name: 'T2',
+    fieldValues: {
+      divisionType: 'EXOG',
+      e1: 1,
+      e2: 1,
+      m: 2,
+      d1: 0.5,
+      d2: 0.5,
+      chartMax: 200,
     },
-    {
-        name: 'T3',
-        fieldValues: {
-            divisionType: 'EXOG',
-            e1: 1.3,
-            e2: 0.7,
-            m: 2,
-            d1: 0.5,
-            d2: 0.5,
-            chartMax: 200,
-        },
-        color: 'cyan'
+    color: 'cyan'
+  },
+  {
+    name: 'T3',
+    fieldValues: {
+      divisionType: 'EXOG',
+      e1: 1.3,
+      e2: 0.7,
+      m: 2,
+      d1: 0.5,
+      d2: 0.5,
+      chartMax: 200,
     },
-    {
-        name: 'T4',
-        fieldValues: {
-            divisionType: 'EXOG',
-            e1: 1.3,
-            e2: 0.7,
-            m: 2,
-            d1: 0.65,
-            d2: 0.35,
-            chartMax: 200,
-        },
-        color: 'cyan'
+    color: 'cyan'
+  },
+  {
+    name: 'T4',
+    fieldValues: {
+      divisionType: 'EXOG',
+      e1: 1.3,
+      e2: 0.7,
+      m: 2,
+      d1: 0.65,
+      d2: 0.35,
+      chartMax: 200,
     },
-    {
-        name: 'T5',
-        fieldValues: {
-            divisionType: 'ENDO',
-            e1: 1,
-            e2: 1,
-            m: 2,
-            chartMax: 200,
-        },
-        color: 'yellow'
+    color: 'cyan'
+  },
+  {
+    name: 'T5',
+    fieldValues: {
+      divisionType: 'ENDO',
+      e1: 1,
+      e2: 1,
+      m: 2,
+      chartMax: 200,
     },
-    {
-        name: 'T6',
-        fieldValues: {
-            divisionType: 'ENDO',
-            e1: 1.3,
-            e2: 0.7,
-            m: 2,
-            chartMax: 200,
-        },
-        color: 'yellow'
+    color: 'yellow'
+  },
+  {
+    name: 'T6',
+    fieldValues: {
+      divisionType: 'ENDO',
+      e1: 1.3,
+      e2: 0.7,
+      m: 2,
+      chartMax: 200,
     },
+    color: 'yellow'
+  },
 ]
 
 let treatmentNames = [];
 for (let i in treatments) {
-    let name = treatments[i].name;
-    for (let j in treatments[i].fieldValues) {
-        name += ', ' + j + '=' + treatments[i].fieldValues[j];
-    }
-    treatments[i].fullName = name;
-    treatmentNames.push(name);
+  let name = treatments[i].name;
+  for (let j in treatments[i].fieldValues) {
+    name += ', ' + j + '=' + treatments[i].fieldValues[j];
+  }
+  treatments[i].fullName = name;
+  treatmentNames.push(name);
 }
 
 session.addSelectOption('treatment', treatmentNames, 'The treatment determines proposal type, e1, e2, m, d1 and d2.');
@@ -116,13 +112,13 @@ session.addNumberOption('socPrefsExRatePoints', 3, 0, 5000, 1, 'This number of P
 session.addNumberOption('socPrefsExRateEuros', 1, 0, 5000, 0.001, '... is equal to this number of Euros')
 
 session.ravenMatricesPractice = {
-    questionIds: [1, 2],
-    answers: [8, 4],
+  questionIds: [1, 2],
+  answers: [8, 4],
 };
 
 session.ravenMatrices = {
-    questionIds: [3, 10, 12, 15, 16, 18, 21, 22, 28, 30, 31, 34],
-    answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
+  questionIds: [3, 10, 12, 15, 16, 18, 21, 22, 28, 30, 31, 34],
+  answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
 }
 
 session.participantStart = function (participant) {
@@ -166,14 +162,14 @@ function addPairApps() {
 session.addApp('1_general_instructions.jtt');
 
 if (session.playFirst === 'pair') {
-    addPairApps();
+  addPairApps();
 }
 
 session.addApp('counting.jtt', {
-    treatment: 'individual',
-    text: 'training',
-    numRegularBudgets: session.numPracticeRounds,
-    numAddBudgets: 0,
+  treatment: 'individual',
+  text: 'training',
+  numRegularBudgets: session.numPracticeRounds,
+  numAddBudgets: 0,
   numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
 });
@@ -184,31 +180,32 @@ session.addApp('counting.jtt', {
     numRegularBudgets: session.numRounds,
     numAddBudgets: session.numAddRounds,
   exRate: session.exchangeRateIndiv,
+  waitForAll: true
 });
 
 if (session.playFirst !== 'pair') {
-    addPairApps();
+  addPairApps();
 }
 
 session.addApp('soc_prefs_instr.jtt');
 session.addApp('soc_prefs.jtt');
 
 session.addApp('ravens.jtt', {
-    imagePrefix: 'Practice',
-    playType: 'practice',
-    matrices: session.ravenMatricesPractice,
-    questionLabel: 'Practice Question',
-    showInstructions: true,
+  imagePrefix: 'Practice',
+  playType: 'practice',
+  matrices: session.ravenMatricesPractice,
+  questionLabel: 'Practice Question',
+  showInstructions: true,
 });
 
 session.addApp('3_instructions_ravens.jtt');
 
 session.addApp('ravens.jtt', {
-    imagePrefix: 'Raven',
-    playType: 'real',
-    matrices: session.ravenMatrices,
-    questionLabel: 'Question',
-    showInstructions: false,
+  imagePrefix: 'Raven',
+  playType: 'real',
+  matrices: session.ravenMatrices,
+  questionLabel: 'Question',
+  showInstructions: false,
 });
 
 session.addApp('big5.jtt');
