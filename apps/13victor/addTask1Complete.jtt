@@ -1,4 +1,5 @@
 app.isStandaloneApp = false;
+app.numGroups = 1;
 
 let stage = app.newStage('message')
 stage.activeScreen = `

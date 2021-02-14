@@ -1,7 +1,5 @@
 app.isStandaloneApp = false;
-app.waitForAll = false;
-app.stageWaitToStart = false;
-app.stageWaitToEnd = false;
+app.groupSize = 1;
 
 app.table = [
     [10, 10, 5, 9],

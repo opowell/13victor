@@ -1,3 +1,6 @@
+app.isStandaloneApp = false;
+app.groupSize = 1;
+
 let results = app.newStage('results');
 
 app.start = function() {
@@ -64,55 +67,64 @@ results.playerStart = function(player) {
             player.totalEuros += participant.chosenEuros[i][j];
         }
     }
+    participant.spPayoffPoints = participant.spActivePayoff + participant.spPassivePayoff
+    participant.spPayoffEuros = participant.spPayoffPoints * app.session.socPrefsExRateEuros/app.session.socPrefsExRatePoints
+    player.totalEuros += participant.spPayoffEuros
+    player.totalEuros += 3
 }
 results.activeScreen = `
-    <h3>Part A</h3>
-    <table border>
+<style>
+th, td {
+    text-align: start;
+    vertical-align: top;
+    padding: 2px 5px;
+}
+</style>
+    <p><b>Part A</b></p>
+    <table border="1" cellpadding="0" cellspacing="0" style="font-size: inherit; border-collapse:collapse;">
     <tr><th>Selected<br/>Round</th><th>Chosen<br/>Allocation</th><th>Division<br/>of Tokens</th><th>Selected<br/>Account</th><th>Tokens<br/>earned</th><th>EUR earned</th></tr>
     <tr>
-    <th>{{ participant.payoffs[0].part }}</th>
-    <th>{{ participant.payoffs[0].round }}</th>
-    <th>X: {{participant.payoffs[0].allocation.x}} Y: {{participant.payoffs[0].allocation.y}}</th>
-    <th>{{ participant.payoffs[0].division === '-' ? '-' : "X: " + participant.payoffs[0].division.x + "%<br>Y: " + participant.payoffs[0].division.y}} + "%"</th>
-    <th>{{ participant.payoffs[0].account === 'x' ? 'X' : 'Y'}}</th>
-    <th>{{ participant.payoffs[0].tokens || round(2) }}</th>
-    <th>{{ participant.payoffs[0].euros || round(2) }}</th>
+    <td>{{ participant.payoffs[0].round }}</td>
+    <td>X: {{participant.payoffs[0].allocation.x}} Y: {{participant.payoffs[0].allocation.y}}</td>
+    <td>X: {{ participant.payoffs[0].division.x }}%<br>Y: {{ participant.payoffs[0].division.y }}%</td>
+    <td>{{ participant.payoffs[0].account === 'x' ? 'X' : 'Y'}}</td>
+    <td>{{ participant.payoffs[0].tokens | round(2) }}</td>
+    <td>{{ participant.payoffs[0].euros | round(2) }}</td>
     </tr>
     </table>
-    <div>Note: {{ Math.floor(1/app.session.exchangeRateIndiv) }} tokens are equal to 1 Euro</div>
+    <div>Note: {{ app.session.playFirst ? app.session.exchangeRatePairs : app.session.exchangeRateIndiv | round(2) }} tokens are equal to 1 Euro</div>
 
-    <h3>Part B</h3>
-    <table border>
+    <p><b>Part B</b></p>
+    <table border="1" cellpadding="0" cellspacing="0" style="font-size: inherit; border-collapse:collapse;">
     <tr><th>Selected<br/>Round</th><th>Chosen<br/>Allocation</th><th>Division<br/>of Tokens</th><th>Selected<br/>Account</th><th>Tokens<br/>earned</th><th>EUR earned</th></tr>
     <tr>
-    <th>{{ participant.payoffs[1].part }}</th>
-    <th>{{ participant.payoffs[1].round }}</th>
-    <th>X: {{participant.payoffs[1].allocation.x}} Y: {{participant.payoffs[1].allocation.y}}</th>
-    <th>{{ participant.payoffs[1].division === '-' ? '-' : "X: " + participant.payoffs[1].division.x + "%<br>Y: " + participant.payoffs[1].division.y}} + "%"</th>
-    <th>{{ participant.payoffs[1].account === 'x' ? 'X' : 'Y'}}</th>
-    <th>{{ participant.payoffs[1].tokens || round(2) }}</th>
-    <th>{{ participant.payoffs[1].euros || round(2) }}</th>
+    <td>{{ participant.payoffs[1].round }}</td>
+    <td>X: {{participant.payoffs[1].allocation.x}} Y: {{participant.payoffs[1].allocation.y}}</td>
+    <td>X: {{ participant.payoffs[0].division.x }}%<br>Y: {{ participant.payoffs[0].division.y }}%</td>
+    <td>{{ participant.payoffs[1].account === 'x' ? 'X' : 'Y'}}</td>
+    <td>{{ participant.payoffs[1].tokens | round(2) }}</td>
+    <td>{{ participant.payoffs[1].euros | round(2) }}</td>
     </tr>
     </table>
-    <div>Note: {{ Math.floor(1/app.session.exchangeRatePairs) }} tokens are equal to 1 Euro</div>
+    <div>Note: {{ app.session.playFirst ? app.session.exchangeRateIndiv : app.session.exchangeRatePairs | round(2) }} tokens are equal to 1 Euro</div>
 
-    <h3>Additional Task 1</h3>
-    <table border>
+    <p><b>Additional Task 1</b></p>
+    <table border="1" cellpadding="0" cellspacing="0" style="font-size: inherit; border-collapse:collapse;">
     <tr><th>Selected<br/>Table</th><th>Chosen<br/>Allocation</th><th>Points earned</th><th>EUR earned</th></tr>
     <tr>
-    <th>{{ participant.spChosenTable + 1 }}</th>
-    <th>Active: {{ participant.spActivePayoff }}<br>Passive: {{ participant.spPassivePayoff }}</th>
-    <th>{{ participant.spActivePayoff + participant.spPassivePayoff }}</th>
-    <th>{{ (participant.spActivePayoff + participant.spPassivePayoff)*app.session.socPrefsExRateEuros/app.session.socPrefsExRatePoints || round(2) }}</th>
+    <td>{{ participant.spChosenTable + 1 }}</td>
+    <td>Active: {{ participant.spActivePayoff }}<br>Passive: {{ participant.spPassivePayoff }}</td>
+    <td>{{ participant.spActivePayoff + participant.spPassivePayoff }}</td>
+    <td>{{ participant.spPayoffEuros | round(2) }}</td>
     </tr>
     </table>
     <div>Note: {{ app.session.socPrefsExRatePoints }} Points are equal to {{ app.session.socPrefsExRateEuros }} Euro</div>
 
-    <h3>Additional Task 2</h3>
+    <p><b>Additional Task 2</b></p>
     <p>You earned 3 Euros for this task.</p>
 
-    <h3>Additional Task 3</h3>
+    <p><b>Additional Task 3</b></p>
     <p>No earnings for this task.</p>
 
-    <h3>Your total earnings in this experiment are: {{ player.totalEuros | round(1) }} Euros</h3>
+    <p><b>Your total earnings in this experiment are: {{ player.totalEuros | round(1) }} Euros</b></p>
 `

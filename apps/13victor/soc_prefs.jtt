@@ -1,8 +1,5 @@
 app.isStandaloneApp = false;
 app.groupSize = 1;
-app.stageWaitToEnd = false;
-app.stageWaitToStart = false;
-app.waitForAll = false;
 
 app.tables = [
     [
@@ -220,10 +217,10 @@ stage.playerEnd = function(player) {
 }
 
 stage.autoplay = `
-    if (jt.vue.player.switchRow == '') {
+    if (!jt.vue.player.switchRow || jt.vue.player.switchRow == '') {
         let x = Math.floor(Math.random()*jt.vue.player.table.length);
         showSwitchVal(x);
-    } else if (jt.vue.player.tableId < app.tables.length - 1) {
+    } else if (jt.vue.player.tableId < jt.vue.app.tables.length - 1) {
         jt.setTable(jt.vue.player.tableId + 1);
     } else {
         jt.endStage();
