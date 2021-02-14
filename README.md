@@ -1,6 +1,6 @@
 # Requirements
 1. Google Chrome
-All pages should be opened in Google Chrome.
+- All pages should be opened in Google Chrome.
 
 # Getting started
 
