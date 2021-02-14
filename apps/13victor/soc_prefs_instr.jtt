@@ -96,7 +96,7 @@ td {
 <p>To sum up: In this part of the experiment, you are taking decisions in six tables in which you are asked to indicate the row for which you prefer for the first time the right allocation over the left allocation. Besides you earning Points as an active decision maker, you will also earn Points as a passive recipient.</p>
   </div>
 </div>
-<div style="text-align: center; padding-top: 1rem;">
+<div style="text-align: end; padding-top: 1rem;">
   <button>Continue</button>
 </div>
 
