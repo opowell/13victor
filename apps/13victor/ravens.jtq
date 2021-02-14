@@ -1,0 +1,27 @@
+session.ravenMatricesPractice = {
+  questionIds: [1, 2],
+  answers: [8, 4],
+};
+
+session.ravenMatrices = {
+  questionIds: [3, 10, 12, 15, 16, 18, 21, 22, 28, 30, 31, 34],
+  answers: [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4],
+}
+
+session.addApp('ravens.jtt', {
+  imagePrefix: 'Practice',
+  playType: 'practice',
+  matrices: session.ravenMatricesPractice,
+  questionLabel: 'Practice Question',
+  showInstructions: true,
+});
+
+session.addApp('3_instructions_ravens.jtt');
+
+session.addApp('ravens.jtt', {
+  imagePrefix: 'Raven',
+  playType: 'real',
+  matrices: session.ravenMatrices,
+  questionLabel: 'Question',
+  showInstructions: false,
+});

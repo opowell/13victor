@@ -89,7 +89,9 @@ choiceStage.activeScreen = /*html*/`
 <p>To answer a question, first select a question from the “Question list” in the top right corner of the screen. Then answer this question by clicking on one of the possible answers 1-8 on the bottom of the screen. Then select another question from the “Question list” in the top right corner of the screen and answer it by clicking on one of the possible answers 1-8 on the bottom of the screen, and so on.</p>
 <p>You can select and answer the {{ app.session.ravenMatrices.questionIds.length }} questions in any order you want. You can also go back and forth between questions to revise your answers at any time using the “Question list” in the upper right corner of the screen as long as the time limit of 5 minutes has not expired.</p>
 <p>To help you keeping an overview, those questions you have already answered will be indicated with a grey background in the “Question list” in the top right corner of the screen. But as mentioned, you can revise your answer also for these questions.</p>
-<button type='button' onclick='showPage(2)'>OK</button>
+<p style="text-align: end;">
+    <button type='button' onclick='showPage(2)'>Continue</button>
+</p>
     </div>
 </div>
 
