@@ -29,6 +29,8 @@ instructions.activeScreen = `
 <div class="card" style='background-color: inherit; border: none;'>
     <div class="card-body">
 <h4>Instructions for Additional Task 1</h4>
+<div style="display: flex;">
+  <div style="flex: 1 1 100px; max-width: 700px;">
 <p>In the following, we ask you to distribute money between you and another anonymous participant. The other anonymous participant will be randomly selected at the end of the experiment, and it will NOT be the participant with whom you were matched during the group decision making task. We will call the other randomly chosen participant the "passive recipient". You will see below, why we call this person the "passive recipient".</p>
 <p>The decisions you will make concern real money as some randomly chosen decisions will actually be paid. All numbers appearing in the tables you will see are in Points. For every {{ app.session.socPrefsExRatePoints }} Points you earn in this task, you will be paid EUR {{ app.session.socPrefsExRateEuros }} at the end of the experiment.</p>
 <p>In this task, you will sequentially see six tables. An example of a table is shown here.</p>
@@ -60,6 +62,7 @@ instructions.activeScreen = `
 <style>
 body {
   margin: auto;
+  max-width: unset;
 }
 table {
     border-spacing: 0px;
@@ -82,11 +85,20 @@ td {
 }
 </style>
 <p>The two left columns in this table always show allocations where you and the passive recipient are getting the same number of Points. The two right columns in the table always show allocations where the passive recipient always receives the same number of Points, while your number of Points increases as you move downwards in the table. All of the six tables that you will see in this part of the experiment exhibit the same features: the allocations on the left hand side always stay the same, while the ones on the right hand side become more favorable for you, because you receive more Points the further down you go in a table.</p>
+  </div>
+  <div style="flex: 0 0 1px; background-color: #CCC; margin: 0px 25px;"></div>
+  <div style="flex: 1 1 100px; max-width: 700px;">
 <p>We would therefore expect that participants prefer the left allocations at the beginning and then want to switch to the right allocations at some point. However, there might be participants who always prefer one allocation over the other (left or right). We want you to indicate in which row you would like to switch from the left allocation to the right allocation, i.e., from which row onwards you prefer the right allocation.</p>
 <p>You can see in the above table that you and the passive recipient both receive 10 Points in each row in the left allocations. In the right allocations, your amount of money increases from row to row, while the passive recipient always receives 9 Points. You are now supposed to choose the row in which you prefer the right over the left allocation for the first time. You can do so by clicking on the circle to the left of the corresponding row.</p>
 <p>For example, if you prefer for the first time the right over the left allocation in the second to last row in the table above, meaning you would rather receive 12 Points and the passive recipient 9 Points (right allocation) than both of you receiving 10 Points (left allocation) and you prefer the left allocation in all prior rows, then you should indicate the second to last row as the one where you prefer the right allocation over the left one for the first time.
 <p><b>Payment as Active Person:</b> At the end of the experiment and separately for each participant, the computer will first randomly select one of the six tables and then the computer will randomly select one of the 11 rows in the selected table. The allocation chosen by you in the selected table and the selected row will be actually paid out. If, for example, the randomly chosen table was the one shown above and the selected row in this table was the fourth row, and if in this task you had chosen the right allocation, then you would receive 9.5 Points as an active person, while your passive recipient would receive 9 Points.</p>
 <p><b>Payment as Passive Recipient:</b> In the exact same manner that your passive recipient receives a payment from your decision, without having taken any action, you receive a payment from another participant (who is again not the participant with whom you were matched during the group decision making task) without you doing anything, i.e., you are the passive recipient of this other participant. We make sure that you are not matched twice with the same participant as active and as passive recipient. This means that, if participant X is your passive recipient, then we make sure that you are not the passive recipient of participant X.</p>
 <p>To sum up: In this part of the experiment, you are taking decisions in six tables in which you are asked to indicate the row for which you prefer for the first time the right allocation over the left allocation. Besides you earning Points as an active decision maker, you will also earn Points as a passive recipient.</p>
+  </div>
+</div>
+<div style="text-align: center; padding-top: 1rem;">
+  <button>Continue</button>
+</div>
+
 </div></div>
 `
