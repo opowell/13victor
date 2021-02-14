@@ -400,6 +400,7 @@ to the selected account (either X or Y) and the other gets {{ player.dj * 100 }}
 decision screen labeled <q>Token Division</q>.</p>
 <p>The process described above will be repeated until all {{ app.session.numRounds + app.session.numAddRounds }} rounds
 are completed.</p>
+<h4>Earnings in Part {{participant.numDecParts === 1 ? 'A' : 'B'}}</h4>
 <p>Your earnings in this part of the experiment are determined as follows: At the end of
 the entire experiment, the computer will randomly select one of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} of this part of the experiment. The round selected only depends
 on chance, and each of the rounds 1 to {{ app.session.numRounds + app.session.numAddRounds }} is equally likely to be
