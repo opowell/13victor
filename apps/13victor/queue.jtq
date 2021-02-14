@@ -140,23 +140,25 @@ session.participantStart = function (participant) {
   }
 }
 
-function addPairApps() {
+function addPairApps(wait) {
   session.addApp('counting.jtt', {
-      treatment: 'pair',
-      text: 'training',
-      numRegularBudgets: session.numPracticeRounds,
-      numAddBudgets: 0,
-      numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
-      exRate: session.exchangeRatePracticeRound,
+    treatment: 'pair',
+    text: 'training',
+    numRegularBudgets: session.numPracticeRounds,
+    numAddBudgets: 0,
+    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+    exRate: session.exchangeRatePracticeRound,
+    waitForAll: false
   });
-    session.addApp('counting.jtt', {
-        treatment: 'pair',
-        numPaidDecisions: session.numPaidDecisionsPerRound,
-        text: 'standard',
-        numRegularBudgets: session.numRounds,
-        numAddBudgets: session.numAddRounds,
-          exRate: session.exchangeRatePairs,
-    });
+  session.addApp('counting.jtt', {
+    treatment: 'pair',
+    numPaidDecisions: session.numPaidDecisionsPerRound,
+    text: 'standard',
+    numRegularBudgets: session.numRounds,
+    numAddBudgets: session.numAddRounds,
+    exRate: session.exchangeRatePairs,
+    waitForAll: true
+  });
 }
 
 session.addApp('1_general_instructions.jtt');
@@ -171,14 +173,15 @@ session.addApp('counting.jtt', {
   numRegularBudgets: session.numPracticeRounds,
   numAddBudgets: 0,
   numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
-    exRate: session.exchangeRatePracticeRound,
+  exRate: session.exchangeRatePracticeRound,
+  waitForAll: false
 });
 session.addApp('counting.jtt', {
-    treatment: 'individual',
-    numPaidDecisions: session.numPaidDecisionsPerRound,
-    text: 'standard',
-    numRegularBudgets: session.numRounds,
-    numAddBudgets: session.numAddRounds,
+  treatment: 'individual',
+  numPaidDecisions: session.numPaidDecisionsPerRound,
+  text: 'standard',
+  numRegularBudgets: session.numRounds,
+  numAddBudgets: session.numAddRounds,
   exRate: session.exchangeRateIndiv,
   waitForAll: true
 });
