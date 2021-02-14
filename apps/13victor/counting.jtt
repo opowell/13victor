@@ -238,22 +238,22 @@ selected lines will not depend on your choices in any of the earlier
 decision problems.)
 </li>
 </ul>
-<p v-if="app.color === 'magenta'">
+<p v-if="app.session.color === 'magenta'">
 So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
 of the decision rounds is {{ 100 * player.ei }}.
 </p>
-<p v-if="app.color === 'yellow'">
+<p v-if="app.session.color === 'yellow'">
 So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
 of the decision rounds is {{ 100 * player.ei }}.
 </p>
-<p v-if="app.color === 'magenta'">
+<p v-if="app.session.color === 'magenta'">
 And the individual maximal number of tokens that the other contributes to
 the joint maximal number of tokens available to allocate jointly to an
 account in any of the decision rounds is {{ 100 * player.ej }}.
 </p>
-<p v-if="app.color === 'yellow'">
+<p v-if="app.session.color === 'yellow'">
 And the individual maximal number of tokens that the other contributes to
 the joint maximal number of tokens available to allocate jointly to an
 account in any of the decision rounds is {{ 100 * player.ej }}.
@@ -266,7 +266,7 @@ be done in two steps:
 <b>Step 1:</b>
 <br />
 <p>
-You and the other first individually and independently make <span v-if="app.color === 'yellow'">three decisions</span>:
+You and the other first individually and independently make <span v-if="app.session.color === 'yellow'">three decisions</span>:
 </p>
 <ul>
 <li>
@@ -279,7 +279,7 @@ Once you have made this independent decision, it will also be shown in
 the panel in the upper right hand corner in your decision screen labeled
 <q>My allocation proposal</q>.
 </li>
-<li v-if="app.color !== 'yellow'">
+<li v-if="app.session.color !== 'yellow'">
 Once both of you have made your independent decisions, the other's independent 
 token allocation decision will be shown in blue on the line in the main panel 
 and in the panel labeled <q>Other's allocation
@@ -287,7 +287,7 @@ proposal</q> on the right of your decision screen (see Figure 3).
 </li>
 </ul>
 </li>
-<li v-if="app.color === 'yellow'">
+<li v-if="app.session.color === 'yellow'">
 Two decisions on <b>token divisions</b>: You and the other
 individually and independently make a proposal on how to divide between
 yourself and the other the number of tokens you propose to allocate to the X
@@ -367,7 +367,7 @@ messages will appear at the top of the chat box with the IDs
 If the token allocation proposals you and the other made match, the
 <q>Status</q> line on top of the main panel
 will read in green letters <q>Allocation proposals DO
-match</q> <span v-if="app.color === 'yellow'">and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.color === 'yellow'"><b>and</b> the
+match</q> <span v-if="app.session.color === 'yellow'">and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.session.color === 'yellow'"><b>and</b> the
 token divisions</span>. Then, the current decision screen will
 disappear and a new round will start.
 </li>
@@ -375,14 +375,14 @@ disappear and a new round will start.
 If the token allocation proposals you and the other made do not match,
 the <q>Status</q> line on top of the main
 panel will read in red letters <q>Allocation proposals DO NOT
-match</q>.<span v-if="app.color === 'yellow'">If the token divisions you and the other made do
+match</q>.<span v-if="app.session.color === 'yellow'">If the token divisions you and the other made do
 not match, the <q>Status</q> line will read in
 red letters <q>Division proposals DO NOT
 match</q></span>. This indicates to you and the other that there is
-still disagreement on the token allocation<span v-if="app.color === 'yellow'"><b>or</b> either of the token
-divisions or both</span>. You can change your token allocation proposal in the main panel by moving the mouse along the line to a new allocation that you want to propose <span v-if="app.color === 'yellow'">or change either of the token division proposals in the panel labeled <q>Token Division</q> by moving a
+still disagreement on the token allocation<span v-if="app.session.color === 'yellow'"><b>or</b> either of the token
+divisions or both</span>. You can change your token allocation proposal in the main panel by moving the mouse along the line to a new allocation that you want to propose <span v-if="app.session.color === 'yellow'">or change either of the token division proposals in the panel labeled <q>Token Division</q> by moving a
 slider to a new division proposal that you want to propose</span>. A new confirmed proposal
-regarding the token allocation <span v-if="app.color === 'yellow'">or either of the token divisions</span> will immediately also appear on the screen of
+regarding the token allocation <span v-if="app.session.color === 'yellow'">or either of the token divisions</span> will immediately also appear on the screen of
 the other (and the other way around). You and the other can also continue to
 use the chat box to reach agreement.
 </li>
