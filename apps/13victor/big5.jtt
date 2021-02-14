@@ -47,7 +47,7 @@ Below you see a number of statements. For each statement, indicate how much you 
         </label>
     </div>
 </div>
-<div><button :disabled='player.numAnswered < app.statements.length'>Submit</button></div>
+<p style="text-align: end"><button :disabled='player.numAnswered < app.statements.length'>Submit</button></p>
 <p v-show='player.numAnswered < app.statements.length'>You have to answer all questions before you can submit your answers.</p>
 <script>
 countAnswers = function() {
