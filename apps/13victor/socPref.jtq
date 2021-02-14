@@ -1,0 +1,2 @@
+session.addApp('soc_prefs_instr.jtt');
+session.addApp('soc_prefs.jtt');

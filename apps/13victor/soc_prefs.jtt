@@ -3,7 +3,6 @@ app.groupSize = 1;
 app.stageWaitToEnd = false;
 app.stageWaitToStart = false;
 app.waitForAll = false;
-app.periodText = 'Table';
 
 app.tables = [
     [
@@ -79,20 +78,27 @@ app.tables = [
 [10,10,16,17]
     ]
 ];
-app.numPeriods = app.tables.length;
 
 let stage = app.newStage('decide');
 stage.playerStart = function(player) {
     player.switchRow = '';
-    player.table = app.tables[player.period().id - 1];
-    if (player.period().id === 1) {
-        player.participant.socPrefPayoffs = [];
+    player.participant.socPrefPayoffs = [];
+    player.choices = [];
+    player.participant.socPrefTables = [];
+    let indices = [0, 1, 2, 3, 4, 5];
+    Utils.shuffle(indices);
+    for (let i = 0; i<indices.length; i++) {
+      player.participant.socPrefTables.push(app.tables[indices[i]]);
     }
+    player.tableId = 0;
+    player.table = player.participant.socPrefTables[player.tableId];
+    player.allAnswered = false;
 }
 stage.activeScreen = `
 <link rel="stylesheet" href="/shared/bootstrap.min.css">
 <div class="card" style='background-color: inherit; border: none;'>
     <div class="card-body">
+    <h4>Table: {{ player.tableId + 1 }} / {{ app.tables.length}}</h4>
     <p>Please choose the row in which you would like to change for the first time from the left to the right allocation. In order to do so, please mark the row of your choice. After you have marked the row, the rest of the table will be completed automatically as implied by your choice. That is, the row(s) in which you prefer the left allocation and the row(s) in which you prefer the right allocation will be automatically highlighted in green. Please check your decision then. Revise your choice or confirm it by clicking "Continue". All numbers in the table are in Points.
     <table>
         <tr>
@@ -109,18 +115,24 @@ stage.activeScreen = `
         </tr>
         <tr v-for='(row, index) in player.table'>
             <td><input type="radio" tabindex='-1' :value="index" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[0] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[1] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[2] }}</td>
-            <td :style="{ 'background-color': (player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[3] }}</td>
+            <td :style="{ 'background-color': (!player.switchRow || player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[0] }}</td>
+            <td :style="{ 'background-color': (!player.switchRow || player.switchRow === '' || player.switchRow <= index) ? 'inherit' : 'lightgreen'}">{{ row[1] }}</td>
+            <td :style="{ 'background-color': (!player.switchRow || player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[2] }}</td>
+            <td :style="{ 'background-color': (!player.switchRow || player.switchRow === '' || player.switchRow > index) ? 'inherit' : 'lightgreen'}">{{ row[3] }}</td>
         </tr>
         <tr>
             <td><input type="radio" tabindex='-1' :value="player.table.length" onclick="showSwitchVal(this.value)" name="player.switchRow"></td>
             <td colspan=4 style='text-align: left'>I always prefer the left allocation.</td>
         </tr>
     </table>
-    <br>
-    <button :disabled="player.switchRow===''">Continue</button>
+    <input type="hidden" name="player.choices">
+    <p style="display: flex">
+        <button :disabled="player.tableId == 0" type="button" onclick="jt.setTable(jt.vue.player.tableId-1)">Previous Table</button>
+        &nbsp;
+        <button :disabled="player.tableId == app.tables.length - 1" type="button" onclick="jt.setTable(jt.vue.player.tableId+1)">Next Table</button>
+        <span style="flex: 1 1 auto">&nbsp;</span>
+        <button :disabled="!player.allAnswered">Continue</button>
+    </p>
   </div>
 </div>
     <style>
@@ -159,15 +171,37 @@ stage.activeScreen = `
             val = -1;
         }
         jt.vue.player.switchRow = val;
+        jt.vue.player.choices[jt.vue.player.tableId] = val;
         if (val != -1) {
             $('#switchRow').val(val);
         }
+        jt.vue.player.allAnswered = true;
+        for (let i=0; i<jt.vue.player.participant.socPrefTables.length; i++) {
+          if (!jt.vue.player.choices[i]) {
+            jt.vue.player.allAnswered = false;
+            break;
+          }
+        }
+        $('input[name="player.choices"]').val(jt.vue.player.choices)
+    }
+    jt.setTable = function(x) {
+      jt.vue.player.tableId = x;
+      jt.vue.player.switchRow = jt.vue.player.choices[jt.vue.player.tableId];
+      jt.vue.player.table = jt.vue.player.participant.socPrefTables[jt.vue.player.tableId];
+      const inputs = document.querySelectorAll('input[name="player.switchRow"]');
+      for (let i=0; i<inputs.length; i++) {
+        $(inputs[i]).prop('checked', i == jt.vue.player.switchRow);
+      }
     }
     </script>
 `
 stage.playerEnd = function(player) {
-    player.draw = Math.floor(Math.random()*(player.table.length));
-    player.row = player.table[player.draw]
+    const participant = player.participant;
+    let t = Math.floor(Math.random() * participant.socPrefTables.length)
+    participant.spChosenTable = t
+    const table = participant.socPrefTables[t]
+    player.draw = Math.floor(Math.random()*(table.length));
+    player.row = table[player.draw]
     if (player.draw < player.switchRow) {
         player.payoffs = {
             you: player.row[0],
@@ -180,14 +214,8 @@ stage.playerEnd = function(player) {
         };
     }
 
-    player.participant.socPrefPayoffs.push(player.payoffs);
-}
-
-app.participantEnd = function(participant) {
-    // Draw a random period.
-    let t = Math.floor(Math.random() * app.tables.length)
-    participant.spChosenTable = t
-    participant.spChosenRowPayoffs = participant.socPrefPayoffs[t]
+    participant.socPrefPayoffs = player.payoffs;
+    participant.spChosenRowPayoffs = participant.socPrefPayoffs
     participant.spActivePayoff = participant.spChosenRowPayoffs.you
 }
 
@@ -195,6 +223,8 @@ stage.autoplay = `
     if (jt.vue.player.switchRow == '') {
         let x = Math.floor(Math.random()*jt.vue.player.table.length);
         showSwitchVal(x);
+    } else if (jt.vue.player.tableId < app.tables.length - 1) {
+        jt.setTable(jt.vue.player.tableId + 1);
     } else {
         jt.endStage();
     }
