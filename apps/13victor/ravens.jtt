@@ -99,8 +99,10 @@ choiceStage.activeScreen = /*html*/`
 <div class="card" v-show='player.page === 2'>
     <div class="card-body">
 <p>Before you can start answering the 12 questions under a time limit of 5 minutes, we show you two practise questions. Please use these two practise questions to familiarize yourself with the decision screen. For each of the 2 practise questions, we will indicate the correct answer.</p>
-<button type='button' onclick='showPage(1)'>Go back to instructions</button>
-<button type='button' onclick='showPage(3)'>OK</button>
+<p style="text-align: end">
+    <button type='button' onclick='showPage(1)'>Go back to instructions</button>
+    <button type='button' onclick='showPage(3)'>Continue</button>
+</p>
     </div>
 </div>
 
