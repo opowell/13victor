@@ -1,0 +1,10 @@
+app.isStandaloneApp = false;
+
+let stage = app.newStage('message')
+stage.activeScreen = `
+<p>Finally, we ask you to answer a small questionnaire.
+</p>
+<p style="text-align: end">
+    <button>Continue</button>
+</p>
+`

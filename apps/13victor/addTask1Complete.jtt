@@ -1,0 +1,10 @@
+app.isStandaloneApp = false;
+
+let stage = app.newStage('message')
+stage.activeScreen = `
+<p>To start the second additional task please press "Continue".
+</p>
+<p style="text-align: end">
+    <button>Continue</button>
+</p>
+`

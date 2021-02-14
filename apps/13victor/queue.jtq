@@ -191,6 +191,7 @@ if (session.playFirst !== 'pair') {
 session.addApp('partBComplete.jtt');
 session.addApp('soc_prefs_instr.jtt');
 session.addApp('soc_prefs.jtt');
+session.addApp('addTask1Complete.jtt');
 
 session.addApp('ravens.jtt', {
   imagePrefix: 'Practice',
@@ -209,8 +210,10 @@ session.addApp('ravens.jtt', {
   questionLabel: 'Question',
   showInstructions: false,
 });
+session.addApp('addTask2Complete.jtt');
 
 session.addApp('big5.jtt');
+session.addApp('addTask3Complete.jtt');
 
 session.addApp('survey.jtt');
 
