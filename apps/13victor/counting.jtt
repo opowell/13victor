@@ -278,11 +278,14 @@ and the other see exactly the same line from which to choose on your screens.
 Once you have made this independent decision, it will also be shown in
 the panel in the upper right hand corner in your decision screen labeled
 <q>My allocation proposal</q>.
-</li></ul>
 </li>
 <li v-if="app.color !== 'yellow'">
-Once both of you have made your independent decisions, the other's independent token allocation decision will be shown in blue on the line in the main panel and in the panel labeled <q>Other's allocation
-proposal</q> on the right of your decision screen (see Figure 3);
+Once both of you have made your independent decisions, the other's independent 
+token allocation decision will be shown in blue on the line in the main panel 
+and in the panel labeled <q>Other's allocation
+proposal</q> on the right of your decision screen (see Figure 3).
+</li>
+</ul>
 </li>
 <li v-if="app.color === 'yellow'">
 Two decisions on <b>token divisions</b>: You and the other
