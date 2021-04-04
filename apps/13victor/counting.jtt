@@ -1146,7 +1146,7 @@ transitionStage.activeScreen = `
       <div class="card-body">
 <p v-if="app.text === 'training'">
 You have completed the {{ app.numPeriods }} practice rounds.
-Please click <q>Continue</q> to start this part of the experiment.
+Please click <q>Continue</q> to start Part <span>{{ participant.numDecParts === 1 ? 'A' : 'B' }} of the experiment.
 </p>
 <p v-if="app.text === 'real' && participant.numDecParts === 1">
 You have now finished Part A of the experiment. We now ask you to make decisions in Part B.
