@@ -85,8 +85,8 @@ th, td {
     <tr><th>Selected<br/>Round</th><th>Chosen<br/>Allocation</th><th>Division<br/>of Tokens</th><th>Selected<br/>Account</th><th>Tokens<br/>earned</th><th>EUR earned</th></tr>
     <tr>
     <td>{{ participant.payoffs[0].round }}</td>
-    <td>X: {{participant.payoffs[0].allocation.x}} Y: {{participant.payoffs[0].allocation.y}}</td>
-    <td>X: {{ participant.payoffs[0].division.x }}%<br>Y: {{ participant.payoffs[0].division.y }}%</td>
+    <td>X: {{participant.payoffs[0].allocation.x | round(2) }} Y: {{participant.payoffs[0].allocation.y | round(2) }}</td>
+    <td>X: {{ participant.payoffs[0].division.x | round(2) }}%<br>Y: {{ participant.payoffs[0].division.y | round(2) }}%</td>
     <td>{{ participant.payoffs[0].account === 'x' ? 'X' : 'Y'}}</td>
     <td>{{ participant.payoffs[0].tokens | round(2) }}</td>
     <td>{{ participant.payoffs[0].euros | round(2) }}</td>
@@ -99,8 +99,8 @@ th, td {
     <tr><th>Selected<br/>Round</th><th>Chosen<br/>Allocation</th><th>Division<br/>of Tokens</th><th>Selected<br/>Account</th><th>Tokens<br/>earned</th><th>EUR earned</th></tr>
     <tr>
     <td>{{ participant.payoffs[1].round }}</td>
-    <td>X: {{participant.payoffs[1].allocation.x}} Y: {{participant.payoffs[1].allocation.y}}</td>
-    <td>X: {{ participant.payoffs[0].division.x }}%<br>Y: {{ participant.payoffs[0].division.y }}%</td>
+    <td>X: {{participant.payoffs[1].allocation.x | round(2) }} Y: {{participant.payoffs[1].allocation.y | round(2)}}</td>
+    <td>X: {{ participant.payoffs[0].division.x | round(2) }}%<br>Y: {{ participant.payoffs[0].division.y | round(2) }}%</td>
     <td>{{ participant.payoffs[1].account === 'x' ? 'X' : 'Y'}}</td>
     <td>{{ participant.payoffs[1].tokens | round(2) }}</td>
     <td>{{ participant.payoffs[1].euros | round(2) }}</td>
@@ -113,18 +113,18 @@ th, td {
     <tr><th>Selected<br/>Table</th><th>Chosen<br/>Allocation</th><th>Points earned</th><th>EUR earned</th></tr>
     <tr>
     <td>{{ participant.spChosenTable + 1 }}</td>
-    <td>Active: {{ participant.spActivePayoff }}<br>Passive: {{ participant.spPassivePayoff }}</td>
-    <td>{{ participant.spActivePayoff + participant.spPassivePayoff }}</td>
+    <td>Active: {{ participant.spActivePayoff | round(2) }}<br>Passive: {{ participant.spPassivePayoff | round(2) }}</td>
+    <td>{{ participant.spActivePayoff + participant.spPassivePayoff | round(2) }}</td>
     <td>{{ participant.spPayoffEuros | round(2) }}</td>
     </tr>
     </table>
     <div>Note: {{ app.session.socPrefsExRatePoints }} Points are equal to {{ app.session.socPrefsExRateEuros }} Euro</div>
 
     <p><b>Additional Task 2</b></p>
-    <p>You earned 3 Euros for this task.</p>
+    <p>You earned 3,00 Euros for this task.</p>
 
     <p><b>Additional Task 3</b></p>
     <p>No earnings for this task.</p>
 
-    <p><b>Your total earnings in this experiment are: {{ player.totalEuros | round(1) }} Euros</b></p>
+    <p><b>Your total earnings in this experiment are: {{ player.totalEuros | round(2) }} Euros</b></p>
 `
