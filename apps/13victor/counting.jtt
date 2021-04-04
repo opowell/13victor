@@ -51,8 +51,8 @@ app.fig3Src = 'unknown'
 switch (app.session.color) {
   case 'magenta':
     app.fig1Src = 'individualt1.png'
-    app.fig2Src = 'groupfirstt1.png'
-    app.fig3Src = 'groupt1.png'
+    app.fig2Src = 'Figure2Treatment1.png'
+    app.fig3Src = 'Figure3Treatment1.png'
     break;
   case 'cyan':
     app.fig1Src = 'individualt2.png'
