@@ -365,7 +365,7 @@ messages will appear at the top of the chat box with the IDs
 If the token allocation proposals you and the other made match, the
 <q>Status</q> line on top of the main panel
 will read in green letters <q>Allocation proposals DO
-match</q><span v-if="app.session.color === 'yellow'"> and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.session.color === 'yellow'"><b>and</b> the
+match</q><span v-if="app.session.color === 'yellow'"> and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation<span v-if="app.session.color === 'yellow'"> <b>and</b> the
 token divisions</span>. Then, the current decision screen will
 disappear and a new round will start.
 </li>
@@ -377,7 +377,7 @@ match</q>.<span v-if="app.session.color === 'yellow'">If the token divisions you
 not match, the <q>Status</q> line will read in
 red letters <q>Division proposals DO NOT
 match</q></span>. This indicates to you and the other that there is
-still disagreement on the token allocation<span v-if="app.session.color === 'yellow'"><b>or</b> either of the token
+still disagreement on the token allocation<span v-if="app.session.color === 'yellow'"> <b>or</b> either of the token
 divisions or both</span>. You can change your token allocation proposal in the main panel by moving the mouse along the line to a new allocation that you want to propose <span v-if="app.session.color === 'yellow'">or change either of the token division proposals in the panel labeled <q>Token Division</q> by moving a
 slider to a new division proposal that you want to propose</span>. A new confirmed proposal
 regarding the token allocation <span v-if="app.session.color === 'yellow'">or either of the token divisions</span> will immediately also appear on the screen of
