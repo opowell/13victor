@@ -365,7 +365,7 @@ messages will appear at the top of the chat box with the IDs
 If the token allocation proposals you and the other made match, the
 <q>Status</q> line on top of the main panel
 will read in green letters <q>Allocation proposals DO
-match</q> <span v-if="app.session.color === 'yellow'">and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.session.color === 'yellow'"><b>and</b> the
+match</q><span v-if="app.session.color === 'yellow'"> and <q>Division proposals DO match}</q></span>. This indicates to you and the other that there is agreement on the token allocation <span v-if="app.session.color === 'yellow'"><b>and</b> the
 token divisions</span>. Then, the current decision screen will
 disappear and a new round will start.
 </li>
