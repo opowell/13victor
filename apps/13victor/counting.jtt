@@ -237,7 +237,7 @@ selected lines will not depend on your choices in any of the earlier
 decision problems.)
 </li>
 </ul>
-<p v-if="app.session.color === 'magenta'">
+<p v-if="app.session.color === 'cyan'">
 So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
 of the decision rounds is {{ 100 * player.ei }}.
@@ -247,7 +247,7 @@ So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
 of the decision rounds is {{ 100 * player.ei }}.
 </p>
-<p v-if="app.session.color === 'magenta'">
+<p v-if="app.session.color === 'cyan'">
 And the individual maximal number of tokens that the other contributes to
 the joint maximal number of tokens available to allocate jointly to an
 account in any of the decision rounds is {{ 100 * player.ej }}.
