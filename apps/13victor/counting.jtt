@@ -373,7 +373,7 @@ disappear and a new round will start.
 If the token allocation proposals you and the other made do not match,
 the <q>Status</q> line on top of the main
 panel will read in red letters <q>Allocation proposals DO NOT
-match</q>.<span v-if="app.session.color === 'yellow'">If the token divisions you and the other made do
+match</q><span v-if="app.session.color === 'yellow'">. If the token divisions you and the other made do
 not match, the <q>Status</q> line will read in
 red letters <q>Division proposals DO NOT
 match</q></span>. This indicates to you and the other that there is
