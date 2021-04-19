@@ -8,19 +8,16 @@ if (app.treatment === 'pair') {
 }
 
 // Draw budget lines.
-// - intersect at least one axis at or above the 50-token level
+// - intersect both axes at or above the 10-token level.
+// - intersect at least one axis at or above the 50-token level.
 // - intersect both axes at or below the 100-token level.
-function drawBudgetMax1(A) {
-  return Utils.randomInt(A / 2, A + 1);
-}
-
-function drawBudgetMax2(A) {
-  return Utils.randomInt(A / 10, A + 1);
-}
-
 function drawBudget(A) {
-  let x = drawBudgetMax1(A);
-  let y = drawBudgetMax2(A);
+  let x = Utils.randomInt(A / 10, A + 1);
+  let y
+  if (x > A/2)
+    y = Utils.randomInt(A / 10, A + 1);
+  else
+    y = Utils.randomInt(A / 2, A + 1);
   // 50% chance to switch.
   if (Math.random() < 0.5) {
     let z = x;
