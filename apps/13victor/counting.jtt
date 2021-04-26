@@ -12,12 +12,12 @@ if (app.treatment === 'pair') {
 // - intersect at least one axis at or above the 50-token level.
 // - intersect both axes at or below the 100-token level.
 function drawBudget(A) {
-  let x = Utils.randomInt(A / 10, A + 1);
+  let x = Utils.randomInt(A, 10*A + 1) / 10;
   let y
   if (x > A/2)
-    y = Utils.randomInt(A / 10, A + 1);
+    y = Utils.randomInt(A, 10*A + 1) / 10;
   else
-    y = Utils.randomInt(A / 2, A + 1);
+    y = Utils.randomInt(5*A, 10*A + 1) / 10;
   // 50% chance to switch.
   if (Math.random() < 0.5) {
     let z = x;
