@@ -795,7 +795,11 @@ decisionStage.playerStart = function (player) {
   let randX = Math.random() * player.maxX;
   let randY = (1 - randX / player.maxX) * player.maxY;
   player.myAllocationProposal = { x: randX, y: randY };
+  player.myAllocationProposalX = randX;
+  player.myAllocationProposalY = randY;
   player.initialAllocationProposal = { x: randX, y: randY };
+  player.initialAllocationProposalX = randX;
+  player.initialAllocationProposalY = randY;
   player.numAllocationProposals = 0;
   player.allocationProposals = [];
   player.numDivisionProposals = 0;
@@ -1054,6 +1058,8 @@ app.messages.setMyAllocationProposal = function (proposal) {
   player.numAllocationProposals++;
   player.madeAllocationSelection = true;
   player.myAllocationProposal = proposal;
+  player.myAllocationProposalX = proposal.x;
+  player.myAllocationProposalY = proposal.y;
   player.initialCircle = false;
   player.emit('setMyAllocationProposal', proposal);
   let partner = null;
