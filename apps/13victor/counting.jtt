@@ -669,7 +669,10 @@ app.drawMatching = function () {
         for (let j = 0; j < app.session.numRounds + app.session.numAddRounds; j++) {
           p.budgets.push(drawBudget(100))
         }
-        p.shuffledBudgets = Utils.shuffle([...p.budgets])
+        p.shuffledBudgets = [
+          ...Utils.shuffle([...p.budgets.slice(0, app.session.numRounds)]),
+          ...Utils.shuffle([...p.budgets.slice(app.session.numRounds, app.session.numRounds + app.session.numAddRounds)])
+        ]
       }
       // console.log('budgets', p.budgets, p.shuffledBudgets)
     }
