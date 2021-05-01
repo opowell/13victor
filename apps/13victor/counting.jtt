@@ -1057,6 +1057,10 @@ app.messages.setMyAllocationProposal = function (proposal) {
   player.allocationProposals.push(message);
   player.numAllocationProposals++;
   player.madeAllocationSelection = true;
+  if (!player.firstAllocationProposalX) {
+    player.firstAllocationProposalX = proposal.x;
+    player.firstAllocationProposalY = proposal.y;
+  }
   player.myAllocationProposal = proposal;
   player.myAllocationProposalX = proposal.x;
   player.myAllocationProposalY = proposal.y;
@@ -1108,6 +1112,10 @@ app.messages.setMyDivisionProposal = function (proposal) {
   group.divisionProposals.new(message);
   player.divisionProposals.push(message);
   player.numDivisionProposals++;
+  if (!player.firstDivisionProposalX) {
+    player.firstDivisionProposalX = proposal.x;
+    player.firstDivisionProposalY = proposal.y;
+  }
 
   if (proposal.x != null) {
     player.myDivisionProposal.x = proposal.x;
