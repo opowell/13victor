@@ -21,4 +21,4 @@
 * 2021.04.17 - 2 hours
 * 2021.04.26 - 2 hours
 * 2021.05.01 - 1 hour
-## TOTAL - 25 hours
+## TOTAL - 26 hours
