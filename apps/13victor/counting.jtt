@@ -860,6 +860,7 @@ decisionStage.activeScreen = /*html*/`
 <div style='display: flex; flex-direction: column;'>
   <div :style='"display: flex; flex-direction: row; width: 1180px; justify-content: center;"'>
         <div class="card" :style='app.treatment === "pair" ? "flex: 1 1 auto" : ""'>
+            <div class='blocker' v-show='app.treatment === "pair" && !player.initialCircle && player.partnerAllocationProposal.x === ""'></div>
             <div class="card-body">
                 <div style='display: flex; height: 72px;'>
                     <div style='margin-right: 10px;'>
