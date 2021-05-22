@@ -84,8 +84,10 @@ stage.playerStart = function(player) {
     player.participant.socPrefTables = [];
     let indices = [0, 1, 2, 3, 4, 5];
     Utils.shuffle(indices);
+    player.order = ''
     for (let i = 0; i<indices.length; i++) {
       player.participant.socPrefTables.push(app.tables[indices[i]]);
+      player.order += '' + (indices[i] + 1)
     }
     player.tableId = 0;
     player.table = player.participant.socPrefTables[player.tableId];
