@@ -792,11 +792,11 @@ decisionStage.playerStart = function (player) {
   player.maxX = player.group.maxX * player.allocationMultiplier;
   player.maxY = player.group.maxY * player.allocationMultiplier;
 
-  let randX = Math.random() * player.maxX;
-  let randY = (1 - randX / player.maxX) * player.maxY;
+  let randX = (Math.random() * player.maxX).toFixed(2);
+  let randY = ((1 - randX / player.maxX) * player.maxY).toFixed(2);
   player.myAllocationProposal = { x: randX, y: randY };
-  player.myAllocationProposalX = randX.toFixed(2);
-  player.myAllocationProposalY = randY.toFixed(2);
+  player.myAllocationProposalX = randX;
+  player.myAllocationProposalY = randY;
   player.initialAllocationProposal = { x: randX, y: randY };
   player.initialAllocationProposalX = randX;
   player.initialAllocationProposalY = randY;
