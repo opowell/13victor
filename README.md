@@ -1,3 +1,7 @@
+# CHANGELOG
+### 1.0.0
+- solve bug that players get stuck after 1st period of play.
+
 # Requirements
 1. Google Chrome
 - All pages should be opened in Google Chrome.
@@ -23,4 +27,6 @@
 * 2021.05.01 - 1 hour
 * 2021.05.13 - 1 hour
 * 2021.05.22 - 3 hours
-## TOTAL - 30 hours
+* 2021.05.27 - 2 hours
+* 2021.05.29 - 2 hours
+## TOTAL - 34 hours
