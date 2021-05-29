@@ -149,7 +149,9 @@ function addPairApps() {
     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
   });
-  session.addApp('transition.jtt');
+  session.addApp('transition.jtt', {
+    prevPeriods: session.numPracticeRounds
+  });
   session.addApp('counting.jtt', {
     treatment: 'pair',
     numPaidDecisions: session.numPaidDecisionsPerRound,
@@ -176,7 +178,9 @@ session.addApp('counting.jtt', {
   exRate: session.exchangeRatePracticeRound,
 });
 
-session.addApp('transition.jtt')
+session.addApp('transition.jtt', {
+  prevPeriods: session.numPracticeRounds
+});
 
 session.addApp('counting.jtt', {
   treatment: 'individual',

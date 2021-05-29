@@ -4,7 +4,7 @@ app.waitForAll = true;
 const transitionStage = app.newStage('transition');
 transitionStage.activeScreen = `
 <p>
-You have completed the {{ app.numPeriods }} practice rounds.
+You have completed the {{ app.prevPeriods }} practice rounds.
 Please click <q>Continue</q> to start Part <span>{{ participant.numDecParts === 1 ? 'A' : 'B' }} of the experiment.
 </p>
   <button>Continue</button>
