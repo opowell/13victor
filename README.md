@@ -28,5 +28,5 @@
 * 2021.05.13 - 1 hour
 * 2021.05.22 - 3 hours
 * 2021.05.27 - 2 hours
-* 2021.05.29 - 2 hours
-## TOTAL - 34 hours
+* 2021.05.29 - 3 hours
+## TOTAL - 35 hours
