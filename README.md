@@ -1,6 +1,6 @@
 # CHANGELOG
 ### 1.0.0
-- solve bug that players get stuck after 1st period of play.
+1. solve bug that players get stuck after 1st period of play.
 
 # Requirements
 1. Google Chrome
