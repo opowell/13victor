@@ -1149,26 +1149,6 @@ decisionStage.playerEnd = function (player) {
 
 }
 
-const transitionStage = app.newStage('transition');
-transitionStage.canPlayerParticipate = function (player) {
-  return app.text === 'training' && player.group.period.id == app.numPeriods;
-}
-transitionStage.activeScreen = `
-<div style='display: flex; flex-direction: column;'>
-  <div :style='"display: flex; flex-direction: row; width: 1180px; justify-content: center;"'>
-    <div class="card" :style='app.treatment === "pair" ? "flex: 1 1 auto" : ""'>
-      <div class="card-body">
-<p v-if="app.text === 'training'">
-You have completed the {{ app.numPeriods }} practice rounds.
-Please click <q>Continue</q> to start Part <span>{{ participant.numDecParts === 1 ? 'A' : 'B' }} of the experiment.
-</p>
-<p v-if="app.text === 'real' && participant.numDecParts === 1">
-You have now finished Part A of the experiment. We now ask you to make decisions in Part B.
-</p>
-<button>Continue</button>
-</div></div></div></div>
-`
-
 app.participantEnd = function (participant) {
 
   if (participant.chosenPayouts == null) {

@@ -149,13 +149,14 @@ function addPairApps() {
     numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
     exRate: session.exchangeRatePracticeRound,
   });
-    session.addApp('counting.jtt', {
-      treatment: 'pair',
-      numPaidDecisions: session.numPaidDecisionsPerRound,
-      text: 'standard',
-      numRegularBudgets: session.numRounds,
-      numAddBudgets: session.numAddRounds,
-      exRate: session.exchangeRatePairs,
+  session.addApp('transition.jtt');
+  session.addApp('counting.jtt', {
+    treatment: 'pair',
+    numPaidDecisions: session.numPaidDecisionsPerRound,
+    text: 'standard',
+    numRegularBudgets: session.numRounds,
+    numAddBudgets: session.numAddRounds,
+    exRate: session.exchangeRatePairs,
   });
 }
 
@@ -174,6 +175,9 @@ session.addApp('counting.jtt', {
   numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
   exRate: session.exchangeRatePracticeRound,
 });
+
+session.addApp('transition.jtt')
+
 session.addApp('counting.jtt', {
   treatment: 'individual',
   numPaidDecisions: session.numPaidDecisionsPerRound,
