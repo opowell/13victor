@@ -164,8 +164,9 @@ Your payoff in each decision round is determined by the number of tokens you
 allocated to the X account or the number of tokens you allocated to the Y
 account as follows: At the end of the round, the computer will <b>
 randomly</b> select one of the accounts, X or Y. Account X will be selected
-with a 1 out of {{ 1 / app.session.probSelX }} chance and account Y will be selected 
-with a 1 out of {{ 1 / (1 - app.session.probSelX) }}. <b>You will only receive the number of tokens you
+with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.
+<b>You will only receive the number of tokens you
 allocated to the account that was selected. The tokens you allocated to the
 other account will be lost.</b> 
 </p>
@@ -385,8 +386,9 @@ use the chat box to reach agreement.
 <p>
 <span v-if="app.session.playFirst === 'individual'">As in Part A</span>
 <span v-if="app.session.playFirst === 'pair'">Recall from the introduction that</span>, 
-at the end of a round, account X will be selected with a 1 out of {{ 1 / app.session.probSelX }} 
-chance and account Y will be selected with 1 out of {{ 1 / (1 - app.session.probSelX) }} chance. <b>Each
+at the end of a round, account X will be selected
+with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance. <b>Each
 of you will only receive the number of tokens you allocated to the account that was selected. The 
 tokens you allocated to the other account will be lost.</b>
 </p>
@@ -493,8 +495,8 @@ Your payoff in each decision round is determined by the number of tokens you
 allocated to the X account or the number of tokens you allocated to the Y
 account as follows: At the end of the round, the computer will <b>
 randomly</b> select one of the accounts, X or Y. Account X will be selected
-with a 1 out of {{ 1 / app.session.probSelX }} chance and account Y will be selected 
-with a 1 out of {{ 1 / (1 - app.session.probSelX) }}. <b>You will only receive the number of tokens you
+with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance. <b>You will only receive the number of tokens you
 allocated to the account that was selected. The tokens you allocated to the
 other account will be lost.</b> 
 </p>
@@ -532,9 +534,9 @@ lines will not depend on your choices in any of the earlier decision problems.)
 </p>
 
 <p v-if="app.session.playFirst === 'pair'">
-As in Part A, at the end of a round account X will be selected with a 1 out of {{ 1 / app.session.probSelX }}
-chance and account Y will be selected with 1 out of {{ 1 / (1 - app.session.probSelX) }}
-chance. <b>You will only receive the number of tokens you allocated to the account that was selected. The tokens you allocated to the other account will be lost</b>.
+As in Part A, at the end of a round account X with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.
+<b>You will only receive the number of tokens you allocated to the account that was selected. The tokens you allocated to the other account will be lost</b>.
 </p>
 
 <p v-if="app.session.playFirst === 'individual'">

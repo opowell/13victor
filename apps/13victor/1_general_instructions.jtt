@@ -121,8 +121,8 @@ Your payoff in each decision round is determined by the number of tokens you
 allocated to the X account or the number of tokens you allocated to the Y
 account as follows: At the end of the round, the computer will <b>
 randomly</b> select one of the accounts, X or Y. Account X will be selected
-with a 1 out of {{ 1 / app.session.probSelX }} chance and account Y will be selected
-with a 1 out of {{ 1 / (1 - app.session.probSelX) }}. <b>You will only receive the number of tokens you
+with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance. <b>You will only receive the number of tokens you
 allocated to the account that was selected. The tokens you allocated to the
 other account will be lost.</b>
 </p>

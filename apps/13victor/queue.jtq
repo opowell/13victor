@@ -95,7 +95,9 @@ session.addNumberOption('d1', 1, 0, 100, 0.01, 'If EXOG division, Player 1 share
 session.addNumberOption('d2', 1, 0, 100, 0.01, 'If EXOG division, Player 2 share of the group allocation.');
 
 session.addNumberOption('chartMax', 200, 0, 1000, 1, 'Chart scale.');
-session.addNumberOption('probSelX', 0.5, 0, 1, 0.01, 'Probability of selecting good x for payment.');
+
+session.addNumberOption('probSelX_n', 1, 0, 100, 1, 'Probability of selecting good x for payment = *n* out of m.');
+session.addNumberOption('probSelX_m', 2, 1, 100, 1, 'Probability of selecting good x for payment = n out of *m*.');
 session.addNumberOption('numPracticeRounds', 5, 0, 100, 1, 'Number of practice rounds.');
 session.addNumberOption('numPaidDecisionsPerRound', 1, 0, 100, 1, 'Number of randomly paid decisions per round.');
 session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair rounds.');
@@ -124,6 +126,7 @@ session.ravenMatrices = {
 session.participantStart = function (participant) {
   if (session.setTreatment !== true) {
     session.setTreatment = true
+    session.probSelX = session.probSelX_n / session.probSelX_m
     for (let i in treatments) {
       let tr = treatments[i];
       if (tr.name === 'Custom') {
@@ -162,67 +165,86 @@ function addPairApps() {
   });
 }
 
-session.addApp('1_general_instructions.jtt');
+let error = false
 
-if (session.playFirst === 'pair') {
-  addPairApps();
-  session.addApp('partAComplete.jtt');
+if (session.probSelX_n > session.probSelX_m) {
+  console.log('ERROR: Invalid probability of selecting X, n > m')
+  error = true
 }
 
-session.addApp('counting.jtt', {
-  treatment: 'individual',
-  text: 'training',
-  numRegularBudgets: session.numPracticeRounds,
-  numAddBudgets: 0,
-  numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
-  exRate: session.exchangeRatePracticeRound,
-});
-
-session.addApp('transition.jtt', {
-  prevPeriods: session.numPracticeRounds
-});
-
-session.addApp('counting.jtt', {
-  treatment: 'individual',
-  numPaidDecisions: session.numPaidDecisionsPerRound,
-  text: 'standard',
-  numRegularBudgets: session.numRounds,
-  numAddBudgets: session.numAddRounds,
-  exRate: session.exchangeRateIndiv,
-});
-
-if (session.playFirst !== 'pair') {
-  session.addApp('partAComplete.jtt');
-  addPairApps();
+if (session.probSelX_n < 0) {
+  console.log('ERROR: Invalid probability of selecting X, n < 0')
+  error = true
 }
 
-session.addApp('partBComplete.jtt');
-session.addApp('soc_prefs_instr.jtt');
-session.addApp('soc_prefs.jtt');
-session.addApp('addTask1Complete.jtt');
+if (session.probSelX_m <= 0) {
+  console.log('ERROR: Invalid probability of selecting X, m <= 0')
+  error = true
+}
 
-session.addApp('ravens.jtt', {
-  imagePrefix: 'Practice',
-  playType: 'practice',
-  matrices: session.ravenMatricesPractice,
-  questionLabel: 'Practice Question',
-  showInstructions: true,
-});
+if (!error) {
+  session.addApp('1_general_instructions.jtt');
 
-session.addApp('3_instructions_ravens.jtt');
+  if (session.playFirst === 'pair') {
+    addPairApps();
+    session.addApp('partAComplete.jtt');
+  }
 
-session.addApp('ravens.jtt', {
-  imagePrefix: 'Raven',
-  playType: 'real',
-  matrices: session.ravenMatrices,
-  questionLabel: 'Question',
-  showInstructions: false,
-});
-session.addApp('addTask2Complete.jtt');
+  session.addApp('counting.jtt', {
+    treatment: 'individual',
+    text: 'training',
+    numRegularBudgets: session.numPracticeRounds,
+    numAddBudgets: 0,
+    numPaidDecisions: session.payPracticeRound === 'yes' ? 1 : 0,
+    exRate: session.exchangeRatePracticeRound,
+  });
 
-session.addApp('big5.jtt');
-session.addApp('addTask3Complete.jtt');
+  session.addApp('transition.jtt', {
+    prevPeriods: session.numPracticeRounds
+  });
 
-session.addApp('survey.jtt');
+  session.addApp('counting.jtt', {
+    treatment: 'individual',
+    numPaidDecisions: session.numPaidDecisionsPerRound,
+    text: 'standard',
+    numRegularBudgets: session.numRounds,
+    numAddBudgets: session.numAddRounds,
+    exRate: session.exchangeRateIndiv,
+  });
 
-session.addApp('results.jtt');
+  if (session.playFirst !== 'pair') {
+    session.addApp('partAComplete.jtt');
+    addPairApps();
+  }
+
+  session.addApp('partBComplete.jtt');
+  session.addApp('soc_prefs_instr.jtt');
+  session.addApp('soc_prefs.jtt');
+  session.addApp('addTask1Complete.jtt');
+
+  session.addApp('ravens.jtt', {
+    imagePrefix: 'Practice',
+    playType: 'practice',
+    matrices: session.ravenMatricesPractice,
+    questionLabel: 'Practice Question',
+    showInstructions: true,
+  });
+
+  session.addApp('3_instructions_ravens.jtt');
+
+  session.addApp('ravens.jtt', {
+    imagePrefix: 'Raven',
+    playType: 'real',
+    matrices: session.ravenMatrices,
+    questionLabel: 'Question',
+    showInstructions: false,
+  });
+  session.addApp('addTask2Complete.jtt');
+
+  session.addApp('big5.jtt');
+  session.addApp('addTask3Complete.jtt');
+
+  session.addApp('survey.jtt');
+
+  session.addApp('results.jtt');
+}
