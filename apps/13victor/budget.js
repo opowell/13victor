@@ -508,10 +508,11 @@ getSeries = function (player) {
   let app = group.period.app;
   
   jt.budgetData = [];
-  for (let i = 0; i <= player.maxX * 10; i++) {
-    let x = i / 10;
+  const resolution = 100;
+  for (let i = 0; i <= player.maxX * resolution; i++) {
+    let x = i / resolution;
     x = round(x, 2);
-    let y = player.maxY - (player.maxY * i) / 10 / player.maxX;
+    let y = player.maxY - (player.maxY * i) / resolution / player.maxX;
     y = round(y, 2);
     jt.budgetData.push([x, y]);
   }
