@@ -508,7 +508,7 @@ getSeries = function (player) {
   let app = group.period.app;
   
   jt.budgetData = [];
-  const resolution = 100;
+  const resolution = app.session.budgetLinePrecision;
   for (let i = 0; i <= player.maxX * resolution; i++) {
     let x = i / resolution;
     x = round(x, 2);

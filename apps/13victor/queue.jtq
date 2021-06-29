@@ -107,6 +107,7 @@ session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchang
 session.addNumberOption('exchangeRateIndiv', 3, 0, 1000, 0.001, 'Exchange rate for individual part. Measured in tokens per euro.');
 session.addNumberOption('exchangeRatePairs', 3, 0, 1000, 0.001, 'Exchange rate for pairs part. Measured in tokens per euro.');
 session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play first (individual or pair)');
+session.addNumberOption('budgetLinePrecision', 50, 1, 10000, 0.01, 'Precision of the budget line approximation.');
 
 session.addNumberOption('ravensDuration', 300, 0, 3000, 1, 'Number of seconds for solving Ravens matrices.');
 
