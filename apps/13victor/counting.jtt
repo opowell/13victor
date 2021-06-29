@@ -917,8 +917,12 @@ decisionStage.activeScreen = /*html*/`
                     onmousemove='draw_plot_lines(jt.toolTipX)'
                 ></div>
             </div>
-            <div style='display: flex; width: 100%; justify-content: center; margin-bottom: 1rem;'>
-                <button onclick="jt.vue.player.page = 'instructions'; jt.vue.player.instructionsPage = jt.vue.app.treatment === 'pair' ? 4 : 3;">Show instructions</button>
+            <div style='display: flex; margin-bottom: 1rem; margin-left: 1rem; margin-right: 1rem'>
+                <div style="flex: 1 1 auto">
+                  <div>X selected with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.</div>
+                  <div>Y selected with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.</div>
+                </div>
+                <button style="flex: 0 0 auto" onclick="jt.vue.player.page = 'instructions'; jt.vue.player.instructionsPage = jt.vue.app.treatment === 'pair' ? 4 : 3;">Show instructions</button>
             </div>
         </div>
         <div style='display: flex; flex-direction: column; flex: 0 0 360px;' v-if="app.treatment === 'pair'">
