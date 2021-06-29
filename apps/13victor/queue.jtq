@@ -104,8 +104,8 @@ session.addNumberOption('numRounds', 50, 0, 100, 1, 'Number of individual/pair r
 session.addNumberOption('numAddRounds', 10, 0, 5000, 1, 'Number of additional rounds for out-of-sample prediction.');
 session.addSelectOption('payPracticeRound', ['no', 'yes'], 'Whether or not the practice round is paid.');
 session.addNumberOption('exchangeRatePracticeRound', 1, 0, 1000, 0.001, 'Exchange rate for practice round, if paid. Measured in tokens per euro.');
-session.addNumberOption('exchangeRateIndiv', 6, 0, 1000, 0.001, 'Exchange rate for individual part. Measured in tokens per euro.');
-session.addNumberOption('exchangeRatePairs', 6, 0, 1000, 0.001, 'Exchange rate for pairs part. Measured in tokens per euro.');
+session.addNumberOption('exchangeRateIndiv', 3, 0, 1000, 0.001, 'Exchange rate for individual part. Measured in tokens per euro.');
+session.addNumberOption('exchangeRatePairs', 3, 0, 1000, 0.001, 'Exchange rate for pairs part. Measured in tokens per euro.');
 session.addSelectOption('playFirst', ['individual', 'pair'], 'Which part to play first (individual or pair)');
 
 session.addNumberOption('ravensDuration', 300, 0, 3000, 1, 'Number of seconds for solving Ravens matrices.');
