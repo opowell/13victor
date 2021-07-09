@@ -1053,6 +1053,8 @@ app.messages.setMyAllocationProposal = function (proposal) {
   let player = this.participant.player;
   let group = player.group;
 
+  if (group.validProposals) return
+
   let timePosted = player.timeInStage();
   let message = {
     x: proposal.x,
@@ -1108,6 +1110,8 @@ app.messages.setMyDivisionProposal = function (proposal) {
 
   let player = this.participant.player;
   let group = player.group;
+
+  if (group.validProposals) return
 
   let timePosted = player.timeInStage();
   let message = {

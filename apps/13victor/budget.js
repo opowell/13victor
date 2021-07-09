@@ -49,6 +49,8 @@ jt.connected = function () {
     }
 
     if (player.group.validProposals && player.status === 'playing') {
+      $('#confirmAllocationModal').modal('hide');
+      $('#confirmDivisionModal').modal('hide');
       $('#informMatchModal').modal({ backdrop: 'static', keyboard: false });
     } else {
       $('#informMatchModal').modal('hide');
