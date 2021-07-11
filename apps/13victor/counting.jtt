@@ -848,10 +848,15 @@ decisionStage.activeScreen = /*html*/`
   </div>
 </div>
 <div class="modal" id="informMatchModal" tabindex="-1" role="dialog" style='margin-top: 30vh'>
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog" style="max-width: 550px;" role="document">
     <div class="modal-content">
-      <div class="modal-body">
-        <p style='padding-top: 30px;'>Your allocation {{app.treatment === 'pair' && app.session.divisionType === "ENDO" ? ' and division' : ''}} proposals match. A new round will start.</p>
+      <div v-if="group.validProposals" class="modal-body" style='padding-top: 30px;'>
+        <div v-if="app.treatment === 'pair' && app.session.divisionType === 'EXOG'">Your allocation proposals match (X = {{ player.myAllocationProposal.x }}, Y = {{ player.myAllocationProposal.y }}).</div>
+        <div v-else>
+          Your allocation proposals (X = {{ player.myAllocationProposal.x }}, Y = {{ player.myAllocationProposal.y }}) match and<br>
+          division proposals (your X-share = {{ player.myDivisionProposal.x }}%, your Y-share = {{ player.myDivisionProposal.y }}%) match.
+        </div>
+        <div>A new round will start.</div>
       </div>
       <div class="modal-footer" style='justify-content: left'>
         <button type="button" class="btn btn-primary" data-dismiss="modal" onclick='confirmNewRound()'>OK</button>
