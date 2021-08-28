@@ -53,7 +53,7 @@ switch (app.session.color) {
     break;
   case 'cyan':
     app.fig1Src = 'individualt2.png'
-    app.fig2Src = 'groupfirstt2.png'
+    app.fig2Src = 'exogenousfirst.png'
     app.fig3Src = 'groupt2.png'
     break;
   case 'yellow':
