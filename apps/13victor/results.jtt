@@ -100,7 +100,7 @@ th, td {
     <tr>
     <td>{{ participant.payoffs[1].round }}</td>
     <td>X: {{participant.payoffs[1].allocation.x | round(2) }} Y: {{participant.payoffs[1].allocation.y | round(2)}}</td>
-    <td>X: {{ participant.payoffs[0].division.x | round(2) }}%<br>Y: {{ participant.payoffs[0].division.y | round(2) }}%</td>
+    <td>X: {{ participant.payoffs[1].division.x | round(2) }}%<br>Y: {{ participant.payoffs[1].division.y | round(2) }}%</td>
     <td>{{ participant.payoffs[1].account === 'x' ? 'X' : 'Y'}}</td>
     <td>{{ participant.payoffs[1].tokens | round(2) }}</td>
     <td>{{ participant.payoffs[1].euros | round(2) }}</td>
