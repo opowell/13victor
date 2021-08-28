@@ -238,12 +238,14 @@ decision problems.)
 <p v-if="app.session.color === 'cyan'">
 So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
-of the decision rounds is {{ 100 * player.ei }}.
+of the decision rounds is {{ 100 * player.ei }} (that is, {{ 50 * player.ei }}
+% of the maximal number of tokens jointly available).
 </p>
 <p v-if="app.session.color === 'yellow'">
 So the individual maximal number of tokens that you contribute to the joint
 maximal number of tokens available to allocate jointly to an account in any
-of the decision rounds is {{ 100 * player.ei }}.
+of the decision rounds is {{ 100 * player.ei }} (that is, {{ 50 * player.ei }}
+% of the maximal number of tokens jointly available).
 </p>
 <p v-if="app.session.color === 'cyan'">
 And the individual maximal number of tokens that the other contributes to
