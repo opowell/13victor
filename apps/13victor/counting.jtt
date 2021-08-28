@@ -402,9 +402,14 @@ use the chat box to reach agreement.
 <span v-if="app.session.playFirst === 'pair'">Recall from the introduction that</span>, 
 at the end of a round, account X will be selected
 with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
-with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance. <b>Each
-of you will only receive the number of tokens you allocated to the account that was selected. The 
+with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.
+<b v-if="app.session.color !== 'cyan'>Each of you will only receive the number of tokens you allocated to the account that was selected. The 
 tokens you allocated to the other account will be lost.</b>
+<b v-else>You will only receive {{ 100*player.di }}% of the number of tokens allocated to the account that was selected,
+and the other participant will only receive {{ 100*player.dj }}% of the number of tokens allocated to the account
+that was selected. The tokens allocated to the other account will be lost. Note that the percentage of
+tokens that you receive reflects your contribution to the maximal number of tokens available to the
+group.</b>
 </p>
 <p v-if="app.session.color === 'magenta'">Note that the fact that each of you gets the number of tokens allocated to the selected account (either X or Y) means that each of you gets {{ player.di * 100 }}% of the number of tokens allocated
 to the selected account (either X or Y) and the other gets {{ player.dj * 100 }}%. This is indicated in the panel on the right in the
