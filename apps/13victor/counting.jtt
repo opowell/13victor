@@ -750,16 +750,18 @@ decisionStage.groupStart = function (group) {
   for (let p in group.players) {
     let x, y = '';
     let player = group.players[p];
-    if (group.session().divisionType === 'EXOG') {
-      let d = group.session().d1;
-      if (player.idInGroup === 2) {
-        d = group.session().d2;
-      }
-      x = d * 100;
-      y = d * 100;
+    if (app.treatment === 'individual') {
+      x = 100;
+      y = 100;
     } else {
-      x = '';
-      y = '';
+      if (group.session().divisionType === 'EXOG') {
+        let d = group.session().d1;
+        if (player.idInGroup === 2) {
+          d = group.session().d2;
+        }
+        x = d * 100;
+        y = d * 100;
+      }
     }
     player.myDivisionProposal = {
       x,
