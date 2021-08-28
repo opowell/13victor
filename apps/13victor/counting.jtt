@@ -411,6 +411,10 @@ that was selected. The tokens allocated to the other account will be lost. Note 
 tokens that you receive reflects your contribution to the maximal number of tokens available to the
 group.</b>
 </p>
+<p v-if="app.session.color === 'cyan'>The fact that you get {{ 100*player.di }}% and the other gets {{ 100*player.dj }}% of the number of tokens allocated to the
+selected account (either X or Y) is indicated in the panel on the right in the decision screen labeled “Token
+Division” (However, note that Figure 3 might show different percentages than just mentioned. The
+percentages just mentioned will apply in the experiment.)</p>
 <p v-if="app.session.color === 'magenta'">Note that the fact that each of you gets the number of tokens allocated to the selected account (either X or Y) means that each of you gets {{ player.di * 100 }}% of the number of tokens allocated
 to the selected account (either X or Y) and the other gets {{ player.dj * 100 }}%. This is indicated in the panel on the right in the
 decision screen labeled <q>Token Division</q>.</p>
