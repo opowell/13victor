@@ -213,13 +213,23 @@ instructions.
 <p v-if="app.session.playFirst === 'individual'">When decisions were made individually instead of jointly,
 </p>
 <ul>
-<li>lines for you were selected according to the following rules: Each
+<li v-if="app.session.playFirst === 'pair'">lines for you would be selected according to the following rules: Each
+decision round would start by having the computer select a line randomly from
+the set of lines that intersect with at least one of the axes at {{ 50*player.ei }} or
+more tokens but with no intercept exceeding {{ 100*player.ei }} tokens.
+</li>
+<li v-if="app.session.playFirst === 'individual'">lines for you were selected according to the following rules: Each
 decision round started by having the computer select a line randomly from
 the set of lines that intersect with at least one of the axes at {{ 50*player.ei }} or
 more tokens but with no intercept exceeding {{ 100*player.ei }} tokens.
 </li>
 
-<li>lines for the other were selected according to the following rules:
+<li v-if="app.session.playFirst === 'pair'">lines for the other would be selected according to the following rules:
+Each decision round would start by having the computer select a line randomly
+from the set of lines that intersect with at least one of the axes at {{ 50*player.ej }}
+or more tokens but with no intercept exceeding {{ 100*player.ej }} tokens.
+</li>
+<li v-if="app.session.playFirst === 'individual'">lines for the other were selected according to the following rules:
 Each decision round started by having the computer select a line randomly
 from the set of lines that intersect with at least one of the axes at {{ 50*player.ej }}
 or more tokens but with no intercept exceeding {{ 100*player.ej }} tokens.
