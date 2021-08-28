@@ -403,7 +403,7 @@ use the chat box to reach agreement.
 at the end of a round, account X will be selected
 with a {{ app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance and account Y will be selected
 with a {{ app.session.probSelX_m - app.session.probSelX_n }} out of {{ app.session.probSelX_m }} chance.
-<b v-if="app.session.color !== 'cyan'>Each of you will only receive the number of tokens you allocated to the account that was selected. The 
+<b v-if="app.session.color !== 'cyan'">Each of you will only receive the number of tokens you allocated to the account that was selected. The 
 tokens you allocated to the other account will be lost.</b>
 <b v-else>You will only receive {{ 100*player.di }}% of the number of tokens allocated to the account that was selected,
 and the other participant will only receive {{ 100*player.dj }}% of the number of tokens allocated to the account
@@ -411,7 +411,7 @@ that was selected. The tokens allocated to the other account will be lost. Note 
 tokens that you receive reflects your contribution to the maximal number of tokens available to the
 group.</b>
 </p>
-<p v-if="app.session.color === 'cyan'>The fact that you get {{ 100*player.di }}% and the other gets {{ 100*player.dj }}% of the number of tokens allocated to the
+<p v-if="app.session.color === 'cyan'">The fact that you get {{ 100*player.di }}% and the other gets {{ 100*player.dj }}% of the number of tokens allocated to the
 selected account (either X or Y) is indicated in the panel on the right in the decision screen labeled “Token
 Division” (However, note that Figure 3 might show different percentages than just mentioned. The
 percentages just mentioned will apply in the experiment.)</p>
@@ -539,6 +539,8 @@ X and Y. Each choice will involve choosing a point on a line representing possib
 allocations.
 </p>
 <p v-if="app.session.playFirst === 'pair'">
+Recall that in each round, you will be asked to allocate tokens between two accounts, labeled X
+and Y. Each choice will involve choosing a point on a line representing possible token allocations.
 But instead of doing so jointly with another participant as in Part A, you
 will now do so individually.
 </p>
