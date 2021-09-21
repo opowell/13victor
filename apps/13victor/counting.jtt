@@ -818,8 +818,8 @@ decisionStage.playerStart = function (player) {
     player.di = app.session.d2
     player.dj = app.session.d1
   }
-  player.maxX = player.group.maxX * player.allocationMultiplier;
-  player.maxY = player.group.maxY * player.allocationMultiplier;
+  player.maxX = (player.group.maxX * player.allocationMultiplier).toFixed(2);
+  player.maxY = (player.group.maxY * player.allocationMultiplier).toFixed(2);
 
   let randX = (Math.random() * player.maxX).toFixed(2);
   let randY = ((1 - randX / player.maxX) * player.maxY).toFixed(2);
