@@ -32,4 +32,5 @@
 * 2021.06.28 - 2 hours
 * 2021.07.29 - 1 hour
 * 2021.08.29 - 1 hour
-## TOTAL - 39 hours
+* 2021.09.21 - 1 hour
+## TOTAL - 40 hours
